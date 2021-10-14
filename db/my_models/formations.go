@@ -24,47 +24,37 @@ import (
 
 // Formation is an object representing the database table.
 type Formation struct {
-	FormationID int         `boil:"formation_id" json:"formation_id" toml:"formation_id" yaml:"formation_id"`
-	GroupID     int         `boil:"group_id" json:"group_id" toml:"group_id" yaml:"group_id"`
-	MemberID    int         `boil:"member_id" json:"member_id" toml:"member_id" yaml:"member_id"`
-	Single      null.String `boil:"single" json:"single,omitempty" toml:"single" yaml:"single,omitempty"`
-	SongTitle   null.String `boil:"song_title" json:"song_title,omitempty" toml:"song_title" yaml:"song_title,omitempty"`
-	Position    null.String `boil:"position" json:"position,omitempty" toml:"position" yaml:"position,omitempty"`
+	FormationID  int        `boil:"formation_id" json:"formation_id" toml:"formation_id" yaml:"formation_id"`
+	FirstRowNum  null.Int16 `boil:"first_row_num" json:"first_row_num,omitempty" toml:"first_row_num" yaml:"first_row_num,omitempty"`
+	SecondRowNum null.Int16 `boil:"second_row_num" json:"second_row_num,omitempty" toml:"second_row_num" yaml:"second_row_num,omitempty"`
+	ThirdRowNum  null.Int16 `boil:"third_row_num" json:"third_row_num,omitempty" toml:"third_row_num" yaml:"third_row_num,omitempty"`
 
 	R *formationR `boil:"-" json:"-" toml:"-" yaml:"-"`
 	L formationL  `boil:"-" json:"-" toml:"-" yaml:"-"`
 }
 
 var FormationColumns = struct {
-	FormationID string
-	GroupID     string
-	MemberID    string
-	Single      string
-	SongTitle   string
-	Position    string
+	FormationID  string
+	FirstRowNum  string
+	SecondRowNum string
+	ThirdRowNum  string
 }{
-	FormationID: "formation_id",
-	GroupID:     "group_id",
-	MemberID:    "member_id",
-	Single:      "single",
-	SongTitle:   "song_title",
-	Position:    "position",
+	FormationID:  "formation_id",
+	FirstRowNum:  "first_row_num",
+	SecondRowNum: "second_row_num",
+	ThirdRowNum:  "third_row_num",
 }
 
 var FormationTableColumns = struct {
-	FormationID string
-	GroupID     string
-	MemberID    string
-	Single      string
-	SongTitle   string
-	Position    string
+	FormationID  string
+	FirstRowNum  string
+	SecondRowNum string
+	ThirdRowNum  string
 }{
-	FormationID: "formations.formation_id",
-	GroupID:     "formations.group_id",
-	MemberID:    "formations.member_id",
-	Single:      "formations.single",
-	SongTitle:   "formations.song_title",
-	Position:    "formations.position",
+	FormationID:  "formations.formation_id",
+	FirstRowNum:  "formations.first_row_num",
+	SecondRowNum: "formations.second_row_num",
+	ThirdRowNum:  "formations.third_row_num",
 }
 
 // Generated where
@@ -92,59 +82,52 @@ func (w whereHelperint) NIN(slice []int) qm.QueryMod {
 	return qm.WhereNotIn(fmt.Sprintf("%s NOT IN ?", w.field), values...)
 }
 
-type whereHelpernull_String struct{ field string }
+type whereHelpernull_Int16 struct{ field string }
 
-func (w whereHelpernull_String) EQ(x null.String) qm.QueryMod {
+func (w whereHelpernull_Int16) EQ(x null.Int16) qm.QueryMod {
 	return qmhelper.WhereNullEQ(w.field, false, x)
 }
-func (w whereHelpernull_String) NEQ(x null.String) qm.QueryMod {
+func (w whereHelpernull_Int16) NEQ(x null.Int16) qm.QueryMod {
 	return qmhelper.WhereNullEQ(w.field, true, x)
 }
-func (w whereHelpernull_String) LT(x null.String) qm.QueryMod {
+func (w whereHelpernull_Int16) LT(x null.Int16) qm.QueryMod {
 	return qmhelper.Where(w.field, qmhelper.LT, x)
 }
-func (w whereHelpernull_String) LTE(x null.String) qm.QueryMod {
+func (w whereHelpernull_Int16) LTE(x null.Int16) qm.QueryMod {
 	return qmhelper.Where(w.field, qmhelper.LTE, x)
 }
-func (w whereHelpernull_String) GT(x null.String) qm.QueryMod {
+func (w whereHelpernull_Int16) GT(x null.Int16) qm.QueryMod {
 	return qmhelper.Where(w.field, qmhelper.GT, x)
 }
-func (w whereHelpernull_String) GTE(x null.String) qm.QueryMod {
+func (w whereHelpernull_Int16) GTE(x null.Int16) qm.QueryMod {
 	return qmhelper.Where(w.field, qmhelper.GTE, x)
 }
 
-func (w whereHelpernull_String) IsNull() qm.QueryMod    { return qmhelper.WhereIsNull(w.field) }
-func (w whereHelpernull_String) IsNotNull() qm.QueryMod { return qmhelper.WhereIsNotNull(w.field) }
+func (w whereHelpernull_Int16) IsNull() qm.QueryMod    { return qmhelper.WhereIsNull(w.field) }
+func (w whereHelpernull_Int16) IsNotNull() qm.QueryMod { return qmhelper.WhereIsNotNull(w.field) }
 
 var FormationWhere = struct {
-	FormationID whereHelperint
-	GroupID     whereHelperint
-	MemberID    whereHelperint
-	Single      whereHelpernull_String
-	SongTitle   whereHelpernull_String
-	Position    whereHelpernull_String
+	FormationID  whereHelperint
+	FirstRowNum  whereHelpernull_Int16
+	SecondRowNum whereHelpernull_Int16
+	ThirdRowNum  whereHelpernull_Int16
 }{
-	FormationID: whereHelperint{field: "\"formations\".\"formation_id\""},
-	GroupID:     whereHelperint{field: "\"formations\".\"group_id\""},
-	MemberID:    whereHelperint{field: "\"formations\".\"member_id\""},
-	Single:      whereHelpernull_String{field: "\"formations\".\"single\""},
-	SongTitle:   whereHelpernull_String{field: "\"formations\".\"song_title\""},
-	Position:    whereHelpernull_String{field: "\"formations\".\"position\""},
+	FormationID:  whereHelperint{field: "\"formations\".\"formation_id\""},
+	FirstRowNum:  whereHelpernull_Int16{field: "\"formations\".\"first_row_num\""},
+	SecondRowNum: whereHelpernull_Int16{field: "\"formations\".\"second_row_num\""},
+	ThirdRowNum:  whereHelpernull_Int16{field: "\"formations\".\"third_row_num\""},
 }
 
 // FormationRels is where relationship names are stored.
 var FormationRels = struct {
-	Group  string
-	Member string
+	Songs string
 }{
-	Group:  "Group",
-	Member: "Member",
+	Songs: "Songs",
 }
 
 // formationR is where relationships are stored.
 type formationR struct {
-	Group  *Group  `boil:"Group" json:"Group" toml:"Group" yaml:"Group"`
-	Member *Member `boil:"Member" json:"Member" toml:"Member" yaml:"Member"`
+	Songs SongSlice `boil:"Songs" json:"Songs" toml:"Songs" yaml:"Songs"`
 }
 
 // NewStruct creates a new relationship struct
@@ -156,8 +139,8 @@ func (*formationR) NewStruct() *formationR {
 type formationL struct{}
 
 var (
-	formationAllColumns            = []string{"formation_id", "group_id", "member_id", "single", "song_title", "position"}
-	formationColumnsWithoutDefault = []string{"group_id", "member_id", "single", "song_title", "position"}
+	formationAllColumns            = []string{"formation_id", "first_row_num", "second_row_num", "third_row_num"}
+	formationColumnsWithoutDefault = []string{"first_row_num", "second_row_num", "third_row_num"}
 	formationColumnsWithDefault    = []string{"formation_id"}
 	formationPrimaryKeyColumns     = []string{"formation_id"}
 )
@@ -437,37 +420,30 @@ func (q formationQuery) Exists(ctx context.Context, exec boil.ContextExecutor) (
 	return count > 0, nil
 }
 
-// Group pointed to by the foreign key.
-func (o *Formation) Group(mods ...qm.QueryMod) groupQuery {
-	queryMods := []qm.QueryMod{
-		qm.Where("\"group_id\" = ?", o.GroupID),
+// Songs retrieves all the song's Songs with an executor.
+func (o *Formation) Songs(mods ...qm.QueryMod) songQuery {
+	var queryMods []qm.QueryMod
+	if len(mods) != 0 {
+		queryMods = append(queryMods, mods...)
 	}
 
-	queryMods = append(queryMods, mods...)
+	queryMods = append(queryMods,
+		qm.Where("\"songs\".\"formation_id\"=?", o.FormationID),
+	)
 
-	query := Groups(queryMods...)
-	queries.SetFrom(query.Query, "\"groups\"")
+	query := Songs(queryMods...)
+	queries.SetFrom(query.Query, "\"songs\"")
+
+	if len(queries.GetSelect(query.Query)) == 0 {
+		queries.SetSelect(query.Query, []string{"\"songs\".*"})
+	}
 
 	return query
 }
 
-// Member pointed to by the foreign key.
-func (o *Formation) Member(mods ...qm.QueryMod) memberQuery {
-	queryMods := []qm.QueryMod{
-		qm.Where("\"member_id\" = ?", o.MemberID),
-	}
-
-	queryMods = append(queryMods, mods...)
-
-	query := Members(queryMods...)
-	queries.SetFrom(query.Query, "\"members\"")
-
-	return query
-}
-
-// LoadGroup allows an eager lookup of values, cached into the
-// loaded structs of the objects. This is for an N-1 relationship.
-func (formationL) LoadGroup(ctx context.Context, e boil.ContextExecutor, singular bool, maybeFormation interface{}, mods queries.Applicator) error {
+// LoadSongs allows an eager lookup of values, cached into the
+// loaded structs of the objects. This is for a 1-M or N-M relationship.
+func (formationL) LoadSongs(ctx context.Context, e boil.ContextExecutor, singular bool, maybeFormation interface{}, mods queries.Applicator) error {
 	var slice []*Formation
 	var object *Formation
 
@@ -482,8 +458,7 @@ func (formationL) LoadGroup(ctx context.Context, e boil.ContextExecutor, singula
 		if object.R == nil {
 			object.R = &formationR{}
 		}
-		args = append(args, object.GroupID)
-
+		args = append(args, object.FormationID)
 	} else {
 	Outer:
 		for _, obj := range slice {
@@ -492,13 +467,12 @@ func (formationL) LoadGroup(ctx context.Context, e boil.ContextExecutor, singula
 			}
 
 			for _, a := range args {
-				if a == obj.GroupID {
+				if a == obj.FormationID {
 					continue Outer
 				}
 			}
 
-			args = append(args, obj.GroupID)
-
+			args = append(args, obj.FormationID)
 		}
 	}
 
@@ -507,8 +481,8 @@ func (formationL) LoadGroup(ctx context.Context, e boil.ContextExecutor, singula
 	}
 
 	query := NewQuery(
-		qm.From(`groups`),
-		qm.WhereIn(`groups.group_id in ?`, args...),
+		qm.From(`songs`),
+		qm.WhereIn(`songs.formation_id in ?`, args...),
 	)
 	if mods != nil {
 		mods.Apply(query)
@@ -516,51 +490,47 @@ func (formationL) LoadGroup(ctx context.Context, e boil.ContextExecutor, singula
 
 	results, err := query.QueryContext(ctx, e)
 	if err != nil {
-		return errors.Wrap(err, "failed to eager load Group")
+		return errors.Wrap(err, "failed to eager load songs")
 	}
 
-	var resultSlice []*Group
+	var resultSlice []*Song
 	if err = queries.Bind(results, &resultSlice); err != nil {
-		return errors.Wrap(err, "failed to bind eager loaded slice Group")
+		return errors.Wrap(err, "failed to bind eager loaded slice songs")
 	}
 
 	if err = results.Close(); err != nil {
-		return errors.Wrap(err, "failed to close results of eager load for groups")
+		return errors.Wrap(err, "failed to close results in eager load on songs")
 	}
 	if err = results.Err(); err != nil {
-		return errors.Wrap(err, "error occurred during iteration of eager loaded relations for groups")
+		return errors.Wrap(err, "error occurred during iteration of eager loaded relations for songs")
 	}
 
-	if len(formationAfterSelectHooks) != 0 {
+	if len(songAfterSelectHooks) != 0 {
 		for _, obj := range resultSlice {
 			if err := obj.doAfterSelectHooks(ctx, e); err != nil {
 				return err
 			}
 		}
 	}
-
-	if len(resultSlice) == 0 {
-		return nil
-	}
-
 	if singular {
-		foreign := resultSlice[0]
-		object.R.Group = foreign
-		if foreign.R == nil {
-			foreign.R = &groupR{}
+		object.R.Songs = resultSlice
+		for _, foreign := range resultSlice {
+			if foreign.R == nil {
+				foreign.R = &songR{}
+			}
+			foreign.R.Formation = object
 		}
-		foreign.R.Formations = append(foreign.R.Formations, object)
 		return nil
 	}
 
-	for _, local := range slice {
-		for _, foreign := range resultSlice {
-			if local.GroupID == foreign.GroupID {
-				local.R.Group = foreign
+	for _, foreign := range resultSlice {
+		for _, local := range slice {
+			if local.FormationID == foreign.FormationID {
+				local.R.Songs = append(local.R.Songs, foreign)
 				if foreign.R == nil {
-					foreign.R = &groupR{}
+					foreign.R = &songR{}
 				}
-				foreign.R.Formations = append(foreign.R.Formations, local)
+				foreign.R.Formation = local
 				break
 			}
 		}
@@ -569,201 +539,56 @@ func (formationL) LoadGroup(ctx context.Context, e boil.ContextExecutor, singula
 	return nil
 }
 
-// LoadMember allows an eager lookup of values, cached into the
-// loaded structs of the objects. This is for an N-1 relationship.
-func (formationL) LoadMember(ctx context.Context, e boil.ContextExecutor, singular bool, maybeFormation interface{}, mods queries.Applicator) error {
-	var slice []*Formation
-	var object *Formation
-
-	if singular {
-		object = maybeFormation.(*Formation)
-	} else {
-		slice = *maybeFormation.(*[]*Formation)
-	}
-
-	args := make([]interface{}, 0, 1)
-	if singular {
-		if object.R == nil {
-			object.R = &formationR{}
-		}
-		args = append(args, object.MemberID)
-
-	} else {
-	Outer:
-		for _, obj := range slice {
-			if obj.R == nil {
-				obj.R = &formationR{}
-			}
-
-			for _, a := range args {
-				if a == obj.MemberID {
-					continue Outer
-				}
-			}
-
-			args = append(args, obj.MemberID)
-
-		}
-	}
-
-	if len(args) == 0 {
-		return nil
-	}
-
-	query := NewQuery(
-		qm.From(`members`),
-		qm.WhereIn(`members.member_id in ?`, args...),
-	)
-	if mods != nil {
-		mods.Apply(query)
-	}
-
-	results, err := query.QueryContext(ctx, e)
-	if err != nil {
-		return errors.Wrap(err, "failed to eager load Member")
-	}
-
-	var resultSlice []*Member
-	if err = queries.Bind(results, &resultSlice); err != nil {
-		return errors.Wrap(err, "failed to bind eager loaded slice Member")
-	}
-
-	if err = results.Close(); err != nil {
-		return errors.Wrap(err, "failed to close results of eager load for members")
-	}
-	if err = results.Err(); err != nil {
-		return errors.Wrap(err, "error occurred during iteration of eager loaded relations for members")
-	}
-
-	if len(formationAfterSelectHooks) != 0 {
-		for _, obj := range resultSlice {
-			if err := obj.doAfterSelectHooks(ctx, e); err != nil {
-				return err
-			}
-		}
-	}
-
-	if len(resultSlice) == 0 {
-		return nil
-	}
-
-	if singular {
-		foreign := resultSlice[0]
-		object.R.Member = foreign
-		if foreign.R == nil {
-			foreign.R = &memberR{}
-		}
-		foreign.R.Formations = append(foreign.R.Formations, object)
-		return nil
-	}
-
-	for _, local := range slice {
-		for _, foreign := range resultSlice {
-			if local.MemberID == foreign.MemberID {
-				local.R.Member = foreign
-				if foreign.R == nil {
-					foreign.R = &memberR{}
-				}
-				foreign.R.Formations = append(foreign.R.Formations, local)
-				break
-			}
-		}
-	}
-
-	return nil
-}
-
-// SetGroup of the formation to the related item.
-// Sets o.R.Group to related.
-// Adds o to related.R.Formations.
-func (o *Formation) SetGroup(ctx context.Context, exec boil.ContextExecutor, insert bool, related *Group) error {
+// AddSongs adds the given related objects to the existing relationships
+// of the formation, optionally inserting them as new records.
+// Appends related to o.R.Songs.
+// Sets related.R.Formation appropriately.
+func (o *Formation) AddSongs(ctx context.Context, exec boil.ContextExecutor, insert bool, related ...*Song) error {
 	var err error
-	if insert {
-		if err = related.Insert(ctx, exec, boil.Infer()); err != nil {
-			return errors.Wrap(err, "failed to insert into foreign table")
+	for _, rel := range related {
+		if insert {
+			rel.FormationID = o.FormationID
+			if err = rel.Insert(ctx, exec, boil.Infer()); err != nil {
+				return errors.Wrap(err, "failed to insert into foreign table")
+			}
+		} else {
+			updateQuery := fmt.Sprintf(
+				"UPDATE \"songs\" SET %s WHERE %s",
+				strmangle.SetParamNames("\"", "\"", 1, []string{"formation_id"}),
+				strmangle.WhereClause("\"", "\"", 2, songPrimaryKeyColumns),
+			)
+			values := []interface{}{o.FormationID, rel.SongID}
+
+			if boil.IsDebug(ctx) {
+				writer := boil.DebugWriterFrom(ctx)
+				fmt.Fprintln(writer, updateQuery)
+				fmt.Fprintln(writer, values)
+			}
+			if _, err = exec.ExecContext(ctx, updateQuery, values...); err != nil {
+				return errors.Wrap(err, "failed to update foreign table")
+			}
+
+			rel.FormationID = o.FormationID
 		}
 	}
 
-	updateQuery := fmt.Sprintf(
-		"UPDATE \"formations\" SET %s WHERE %s",
-		strmangle.SetParamNames("\"", "\"", 1, []string{"group_id"}),
-		strmangle.WhereClause("\"", "\"", 2, formationPrimaryKeyColumns),
-	)
-	values := []interface{}{related.GroupID, o.FormationID}
-
-	if boil.IsDebug(ctx) {
-		writer := boil.DebugWriterFrom(ctx)
-		fmt.Fprintln(writer, updateQuery)
-		fmt.Fprintln(writer, values)
-	}
-	if _, err = exec.ExecContext(ctx, updateQuery, values...); err != nil {
-		return errors.Wrap(err, "failed to update local table")
-	}
-
-	o.GroupID = related.GroupID
 	if o.R == nil {
 		o.R = &formationR{
-			Group: related,
+			Songs: related,
 		}
 	} else {
-		o.R.Group = related
+		o.R.Songs = append(o.R.Songs, related...)
 	}
 
-	if related.R == nil {
-		related.R = &groupR{
-			Formations: FormationSlice{o},
-		}
-	} else {
-		related.R.Formations = append(related.R.Formations, o)
-	}
-
-	return nil
-}
-
-// SetMember of the formation to the related item.
-// Sets o.R.Member to related.
-// Adds o to related.R.Formations.
-func (o *Formation) SetMember(ctx context.Context, exec boil.ContextExecutor, insert bool, related *Member) error {
-	var err error
-	if insert {
-		if err = related.Insert(ctx, exec, boil.Infer()); err != nil {
-			return errors.Wrap(err, "failed to insert into foreign table")
+	for _, rel := range related {
+		if rel.R == nil {
+			rel.R = &songR{
+				Formation: o,
+			}
+		} else {
+			rel.R.Formation = o
 		}
 	}
-
-	updateQuery := fmt.Sprintf(
-		"UPDATE \"formations\" SET %s WHERE %s",
-		strmangle.SetParamNames("\"", "\"", 1, []string{"member_id"}),
-		strmangle.WhereClause("\"", "\"", 2, formationPrimaryKeyColumns),
-	)
-	values := []interface{}{related.MemberID, o.FormationID}
-
-	if boil.IsDebug(ctx) {
-		writer := boil.DebugWriterFrom(ctx)
-		fmt.Fprintln(writer, updateQuery)
-		fmt.Fprintln(writer, values)
-	}
-	if _, err = exec.ExecContext(ctx, updateQuery, values...); err != nil {
-		return errors.Wrap(err, "failed to update local table")
-	}
-
-	o.MemberID = related.MemberID
-	if o.R == nil {
-		o.R = &formationR{
-			Member: related,
-		}
-	} else {
-		o.R.Member = related
-	}
-
-	if related.R == nil {
-		related.R = &memberR{
-			Formations: FormationSlice{o},
-		}
-	} else {
-		related.R.Formations = append(related.R.Formations, o)
-	}
-
 	return nil
 }
 

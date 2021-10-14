@@ -9,7 +9,9 @@ var TableNames = struct {
 	MemberInfos      string
 	MemberTags       string
 	Members          string
+	Positions        string
 	SchemaMigrations string
+	Songs            string
 	Tags             string
 }{
 	Formations:       "formations",
@@ -17,6 +19,8 @@ var TableNames = struct {
 	MemberInfos:      "member_infos",
 	MemberTags:       "member_tags",
 	Members:          "members",
+	Positions:        "positions",
 	SchemaMigrations: "schema_migrations",
+	Songs:            "songs",
 	Tags:             "tags",
 }

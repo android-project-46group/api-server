@@ -16,7 +16,11 @@ func TestUpsert(t *testing.T) {
 
 	t.Run("Members", testMembersUpsert)
 
+	t.Run("Positions", testPositionsUpsert)
+
 	t.Run("SchemaMigrations", testSchemaMigrationsUpsert)
+
+	t.Run("Songs", testSongsUpsert)
 
 	t.Run("Tags", testTagsUpsert)
 }
