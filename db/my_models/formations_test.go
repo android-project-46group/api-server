@@ -494,109 +494,85 @@ func testFormationsInsertWhitelist(t *testing.T) {
 	}
 }
 
-func testFormationToOneGroupUsingGroup(t *testing.T) {
+func testFormationToManySongs(t *testing.T) {
+	var err error
 	ctx := context.Background()
 	tx := MustTx(boil.BeginTx(ctx, nil))
 	defer func() { _ = tx.Rollback() }()
 
-	var local Formation
-	var foreign Group
+	var a Formation
+	var b, c Song
 
 	seed := randomize.NewSeed()
-	if err := randomize.Struct(seed, &local, formationDBTypes, false, formationColumnsWithDefault...); err != nil {
+	if err = randomize.Struct(seed, &a, formationDBTypes, true, formationColumnsWithDefault...); err != nil {
 		t.Errorf("Unable to randomize Formation struct: %s", err)
 	}
-	if err := randomize.Struct(seed, &foreign, groupDBTypes, false, groupColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize Group struct: %s", err)
-	}
 
-	if err := foreign.Insert(ctx, tx, boil.Infer()); err != nil {
+	if err := a.Insert(ctx, tx, boil.Infer()); err != nil {
 		t.Fatal(err)
 	}
 
-	local.GroupID = foreign.GroupID
-	if err := local.Insert(ctx, tx, boil.Infer()); err != nil {
+	if err = randomize.Struct(seed, &b, songDBTypes, false, songColumnsWithDefault...); err != nil {
+		t.Fatal(err)
+	}
+	if err = randomize.Struct(seed, &c, songDBTypes, false, songColumnsWithDefault...); err != nil {
 		t.Fatal(err)
 	}
 
-	check, err := local.Group().One(ctx, tx)
+	b.FormationID = a.FormationID
+	c.FormationID = a.FormationID
+
+	if err = b.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+	if err = c.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+
+	check, err := a.Songs().All(ctx, tx)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	if check.GroupID != foreign.GroupID {
-		t.Errorf("want: %v, got %v", foreign.GroupID, check.GroupID)
+	bFound, cFound := false, false
+	for _, v := range check {
+		if v.FormationID == b.FormationID {
+			bFound = true
+		}
+		if v.FormationID == c.FormationID {
+			cFound = true
+		}
 	}
 
-	slice := FormationSlice{&local}
-	if err = local.L.LoadGroup(ctx, tx, false, (*[]*Formation)(&slice), nil); err != nil {
-		t.Fatal(err)
+	if !bFound {
+		t.Error("expected to find b")
 	}
-	if local.R.Group == nil {
-		t.Error("struct should have been eager loaded")
+	if !cFound {
+		t.Error("expected to find c")
 	}
 
-	local.R.Group = nil
-	if err = local.L.LoadGroup(ctx, tx, true, &local, nil); err != nil {
+	slice := FormationSlice{&a}
+	if err = a.L.LoadSongs(ctx, tx, false, (*[]*Formation)(&slice), nil); err != nil {
 		t.Fatal(err)
 	}
-	if local.R.Group == nil {
-		t.Error("struct should have been eager loaded")
+	if got := len(a.R.Songs); got != 2 {
+		t.Error("number of eager loaded records wrong, got:", got)
+	}
+
+	a.R.Songs = nil
+	if err = a.L.LoadSongs(ctx, tx, true, &a, nil); err != nil {
+		t.Fatal(err)
+	}
+	if got := len(a.R.Songs); got != 2 {
+		t.Error("number of eager loaded records wrong, got:", got)
+	}
+
+	if t.Failed() {
+		t.Logf("%#v", check)
 	}
 }
 
-func testFormationToOneMemberUsingMember(t *testing.T) {
-	ctx := context.Background()
-	tx := MustTx(boil.BeginTx(ctx, nil))
-	defer func() { _ = tx.Rollback() }()
-
-	var local Formation
-	var foreign Member
-
-	seed := randomize.NewSeed()
-	if err := randomize.Struct(seed, &local, formationDBTypes, false, formationColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize Formation struct: %s", err)
-	}
-	if err := randomize.Struct(seed, &foreign, memberDBTypes, false, memberColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize Member struct: %s", err)
-	}
-
-	if err := foreign.Insert(ctx, tx, boil.Infer()); err != nil {
-		t.Fatal(err)
-	}
-
-	local.MemberID = foreign.MemberID
-	if err := local.Insert(ctx, tx, boil.Infer()); err != nil {
-		t.Fatal(err)
-	}
-
-	check, err := local.Member().One(ctx, tx)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	if check.MemberID != foreign.MemberID {
-		t.Errorf("want: %v, got %v", foreign.MemberID, check.MemberID)
-	}
-
-	slice := FormationSlice{&local}
-	if err = local.L.LoadMember(ctx, tx, false, (*[]*Formation)(&slice), nil); err != nil {
-		t.Fatal(err)
-	}
-	if local.R.Member == nil {
-		t.Error("struct should have been eager loaded")
-	}
-
-	local.R.Member = nil
-	if err = local.L.LoadMember(ctx, tx, true, &local, nil); err != nil {
-		t.Fatal(err)
-	}
-	if local.R.Member == nil {
-		t.Error("struct should have been eager loaded")
-	}
-}
-
-func testFormationToOneSetOpGroupUsingGroup(t *testing.T) {
+func testFormationToManyAddOpSongs(t *testing.T) {
 	var err error
 
 	ctx := context.Background()
@@ -604,17 +580,17 @@ func testFormationToOneSetOpGroupUsingGroup(t *testing.T) {
 	defer func() { _ = tx.Rollback() }()
 
 	var a Formation
-	var b, c Group
+	var b, c, d, e Song
 
 	seed := randomize.NewSeed()
 	if err = randomize.Struct(seed, &a, formationDBTypes, false, strmangle.SetComplement(formationPrimaryKeyColumns, formationColumnsWithoutDefault)...); err != nil {
 		t.Fatal(err)
 	}
-	if err = randomize.Struct(seed, &b, groupDBTypes, false, strmangle.SetComplement(groupPrimaryKeyColumns, groupColumnsWithoutDefault)...); err != nil {
-		t.Fatal(err)
-	}
-	if err = randomize.Struct(seed, &c, groupDBTypes, false, strmangle.SetComplement(groupPrimaryKeyColumns, groupColumnsWithoutDefault)...); err != nil {
-		t.Fatal(err)
+	foreigners := []*Song{&b, &c, &d, &e}
+	for _, x := range foreigners {
+		if err = randomize.Struct(seed, x, songDBTypes, false, strmangle.SetComplement(songPrimaryKeyColumns, songColumnsWithoutDefault)...); err != nil {
+			t.Fatal(err)
+		}
 	}
 
 	if err := a.Insert(ctx, tx, boil.Infer()); err != nil {
@@ -623,90 +599,51 @@ func testFormationToOneSetOpGroupUsingGroup(t *testing.T) {
 	if err = b.Insert(ctx, tx, boil.Infer()); err != nil {
 		t.Fatal(err)
 	}
+	if err = c.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
 
-	for i, x := range []*Group{&b, &c} {
-		err = a.SetGroup(ctx, tx, i != 0, x)
+	foreignersSplitByInsertion := [][]*Song{
+		{&b, &c},
+		{&d, &e},
+	}
+
+	for i, x := range foreignersSplitByInsertion {
+		err = a.AddSongs(ctx, tx, i != 0, x...)
 		if err != nil {
 			t.Fatal(err)
 		}
 
-		if a.R.Group != x {
-			t.Error("relationship struct not set to correct value")
+		first := x[0]
+		second := x[1]
+
+		if a.FormationID != first.FormationID {
+			t.Error("foreign key was wrong value", a.FormationID, first.FormationID)
+		}
+		if a.FormationID != second.FormationID {
+			t.Error("foreign key was wrong value", a.FormationID, second.FormationID)
 		}
 
-		if x.R.Formations[0] != &a {
-			t.Error("failed to append to foreign relationship struct")
+		if first.R.Formation != &a {
+			t.Error("relationship was not added properly to the foreign slice")
 		}
-		if a.GroupID != x.GroupID {
-			t.Error("foreign key was wrong value", a.GroupID)
-		}
-
-		zero := reflect.Zero(reflect.TypeOf(a.GroupID))
-		reflect.Indirect(reflect.ValueOf(&a.GroupID)).Set(zero)
-
-		if err = a.Reload(ctx, tx); err != nil {
-			t.Fatal("failed to reload", err)
+		if second.R.Formation != &a {
+			t.Error("relationship was not added properly to the foreign slice")
 		}
 
-		if a.GroupID != x.GroupID {
-			t.Error("foreign key was wrong value", a.GroupID, x.GroupID)
+		if a.R.Songs[i*2] != first {
+			t.Error("relationship struct slice not set to correct value")
 		}
-	}
-}
-func testFormationToOneSetOpMemberUsingMember(t *testing.T) {
-	var err error
+		if a.R.Songs[i*2+1] != second {
+			t.Error("relationship struct slice not set to correct value")
+		}
 
-	ctx := context.Background()
-	tx := MustTx(boil.BeginTx(ctx, nil))
-	defer func() { _ = tx.Rollback() }()
-
-	var a Formation
-	var b, c Member
-
-	seed := randomize.NewSeed()
-	if err = randomize.Struct(seed, &a, formationDBTypes, false, strmangle.SetComplement(formationPrimaryKeyColumns, formationColumnsWithoutDefault)...); err != nil {
-		t.Fatal(err)
-	}
-	if err = randomize.Struct(seed, &b, memberDBTypes, false, strmangle.SetComplement(memberPrimaryKeyColumns, memberColumnsWithoutDefault)...); err != nil {
-		t.Fatal(err)
-	}
-	if err = randomize.Struct(seed, &c, memberDBTypes, false, strmangle.SetComplement(memberPrimaryKeyColumns, memberColumnsWithoutDefault)...); err != nil {
-		t.Fatal(err)
-	}
-
-	if err := a.Insert(ctx, tx, boil.Infer()); err != nil {
-		t.Fatal(err)
-	}
-	if err = b.Insert(ctx, tx, boil.Infer()); err != nil {
-		t.Fatal(err)
-	}
-
-	for i, x := range []*Member{&b, &c} {
-		err = a.SetMember(ctx, tx, i != 0, x)
+		count, err := a.Songs().Count(ctx, tx)
 		if err != nil {
 			t.Fatal(err)
 		}
-
-		if a.R.Member != x {
-			t.Error("relationship struct not set to correct value")
-		}
-
-		if x.R.Formations[0] != &a {
-			t.Error("failed to append to foreign relationship struct")
-		}
-		if a.MemberID != x.MemberID {
-			t.Error("foreign key was wrong value", a.MemberID)
-		}
-
-		zero := reflect.Zero(reflect.TypeOf(a.MemberID))
-		reflect.Indirect(reflect.ValueOf(&a.MemberID)).Set(zero)
-
-		if err = a.Reload(ctx, tx); err != nil {
-			t.Fatal("failed to reload", err)
-		}
-
-		if a.MemberID != x.MemberID {
-			t.Error("foreign key was wrong value", a.MemberID, x.MemberID)
+		if want := int64((i + 1) * 2); count != want {
+			t.Error("want", want, "got", count)
 		}
 	}
 }
@@ -785,7 +722,7 @@ func testFormationsSelect(t *testing.T) {
 }
 
 var (
-	formationDBTypes = map[string]string{`FormationID`: `integer`, `GroupID`: `integer`, `MemberID`: `integer`, `Single`: `character varying`, `SongTitle`: `character varying`, `Position`: `character varying`}
+	formationDBTypes = map[string]string{`FormationID`: `integer`, `FirstRowNum`: `smallint`, `SecondRowNum`: `smallint`, `ThirdRowNum`: `smallint`}
 	_                = bytes.MinRead
 )
 

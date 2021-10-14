@@ -17,7 +17,9 @@ func TestParent(t *testing.T) {
 	t.Run("MemberInfos", testMemberInfos)
 	t.Run("MemberTags", testMemberTags)
 	t.Run("Members", testMembers)
+	t.Run("Positions", testPositions)
 	t.Run("SchemaMigrations", testSchemaMigrations)
+	t.Run("Songs", testSongs)
 	t.Run("Tags", testTags)
 }
 
@@ -27,7 +29,9 @@ func TestDelete(t *testing.T) {
 	t.Run("MemberInfos", testMemberInfosDelete)
 	t.Run("MemberTags", testMemberTagsDelete)
 	t.Run("Members", testMembersDelete)
+	t.Run("Positions", testPositionsDelete)
 	t.Run("SchemaMigrations", testSchemaMigrationsDelete)
+	t.Run("Songs", testSongsDelete)
 	t.Run("Tags", testTagsDelete)
 }
 
@@ -37,7 +41,9 @@ func TestQueryDeleteAll(t *testing.T) {
 	t.Run("MemberInfos", testMemberInfosQueryDeleteAll)
 	t.Run("MemberTags", testMemberTagsQueryDeleteAll)
 	t.Run("Members", testMembersQueryDeleteAll)
+	t.Run("Positions", testPositionsQueryDeleteAll)
 	t.Run("SchemaMigrations", testSchemaMigrationsQueryDeleteAll)
+	t.Run("Songs", testSongsQueryDeleteAll)
 	t.Run("Tags", testTagsQueryDeleteAll)
 }
 
@@ -47,7 +53,9 @@ func TestSliceDeleteAll(t *testing.T) {
 	t.Run("MemberInfos", testMemberInfosSliceDeleteAll)
 	t.Run("MemberTags", testMemberTagsSliceDeleteAll)
 	t.Run("Members", testMembersSliceDeleteAll)
+	t.Run("Positions", testPositionsSliceDeleteAll)
 	t.Run("SchemaMigrations", testSchemaMigrationsSliceDeleteAll)
+	t.Run("Songs", testSongsSliceDeleteAll)
 	t.Run("Tags", testTagsSliceDeleteAll)
 }
 
@@ -57,7 +65,9 @@ func TestExists(t *testing.T) {
 	t.Run("MemberInfos", testMemberInfosExists)
 	t.Run("MemberTags", testMemberTagsExists)
 	t.Run("Members", testMembersExists)
+	t.Run("Positions", testPositionsExists)
 	t.Run("SchemaMigrations", testSchemaMigrationsExists)
+	t.Run("Songs", testSongsExists)
 	t.Run("Tags", testTagsExists)
 }
 
@@ -67,7 +77,9 @@ func TestFind(t *testing.T) {
 	t.Run("MemberInfos", testMemberInfosFind)
 	t.Run("MemberTags", testMemberTagsFind)
 	t.Run("Members", testMembersFind)
+	t.Run("Positions", testPositionsFind)
 	t.Run("SchemaMigrations", testSchemaMigrationsFind)
+	t.Run("Songs", testSongsFind)
 	t.Run("Tags", testTagsFind)
 }
 
@@ -77,7 +89,9 @@ func TestBind(t *testing.T) {
 	t.Run("MemberInfos", testMemberInfosBind)
 	t.Run("MemberTags", testMemberTagsBind)
 	t.Run("Members", testMembersBind)
+	t.Run("Positions", testPositionsBind)
 	t.Run("SchemaMigrations", testSchemaMigrationsBind)
+	t.Run("Songs", testSongsBind)
 	t.Run("Tags", testTagsBind)
 }
 
@@ -87,7 +101,9 @@ func TestOne(t *testing.T) {
 	t.Run("MemberInfos", testMemberInfosOne)
 	t.Run("MemberTags", testMemberTagsOne)
 	t.Run("Members", testMembersOne)
+	t.Run("Positions", testPositionsOne)
 	t.Run("SchemaMigrations", testSchemaMigrationsOne)
+	t.Run("Songs", testSongsOne)
 	t.Run("Tags", testTagsOne)
 }
 
@@ -97,7 +113,9 @@ func TestAll(t *testing.T) {
 	t.Run("MemberInfos", testMemberInfosAll)
 	t.Run("MemberTags", testMemberTagsAll)
 	t.Run("Members", testMembersAll)
+	t.Run("Positions", testPositionsAll)
 	t.Run("SchemaMigrations", testSchemaMigrationsAll)
+	t.Run("Songs", testSongsAll)
 	t.Run("Tags", testTagsAll)
 }
 
@@ -107,7 +125,9 @@ func TestCount(t *testing.T) {
 	t.Run("MemberInfos", testMemberInfosCount)
 	t.Run("MemberTags", testMemberTagsCount)
 	t.Run("Members", testMembersCount)
+	t.Run("Positions", testPositionsCount)
 	t.Run("SchemaMigrations", testSchemaMigrationsCount)
+	t.Run("Songs", testSongsCount)
 	t.Run("Tags", testTagsCount)
 }
 
@@ -117,7 +137,9 @@ func TestHooks(t *testing.T) {
 	t.Run("MemberInfos", testMemberInfosHooks)
 	t.Run("MemberTags", testMemberTagsHooks)
 	t.Run("Members", testMembersHooks)
+	t.Run("Positions", testPositionsHooks)
 	t.Run("SchemaMigrations", testSchemaMigrationsHooks)
+	t.Run("Songs", testSongsHooks)
 	t.Run("Tags", testTagsHooks)
 }
 
@@ -132,8 +154,12 @@ func TestInsert(t *testing.T) {
 	t.Run("MemberTags", testMemberTagsInsertWhitelist)
 	t.Run("Members", testMembersInsert)
 	t.Run("Members", testMembersInsertWhitelist)
+	t.Run("Positions", testPositionsInsert)
+	t.Run("Positions", testPositionsInsertWhitelist)
 	t.Run("SchemaMigrations", testSchemaMigrationsInsert)
 	t.Run("SchemaMigrations", testSchemaMigrationsInsertWhitelist)
+	t.Run("Songs", testSongsInsert)
+	t.Run("Songs", testSongsInsertWhitelist)
 	t.Run("Tags", testTagsInsert)
 	t.Run("Tags", testTagsInsertWhitelist)
 }
@@ -141,12 +167,14 @@ func TestInsert(t *testing.T) {
 // TestToOne tests cannot be run in parallel
 // or deadlocks can occur.
 func TestToOne(t *testing.T) {
-	t.Run("FormationToGroupUsingGroup", testFormationToOneGroupUsingGroup)
-	t.Run("FormationToMemberUsingMember", testFormationToOneMemberUsingMember)
 	t.Run("MemberInfoToMemberUsingMember", testMemberInfoToOneMemberUsingMember)
 	t.Run("MemberTagToMemberUsingMember", testMemberTagToOneMemberUsingMember)
 	t.Run("MemberTagToTagUsingTag", testMemberTagToOneTagUsingTag)
 	t.Run("MemberToGroupUsingGroup", testMemberToOneGroupUsingGroup)
+	t.Run("PositionToMemberUsingMember", testPositionToOneMemberUsingMember)
+	t.Run("PositionToSongUsingSong", testPositionToOneSongUsingSong)
+	t.Run("SongToFormationUsingFormation", testSongToOneFormationUsingFormation)
+	t.Run("SongToGroupUsingGroup", testSongToOneGroupUsingGroup)
 }
 
 // TestOneToOne tests cannot be run in parallel
@@ -156,23 +184,27 @@ func TestOneToOne(t *testing.T) {}
 // TestToMany tests cannot be run in parallel
 // or deadlocks can occur.
 func TestToMany(t *testing.T) {
-	t.Run("GroupToFormations", testGroupToManyFormations)
+	t.Run("FormationToSongs", testFormationToManySongs)
 	t.Run("GroupToMembers", testGroupToManyMembers)
-	t.Run("MemberToFormations", testMemberToManyFormations)
+	t.Run("GroupToSongs", testGroupToManySongs)
 	t.Run("MemberToMemberInfos", testMemberToManyMemberInfos)
 	t.Run("MemberToMemberTags", testMemberToManyMemberTags)
+	t.Run("MemberToPositions", testMemberToManyPositions)
+	t.Run("SongToPositions", testSongToManyPositions)
 	t.Run("TagToMemberTags", testTagToManyMemberTags)
 }
 
 // TestToOneSet tests cannot be run in parallel
 // or deadlocks can occur.
 func TestToOneSet(t *testing.T) {
-	t.Run("FormationToGroupUsingFormations", testFormationToOneSetOpGroupUsingGroup)
-	t.Run("FormationToMemberUsingFormations", testFormationToOneSetOpMemberUsingMember)
 	t.Run("MemberInfoToMemberUsingMemberInfos", testMemberInfoToOneSetOpMemberUsingMember)
 	t.Run("MemberTagToMemberUsingMemberTags", testMemberTagToOneSetOpMemberUsingMember)
 	t.Run("MemberTagToTagUsingMemberTags", testMemberTagToOneSetOpTagUsingTag)
 	t.Run("MemberToGroupUsingMembers", testMemberToOneSetOpGroupUsingGroup)
+	t.Run("PositionToMemberUsingPositions", testPositionToOneSetOpMemberUsingMember)
+	t.Run("PositionToSongUsingPositions", testPositionToOneSetOpSongUsingSong)
+	t.Run("SongToFormationUsingSongs", testSongToOneSetOpFormationUsingFormation)
+	t.Run("SongToGroupUsingSongs", testSongToOneSetOpGroupUsingGroup)
 }
 
 // TestToOneRemove tests cannot be run in parallel
@@ -190,11 +222,13 @@ func TestOneToOneRemove(t *testing.T) {}
 // TestToManyAdd tests cannot be run in parallel
 // or deadlocks can occur.
 func TestToManyAdd(t *testing.T) {
-	t.Run("GroupToFormations", testGroupToManyAddOpFormations)
+	t.Run("FormationToSongs", testFormationToManyAddOpSongs)
 	t.Run("GroupToMembers", testGroupToManyAddOpMembers)
-	t.Run("MemberToFormations", testMemberToManyAddOpFormations)
+	t.Run("GroupToSongs", testGroupToManyAddOpSongs)
 	t.Run("MemberToMemberInfos", testMemberToManyAddOpMemberInfos)
 	t.Run("MemberToMemberTags", testMemberToManyAddOpMemberTags)
+	t.Run("MemberToPositions", testMemberToManyAddOpPositions)
+	t.Run("SongToPositions", testSongToManyAddOpPositions)
 	t.Run("TagToMemberTags", testTagToManyAddOpMemberTags)
 }
 
@@ -212,7 +246,9 @@ func TestReload(t *testing.T) {
 	t.Run("MemberInfos", testMemberInfosReload)
 	t.Run("MemberTags", testMemberTagsReload)
 	t.Run("Members", testMembersReload)
+	t.Run("Positions", testPositionsReload)
 	t.Run("SchemaMigrations", testSchemaMigrationsReload)
+	t.Run("Songs", testSongsReload)
 	t.Run("Tags", testTagsReload)
 }
 
@@ -222,7 +258,9 @@ func TestReloadAll(t *testing.T) {
 	t.Run("MemberInfos", testMemberInfosReloadAll)
 	t.Run("MemberTags", testMemberTagsReloadAll)
 	t.Run("Members", testMembersReloadAll)
+	t.Run("Positions", testPositionsReloadAll)
 	t.Run("SchemaMigrations", testSchemaMigrationsReloadAll)
+	t.Run("Songs", testSongsReloadAll)
 	t.Run("Tags", testTagsReloadAll)
 }
 
@@ -232,7 +270,9 @@ func TestSelect(t *testing.T) {
 	t.Run("MemberInfos", testMemberInfosSelect)
 	t.Run("MemberTags", testMemberTagsSelect)
 	t.Run("Members", testMembersSelect)
+	t.Run("Positions", testPositionsSelect)
 	t.Run("SchemaMigrations", testSchemaMigrationsSelect)
+	t.Run("Songs", testSongsSelect)
 	t.Run("Tags", testTagsSelect)
 }
 
@@ -242,7 +282,9 @@ func TestUpdate(t *testing.T) {
 	t.Run("MemberInfos", testMemberInfosUpdate)
 	t.Run("MemberTags", testMemberTagsUpdate)
 	t.Run("Members", testMembersUpdate)
+	t.Run("Positions", testPositionsUpdate)
 	t.Run("SchemaMigrations", testSchemaMigrationsUpdate)
+	t.Run("Songs", testSongsUpdate)
 	t.Run("Tags", testTagsUpdate)
 }
 
@@ -252,6 +294,8 @@ func TestSliceUpdateAll(t *testing.T) {
 	t.Run("MemberInfos", testMemberInfosSliceUpdateAll)
 	t.Run("MemberTags", testMemberTagsSliceUpdateAll)
 	t.Run("Members", testMembersSliceUpdateAll)
+	t.Run("Positions", testPositionsSliceUpdateAll)
 	t.Run("SchemaMigrations", testSchemaMigrationsSliceUpdateAll)
+	t.Run("Songs", testSongsSliceUpdateAll)
 	t.Run("Tags", testTagsSliceUpdateAll)
 }

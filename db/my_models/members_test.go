@@ -494,84 +494,6 @@ func testMembersInsertWhitelist(t *testing.T) {
 	}
 }
 
-func testMemberToManyFormations(t *testing.T) {
-	var err error
-	ctx := context.Background()
-	tx := MustTx(boil.BeginTx(ctx, nil))
-	defer func() { _ = tx.Rollback() }()
-
-	var a Member
-	var b, c Formation
-
-	seed := randomize.NewSeed()
-	if err = randomize.Struct(seed, &a, memberDBTypes, true, memberColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize Member struct: %s", err)
-	}
-
-	if err := a.Insert(ctx, tx, boil.Infer()); err != nil {
-		t.Fatal(err)
-	}
-
-	if err = randomize.Struct(seed, &b, formationDBTypes, false, formationColumnsWithDefault...); err != nil {
-		t.Fatal(err)
-	}
-	if err = randomize.Struct(seed, &c, formationDBTypes, false, formationColumnsWithDefault...); err != nil {
-		t.Fatal(err)
-	}
-
-	b.MemberID = a.MemberID
-	c.MemberID = a.MemberID
-
-	if err = b.Insert(ctx, tx, boil.Infer()); err != nil {
-		t.Fatal(err)
-	}
-	if err = c.Insert(ctx, tx, boil.Infer()); err != nil {
-		t.Fatal(err)
-	}
-
-	check, err := a.Formations().All(ctx, tx)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	bFound, cFound := false, false
-	for _, v := range check {
-		if v.MemberID == b.MemberID {
-			bFound = true
-		}
-		if v.MemberID == c.MemberID {
-			cFound = true
-		}
-	}
-
-	if !bFound {
-		t.Error("expected to find b")
-	}
-	if !cFound {
-		t.Error("expected to find c")
-	}
-
-	slice := MemberSlice{&a}
-	if err = a.L.LoadFormations(ctx, tx, false, (*[]*Member)(&slice), nil); err != nil {
-		t.Fatal(err)
-	}
-	if got := len(a.R.Formations); got != 2 {
-		t.Error("number of eager loaded records wrong, got:", got)
-	}
-
-	a.R.Formations = nil
-	if err = a.L.LoadFormations(ctx, tx, true, &a, nil); err != nil {
-		t.Fatal(err)
-	}
-	if got := len(a.R.Formations); got != 2 {
-		t.Error("number of eager loaded records wrong, got:", got)
-	}
-
-	if t.Failed() {
-		t.Logf("%#v", check)
-	}
-}
-
 func testMemberToManyMemberInfos(t *testing.T) {
 	var err error
 	ctx := context.Background()
@@ -728,30 +650,34 @@ func testMemberToManyMemberTags(t *testing.T) {
 	}
 }
 
-func testMemberToManyAddOpFormations(t *testing.T) {
+func testMemberToManyPositions(t *testing.T) {
 	var err error
-
 	ctx := context.Background()
 	tx := MustTx(boil.BeginTx(ctx, nil))
 	defer func() { _ = tx.Rollback() }()
 
 	var a Member
-	var b, c, d, e Formation
+	var b, c Position
 
 	seed := randomize.NewSeed()
-	if err = randomize.Struct(seed, &a, memberDBTypes, false, strmangle.SetComplement(memberPrimaryKeyColumns, memberColumnsWithoutDefault)...); err != nil {
-		t.Fatal(err)
-	}
-	foreigners := []*Formation{&b, &c, &d, &e}
-	for _, x := range foreigners {
-		if err = randomize.Struct(seed, x, formationDBTypes, false, strmangle.SetComplement(formationPrimaryKeyColumns, formationColumnsWithoutDefault)...); err != nil {
-			t.Fatal(err)
-		}
+	if err = randomize.Struct(seed, &a, memberDBTypes, true, memberColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize Member struct: %s", err)
 	}
 
 	if err := a.Insert(ctx, tx, boil.Infer()); err != nil {
 		t.Fatal(err)
 	}
+
+	if err = randomize.Struct(seed, &b, positionDBTypes, false, positionColumnsWithDefault...); err != nil {
+		t.Fatal(err)
+	}
+	if err = randomize.Struct(seed, &c, positionDBTypes, false, positionColumnsWithDefault...); err != nil {
+		t.Fatal(err)
+	}
+
+	b.MemberID = a.MemberID
+	c.MemberID = a.MemberID
+
 	if err = b.Insert(ctx, tx, boil.Infer()); err != nil {
 		t.Fatal(err)
 	}
@@ -759,50 +685,49 @@ func testMemberToManyAddOpFormations(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	foreignersSplitByInsertion := [][]*Formation{
-		{&b, &c},
-		{&d, &e},
+	check, err := a.Positions().All(ctx, tx)
+	if err != nil {
+		t.Fatal(err)
 	}
 
-	for i, x := range foreignersSplitByInsertion {
-		err = a.AddFormations(ctx, tx, i != 0, x...)
-		if err != nil {
-			t.Fatal(err)
+	bFound, cFound := false, false
+	for _, v := range check {
+		if v.MemberID == b.MemberID {
+			bFound = true
 		}
+		if v.MemberID == c.MemberID {
+			cFound = true
+		}
+	}
 
-		first := x[0]
-		second := x[1]
+	if !bFound {
+		t.Error("expected to find b")
+	}
+	if !cFound {
+		t.Error("expected to find c")
+	}
 
-		if a.MemberID != first.MemberID {
-			t.Error("foreign key was wrong value", a.MemberID, first.MemberID)
-		}
-		if a.MemberID != second.MemberID {
-			t.Error("foreign key was wrong value", a.MemberID, second.MemberID)
-		}
+	slice := MemberSlice{&a}
+	if err = a.L.LoadPositions(ctx, tx, false, (*[]*Member)(&slice), nil); err != nil {
+		t.Fatal(err)
+	}
+	if got := len(a.R.Positions); got != 2 {
+		t.Error("number of eager loaded records wrong, got:", got)
+	}
 
-		if first.R.Member != &a {
-			t.Error("relationship was not added properly to the foreign slice")
-		}
-		if second.R.Member != &a {
-			t.Error("relationship was not added properly to the foreign slice")
-		}
+	a.R.Positions = nil
+	if err = a.L.LoadPositions(ctx, tx, true, &a, nil); err != nil {
+		t.Fatal(err)
+	}
+	if got := len(a.R.Positions); got != 2 {
+		t.Error("number of eager loaded records wrong, got:", got)
+	}
 
-		if a.R.Formations[i*2] != first {
-			t.Error("relationship struct slice not set to correct value")
-		}
-		if a.R.Formations[i*2+1] != second {
-			t.Error("relationship struct slice not set to correct value")
-		}
-
-		count, err := a.Formations().Count(ctx, tx)
-		if err != nil {
-			t.Fatal(err)
-		}
-		if want := int64((i + 1) * 2); count != want {
-			t.Error("want", want, "got", count)
-		}
+	if t.Failed() {
+		t.Logf("%#v", check)
 	}
 }
+
 func testMemberToManyAddOpMemberInfos(t *testing.T) {
 	var err error
 
@@ -945,6 +870,81 @@ func testMemberToManyAddOpMemberTags(t *testing.T) {
 		}
 
 		count, err := a.MemberTags().Count(ctx, tx)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if want := int64((i + 1) * 2); count != want {
+			t.Error("want", want, "got", count)
+		}
+	}
+}
+func testMemberToManyAddOpPositions(t *testing.T) {
+	var err error
+
+	ctx := context.Background()
+	tx := MustTx(boil.BeginTx(ctx, nil))
+	defer func() { _ = tx.Rollback() }()
+
+	var a Member
+	var b, c, d, e Position
+
+	seed := randomize.NewSeed()
+	if err = randomize.Struct(seed, &a, memberDBTypes, false, strmangle.SetComplement(memberPrimaryKeyColumns, memberColumnsWithoutDefault)...); err != nil {
+		t.Fatal(err)
+	}
+	foreigners := []*Position{&b, &c, &d, &e}
+	for _, x := range foreigners {
+		if err = randomize.Struct(seed, x, positionDBTypes, false, strmangle.SetComplement(positionPrimaryKeyColumns, positionColumnsWithoutDefault)...); err != nil {
+			t.Fatal(err)
+		}
+	}
+
+	if err := a.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+	if err = b.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+	if err = c.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+
+	foreignersSplitByInsertion := [][]*Position{
+		{&b, &c},
+		{&d, &e},
+	}
+
+	for i, x := range foreignersSplitByInsertion {
+		err = a.AddPositions(ctx, tx, i != 0, x...)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		first := x[0]
+		second := x[1]
+
+		if a.MemberID != first.MemberID {
+			t.Error("foreign key was wrong value", a.MemberID, first.MemberID)
+		}
+		if a.MemberID != second.MemberID {
+			t.Error("foreign key was wrong value", a.MemberID, second.MemberID)
+		}
+
+		if first.R.Member != &a {
+			t.Error("relationship was not added properly to the foreign slice")
+		}
+		if second.R.Member != &a {
+			t.Error("relationship was not added properly to the foreign slice")
+		}
+
+		if a.R.Positions[i*2] != first {
+			t.Error("relationship struct slice not set to correct value")
+		}
+		if a.R.Positions[i*2+1] != second {
+			t.Error("relationship struct slice not set to correct value")
+		}
+
+		count, err := a.Positions().Count(ctx, tx)
 		if err != nil {
 			t.Fatal(err)
 		}
