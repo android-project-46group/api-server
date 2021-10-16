@@ -26,10 +26,10 @@ import (
 type MemberInfo struct {
 	MemberInfoID int         `boil:"member_info_id" json:"member_info_id" toml:"member_info_id" yaml:"member_info_id"`
 	MemberID     int         `boil:"member_id" json:"member_id" toml:"member_id" yaml:"member_id"`
-	Birthday     null.String `boil:"birthday" json:"birthday,omitempty" toml:"birthday" yaml:"birthday,omitempty"`
-	BloodType    null.String `boil:"blood_type" json:"blood_type,omitempty" toml:"blood_type" yaml:"blood_type,omitempty"`
-	Height       null.Int16  `boil:"height" json:"height,omitempty" toml:"height" yaml:"height,omitempty"`
-	Generation   null.Int16  `boil:"generation" json:"generation,omitempty" toml:"generation" yaml:"generation,omitempty"`
+	Birthday     string      `boil:"birthday" json:"birthday" toml:"birthday" yaml:"birthday"`
+	BloodType    string      `boil:"blood_type" json:"blood_type" toml:"blood_type" yaml:"blood_type"`
+	Height       string      `boil:"height" json:"height" toml:"height" yaml:"height"`
+	Generation   string      `boil:"generation" json:"generation" toml:"generation" yaml:"generation"`
 	BlogURL      null.String `boil:"blog_url" json:"blog_url,omitempty" toml:"blog_url" yaml:"blog_url,omitempty"`
 	ImgURL       null.String `boil:"img_url" json:"img_url,omitempty" toml:"img_url" yaml:"img_url,omitempty"`
 
@@ -79,22 +79,46 @@ var MemberInfoTableColumns = struct {
 
 // Generated where
 
+type whereHelpernull_String struct{ field string }
+
+func (w whereHelpernull_String) EQ(x null.String) qm.QueryMod {
+	return qmhelper.WhereNullEQ(w.field, false, x)
+}
+func (w whereHelpernull_String) NEQ(x null.String) qm.QueryMod {
+	return qmhelper.WhereNullEQ(w.field, true, x)
+}
+func (w whereHelpernull_String) LT(x null.String) qm.QueryMod {
+	return qmhelper.Where(w.field, qmhelper.LT, x)
+}
+func (w whereHelpernull_String) LTE(x null.String) qm.QueryMod {
+	return qmhelper.Where(w.field, qmhelper.LTE, x)
+}
+func (w whereHelpernull_String) GT(x null.String) qm.QueryMod {
+	return qmhelper.Where(w.field, qmhelper.GT, x)
+}
+func (w whereHelpernull_String) GTE(x null.String) qm.QueryMod {
+	return qmhelper.Where(w.field, qmhelper.GTE, x)
+}
+
+func (w whereHelpernull_String) IsNull() qm.QueryMod    { return qmhelper.WhereIsNull(w.field) }
+func (w whereHelpernull_String) IsNotNull() qm.QueryMod { return qmhelper.WhereIsNotNull(w.field) }
+
 var MemberInfoWhere = struct {
 	MemberInfoID whereHelperint
 	MemberID     whereHelperint
-	Birthday     whereHelpernull_String
-	BloodType    whereHelpernull_String
-	Height       whereHelpernull_Int16
-	Generation   whereHelpernull_Int16
+	Birthday     whereHelperstring
+	BloodType    whereHelperstring
+	Height       whereHelperstring
+	Generation   whereHelperstring
 	BlogURL      whereHelpernull_String
 	ImgURL       whereHelpernull_String
 }{
 	MemberInfoID: whereHelperint{field: "\"member_infos\".\"member_info_id\""},
 	MemberID:     whereHelperint{field: "\"member_infos\".\"member_id\""},
-	Birthday:     whereHelpernull_String{field: "\"member_infos\".\"birthday\""},
-	BloodType:    whereHelpernull_String{field: "\"member_infos\".\"blood_type\""},
-	Height:       whereHelpernull_Int16{field: "\"member_infos\".\"height\""},
-	Generation:   whereHelpernull_Int16{field: "\"member_infos\".\"generation\""},
+	Birthday:     whereHelperstring{field: "\"member_infos\".\"birthday\""},
+	BloodType:    whereHelperstring{field: "\"member_infos\".\"blood_type\""},
+	Height:       whereHelperstring{field: "\"member_infos\".\"height\""},
+	Generation:   whereHelperstring{field: "\"member_infos\".\"generation\""},
 	BlogURL:      whereHelpernull_String{field: "\"member_infos\".\"blog_url\""},
 	ImgURL:       whereHelpernull_String{field: "\"member_infos\".\"img_url\""},
 }

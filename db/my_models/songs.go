@@ -14,7 +14,6 @@ import (
 	"time"
 
 	"github.com/friendsofgo/errors"
-	"github.com/volatiletech/null/v8"
 	"github.com/volatiletech/sqlboiler/v4/boil"
 	"github.com/volatiletech/sqlboiler/v4/queries"
 	"github.com/volatiletech/sqlboiler/v4/queries/qm"
@@ -24,11 +23,11 @@ import (
 
 // Song is an object representing the database table.
 type Song struct {
-	SongID      int         `boil:"song_id" json:"song_id" toml:"song_id" yaml:"song_id"`
-	GroupID     int         `boil:"group_id" json:"group_id" toml:"group_id" yaml:"group_id"`
-	FormationID int         `boil:"formation_id" json:"formation_id" toml:"formation_id" yaml:"formation_id"`
-	Title       null.String `boil:"title" json:"title,omitempty" toml:"title" yaml:"title,omitempty"`
-	SingleNum   null.String `boil:"single_num" json:"single_num,omitempty" toml:"single_num" yaml:"single_num,omitempty"`
+	SongID      int    `boil:"song_id" json:"song_id" toml:"song_id" yaml:"song_id"`
+	GroupID     int    `boil:"group_id" json:"group_id" toml:"group_id" yaml:"group_id"`
+	FormationID int    `boil:"formation_id" json:"formation_id" toml:"formation_id" yaml:"formation_id"`
+	Title       string `boil:"title" json:"title" toml:"title" yaml:"title"`
+	Single      string `boil:"single" json:"single" toml:"single" yaml:"single"`
 
 	R *songR `boil:"-" json:"-" toml:"-" yaml:"-"`
 	L songL  `boil:"-" json:"-" toml:"-" yaml:"-"`
@@ -39,13 +38,13 @@ var SongColumns = struct {
 	GroupID     string
 	FormationID string
 	Title       string
-	SingleNum   string
+	Single      string
 }{
 	SongID:      "song_id",
 	GroupID:     "group_id",
 	FormationID: "formation_id",
 	Title:       "title",
-	SingleNum:   "single_num",
+	Single:      "single",
 }
 
 var SongTableColumns = struct {
@@ -53,13 +52,13 @@ var SongTableColumns = struct {
 	GroupID     string
 	FormationID string
 	Title       string
-	SingleNum   string
+	Single      string
 }{
 	SongID:      "songs.song_id",
 	GroupID:     "songs.group_id",
 	FormationID: "songs.formation_id",
 	Title:       "songs.title",
-	SingleNum:   "songs.single_num",
+	Single:      "songs.single",
 }
 
 // Generated where
@@ -68,14 +67,14 @@ var SongWhere = struct {
 	SongID      whereHelperint
 	GroupID     whereHelperint
 	FormationID whereHelperint
-	Title       whereHelpernull_String
-	SingleNum   whereHelpernull_String
+	Title       whereHelperstring
+	Single      whereHelperstring
 }{
 	SongID:      whereHelperint{field: "\"songs\".\"song_id\""},
 	GroupID:     whereHelperint{field: "\"songs\".\"group_id\""},
 	FormationID: whereHelperint{field: "\"songs\".\"formation_id\""},
-	Title:       whereHelpernull_String{field: "\"songs\".\"title\""},
-	SingleNum:   whereHelpernull_String{field: "\"songs\".\"single_num\""},
+	Title:       whereHelperstring{field: "\"songs\".\"title\""},
+	Single:      whereHelperstring{field: "\"songs\".\"single\""},
 }
 
 // SongRels is where relationship names are stored.
@@ -105,8 +104,8 @@ func (*songR) NewStruct() *songR {
 type songL struct{}
 
 var (
-	songAllColumns            = []string{"song_id", "group_id", "formation_id", "title", "single_num"}
-	songColumnsWithoutDefault = []string{"group_id", "formation_id", "title", "single_num"}
+	songAllColumns            = []string{"song_id", "group_id", "formation_id", "title", "single"}
+	songColumnsWithoutDefault = []string{"group_id", "formation_id", "title", "single"}
 	songColumnsWithDefault    = []string{"song_id"}
 	songPrimaryKeyColumns     = []string{"song_id"}
 )

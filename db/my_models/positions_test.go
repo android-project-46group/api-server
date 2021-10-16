@@ -785,7 +785,7 @@ func testPositionsSelect(t *testing.T) {
 }
 
 var (
-	positionDBTypes = map[string]string{`PositionID`: `integer`, `SongID`: `integer`, `MemberID`: `integer`, `Single`: `character varying`, `SongTitle`: `character varying`, `Position`: `character varying`}
+	positionDBTypes = map[string]string{`PositionID`: `integer`, `SongID`: `integer`, `MemberID`: `integer`, `Position`: `character varying`, `IsCenter`: `boolean`}
 	_               = bytes.MinRead
 )
 
