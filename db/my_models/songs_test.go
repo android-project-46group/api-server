@@ -938,7 +938,7 @@ func testSongsSelect(t *testing.T) {
 }
 
 var (
-	songDBTypes = map[string]string{`SongID`: `integer`, `GroupID`: `integer`, `FormationID`: `integer`, `Title`: `character varying`, `SingleNum`: `character varying`}
+	songDBTypes = map[string]string{`SongID`: `integer`, `GroupID`: `integer`, `FormationID`: `integer`, `Title`: `character varying`, `Single`: `character varying`}
 	_           = bytes.MinRead
 )
 

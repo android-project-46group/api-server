@@ -24,12 +24,11 @@ import (
 
 // Position is an object representing the database table.
 type Position struct {
-	PositionID int         `boil:"position_id" json:"position_id" toml:"position_id" yaml:"position_id"`
-	SongID     int         `boil:"song_id" json:"song_id" toml:"song_id" yaml:"song_id"`
-	MemberID   int         `boil:"member_id" json:"member_id" toml:"member_id" yaml:"member_id"`
-	Single     null.String `boil:"single" json:"single,omitempty" toml:"single" yaml:"single,omitempty"`
-	SongTitle  null.String `boil:"song_title" json:"song_title,omitempty" toml:"song_title" yaml:"song_title,omitempty"`
-	Position   null.String `boil:"position" json:"position,omitempty" toml:"position" yaml:"position,omitempty"`
+	PositionID int       `boil:"position_id" json:"position_id" toml:"position_id" yaml:"position_id"`
+	SongID     int       `boil:"song_id" json:"song_id" toml:"song_id" yaml:"song_id"`
+	MemberID   int       `boil:"member_id" json:"member_id" toml:"member_id" yaml:"member_id"`
+	Position   string    `boil:"position" json:"position" toml:"position" yaml:"position"`
+	IsCenter   null.Bool `boil:"is_center" json:"is_center,omitempty" toml:"is_center" yaml:"is_center,omitempty"`
 
 	R *positionR `boil:"-" json:"-" toml:"-" yaml:"-"`
 	L positionL  `boil:"-" json:"-" toml:"-" yaml:"-"`
@@ -39,50 +38,68 @@ var PositionColumns = struct {
 	PositionID string
 	SongID     string
 	MemberID   string
-	Single     string
-	SongTitle  string
 	Position   string
+	IsCenter   string
 }{
 	PositionID: "position_id",
 	SongID:     "song_id",
 	MemberID:   "member_id",
-	Single:     "single",
-	SongTitle:  "song_title",
 	Position:   "position",
+	IsCenter:   "is_center",
 }
 
 var PositionTableColumns = struct {
 	PositionID string
 	SongID     string
 	MemberID   string
-	Single     string
-	SongTitle  string
 	Position   string
+	IsCenter   string
 }{
 	PositionID: "positions.position_id",
 	SongID:     "positions.song_id",
 	MemberID:   "positions.member_id",
-	Single:     "positions.single",
-	SongTitle:  "positions.song_title",
 	Position:   "positions.position",
+	IsCenter:   "positions.is_center",
 }
 
 // Generated where
+
+type whereHelpernull_Bool struct{ field string }
+
+func (w whereHelpernull_Bool) EQ(x null.Bool) qm.QueryMod {
+	return qmhelper.WhereNullEQ(w.field, false, x)
+}
+func (w whereHelpernull_Bool) NEQ(x null.Bool) qm.QueryMod {
+	return qmhelper.WhereNullEQ(w.field, true, x)
+}
+func (w whereHelpernull_Bool) LT(x null.Bool) qm.QueryMod {
+	return qmhelper.Where(w.field, qmhelper.LT, x)
+}
+func (w whereHelpernull_Bool) LTE(x null.Bool) qm.QueryMod {
+	return qmhelper.Where(w.field, qmhelper.LTE, x)
+}
+func (w whereHelpernull_Bool) GT(x null.Bool) qm.QueryMod {
+	return qmhelper.Where(w.field, qmhelper.GT, x)
+}
+func (w whereHelpernull_Bool) GTE(x null.Bool) qm.QueryMod {
+	return qmhelper.Where(w.field, qmhelper.GTE, x)
+}
+
+func (w whereHelpernull_Bool) IsNull() qm.QueryMod    { return qmhelper.WhereIsNull(w.field) }
+func (w whereHelpernull_Bool) IsNotNull() qm.QueryMod { return qmhelper.WhereIsNotNull(w.field) }
 
 var PositionWhere = struct {
 	PositionID whereHelperint
 	SongID     whereHelperint
 	MemberID   whereHelperint
-	Single     whereHelpernull_String
-	SongTitle  whereHelpernull_String
-	Position   whereHelpernull_String
+	Position   whereHelperstring
+	IsCenter   whereHelpernull_Bool
 }{
 	PositionID: whereHelperint{field: "\"positions\".\"position_id\""},
 	SongID:     whereHelperint{field: "\"positions\".\"song_id\""},
 	MemberID:   whereHelperint{field: "\"positions\".\"member_id\""},
-	Single:     whereHelpernull_String{field: "\"positions\".\"single\""},
-	SongTitle:  whereHelpernull_String{field: "\"positions\".\"song_title\""},
-	Position:   whereHelpernull_String{field: "\"positions\".\"position\""},
+	Position:   whereHelperstring{field: "\"positions\".\"position\""},
+	IsCenter:   whereHelpernull_Bool{field: "\"positions\".\"is_center\""},
 }
 
 // PositionRels is where relationship names are stored.
@@ -109,8 +126,8 @@ func (*positionR) NewStruct() *positionR {
 type positionL struct{}
 
 var (
-	positionAllColumns            = []string{"position_id", "song_id", "member_id", "single", "song_title", "position"}
-	positionColumnsWithoutDefault = []string{"song_id", "member_id", "single", "song_title", "position"}
+	positionAllColumns            = []string{"position_id", "song_id", "member_id", "position", "is_center"}
+	positionColumnsWithoutDefault = []string{"song_id", "member_id", "position", "is_center"}
 	positionColumnsWithDefault    = []string{"position_id"}
 	positionPrimaryKeyColumns     = []string{"position_id"}
 )
