@@ -1,0 +1,128 @@
+openapi: 3.0.0
+servers:
+  # Added by API Auto Mocking Plugin
+  # Added by API Auto Mocking Plugin
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/kokoichi206/Sakamichi/1.0.0
+  - url: https://kokoichi0206.mydns.jp/cgi-bin/server.cgi/
+    description: New Server 2
+info:
+  description: This is a simple API
+  version: "1.0.0"
+  title: Simple Inventory API
+  contact:
+    email: you@your-company.com
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+tags:
+  - name: admins
+    description: Secured Admin-only calls
+  - name: developers
+    description: Operations available to regular developers
+paths:
+  /members:
+    get:
+      summary: searches members
+      operationId: searchMembers
+      description: |
+        ## By passing in the appropriate options, you can search for******
+        available inventory in the system
+      parameters:
+        - in: query
+          name: gn
+          description: pass an Group Name for looking up members
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: search results matching criteria
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  members:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Member'
+        '400':
+          description: bad input parameter
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  error:
+                    type: "string"
+                    example: "group name does not exist"
+        '500':
+          description: internal server error
+      tags:
+        - developers
+components:
+  schemas:
+    Member:
+      type: object
+      required:
+        - id
+        - name
+        - manufacturer
+        - releaseDate
+      properties:
+        id:
+          type: integer
+          format: id
+          example: 4
+        name:
+          type: string
+          example: 岩本 蓮加
+        birthday:
+          type: string
+          example: 2004年2月2日
+        generation:
+          type: string
+          example: 3期生
+        height:
+          type: string
+          example: 159cm
+        blood_type:
+          type: string
+          example: B型
+        blog_url:
+          type: string
+          example: https://blog.nogizaka46.com/renka.iwamoto
+        img_url:
+          type: string
+          example: https://firebasestorage.googleapis.com/v0/b/my-memory-3b3bd.appspot.com/o/saka%2Fnogizaka%2Fiwamotorenka.jpeg?alt=media
+    Formation:
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          example: ACME Corporation
+        homePage:
+          type: string
+          format: url
+          example: 'https://www.acme-corp.com'
+        phone:
+          type: string
+          example: 408-867-5309
+      type: object
+    Position:
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          example: ACME Corporation
+        homePage:
+          type: string
+          format: url
+          example: 'https://www.acme-corp.com'
+        phone:
+          type: string
+          example: 408-867-5309
+      type: object
