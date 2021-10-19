@@ -31,3 +31,9 @@ type GetSongsResponse struct {
 	Title	string		`json:"title"`
 	Center	[]string	`json:"center"`
 }
+
+type GetPositionsResponse struct {
+	MemberName	string		`json:"member_name"`
+	Position	string		`json:"position"`
+	IsCenter	bool		`json:"is_center"`
+}

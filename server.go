@@ -37,6 +37,10 @@ func main() {
 		HandlerFunc(api.GetAllSongs).
 		Methods("GET")
 
-
+	r.Path(rootPath + "/positions").
+		Queries("title", "{title}").
+		HandlerFunc(api.GetPositions).
+		Methods("GET")
+	
 	cgi.Serve(r)
 }
