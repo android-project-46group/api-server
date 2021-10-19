@@ -13,3 +13,21 @@ type MemberInfoResponse struct {
 	BlogURL		string	`json:"blog_url"`
 	ImgURL		string	`json:"img_url"`
 }
+
+type FormationResponse struct {
+	Single		string		`json:"single"`
+	Title		string		`json:"title"`
+	Positions	[] Position `json:"positions"`
+}
+
+type Position struct {
+	MemberName	string	`json:"member_name"`
+	Position	string	`json:"position"`
+	IsCenter	bool	`json:"is_center"`
+}
+
+type GetSongsResponse struct {
+	Single	string		`json:"single"`
+	Title	string		`json:"title"`
+	Center	[]string	`json:"center"`
+}
