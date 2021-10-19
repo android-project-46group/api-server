@@ -13,3 +13,10 @@ func ExistGroup(groupName string) bool {
 
 	return err == nil	
 }
+
+func FindGroupByName(groupName string) (*models.Group, error) {
+
+	g, err := models.Groups(qm.Where("group_name = ?", groupName)).One(Ctx, DB)
+
+	return g, err
+}
