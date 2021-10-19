@@ -4,11 +4,11 @@ import (
 	"encoding/json"
 )
 
-func ErrorJson(msg string) []byte {
+func ErrorJson(msg string) string {
 	j, _ := json.Marshal(
 		map[string]interface{} {
-			"members": msg,
+			"error": msg,
 		},
 	)
-	return j
+	return string(j)
 }
