@@ -23,3 +23,19 @@ func GetAllPositions(groupName string) ([]MemberInfoBind, error) {
 	).Bind(Ctx, DB, &jMember)
 	return jMember, err
 }
+
+type PositionMemberBind struct {
+	models.Position	`boil:",bind"`
+	models.Member	`boil:",bind"`
+}
+
+func GetPositionFromTitle(title string) ([]PositionMemberBind, error) {
+	var pMs []PositionMemberBind
+	err := models.Positions(
+		qm.Select("positions.*", "members.*"),
+		qm.InnerJoin("members on members.member_id = positions.member_id"),
+		qm.InnerJoin("songs on songs.song_id = positions.song_id"),
+		qm.Where("songs.title = ?", title),
+	).Bind(Ctx, DB, &pMs)
+	return pMs, err
+}

@@ -37,3 +37,23 @@ func GetAllFormations(groupName string) ([]PositionSongsBind, error) {
 	).Bind(Ctx, DB, &sPositions)
 	return sPositions, err
 }
+
+// Custom struct using two generated structs
+type SongFormationsBind struct {
+	models.Song			`boil:",bind"`
+	models.Formation	`boil:",bind"`
+	Center string		`json:"center" boil:",bind"`
+}
+// models.Member	`boil:",bind"`
+
+
+func GetFormations(groupName string) ([]PositionSongsBind, error) {
+	var jMember []PositionSongsBind
+	err := models.Positions(
+		qm.Select("positions.*", "songs.*", "members.name_ja"),
+		qm.InnerJoin("songs on songs.song_id = positions.song_id"),
+		qm.InnerJoin("members on members.member_id = positions.member_id"),
+		qm.Where("groups.group_name = ?", groupName),
+	).Bind(Ctx, DB, &jMember)
+	return jMember, err
+}
