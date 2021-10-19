@@ -61,6 +61,139 @@ paths:
           description: internal server error
       tags:
         - developers
+  /formations:
+    get:
+      summary: searches inventory
+      operationId: searchFormations
+      description: |
+        By passing in the appropriate options, you can search for
+        available inventory in the system
+      parameters:
+        - in: query
+          name: searchString
+          description: pass an optional search string for looking up inventory
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: skip
+          description: number of records to skip for pagination
+          schema:
+            type: integer
+            format: int32
+            minimum: 0
+        - in: query
+          name: limit
+          description: maximum number of records to return
+          schema:
+            type: integer
+            format: int32
+            minimum: 0
+            maximum: 50
+      responses:
+        '200':
+          description: search results matching criteria
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  formations:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Formation'
+        '400':
+          description: bad input parameter
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  error:
+                    type: "string"
+                    example: "TODO: explain why failed"
+        '500':
+          description: internal server error
+      tags:
+        - developers
+  /positions:
+    get:
+      summary: searches inventory
+      operationId: searchPositions
+      description: |
+        Positions of a specific song
+      parameters:
+        - in: query
+          name: title
+          description: pass the **title** of which you want to get the formation
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: search results matching criteria
+          content:
+            application/json:
+              schema:
+                properties:
+                  positions:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Position'
+                type: object
+        '400':
+          description: bad input parameter
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  error:
+                    type: "string"
+                    example: "TODO: explain why failed"
+        '500':
+          description: internal server error
+      tags:
+        - developers
+  /songs:
+    get:
+      summary: searches inventory
+      operationId: getAllSongs
+      description: |
+        Brief information of All songs
+      parameters:
+        - in: query
+          name: gn
+          description: pass the group name
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: search results matching criteria
+          content:
+            application/json:
+              schema:
+                properties:
+                  songs:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Song'
+                type: object
+        '400':
+          description: bad input parameter
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  error:
+                    type: "string"
+                    example: "TODO: explain why failed"
+        '500':
+          description: internal server error
+      tags:
+        - developers
 components:
   schemas:
     Member:
@@ -100,29 +233,38 @@ components:
       required:
         - name
       properties:
-        name:
+        single:
           type: string
-          example: ACME Corporation
-        homePage:
+          example: '6th'
+        title:
           type: string
-          format: url
-          example: 'https://www.acme-corp.com'
-        phone:
-          type: string
-          example: 408-867-5309
+          example: 'ってか'
+        positions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Position'
       type: object
     Position:
-      required:
-        - name
       properties:
-        name:
+        member_name:
           type: string
-          example: ACME Corporation
-        homePage:
+          example: '小坂菜緒'
+        position:
           type: string
-          format: url
-          example: 'https://www.acme-corp.com'
-        phone:
+          example: '003'
+        is_center:
+          type: boolean
+          example: true
+      type: object
+    Song:
+      properties:
+        single:
           type: string
-          example: 408-867-5309
+          example: '6th'
+        title:
+          type: string
+          example: 'ってか'
+        center:
+          type: string
+          example: '金村美玖'
       type: object
