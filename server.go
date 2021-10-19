@@ -27,5 +27,16 @@ func main() {
 		HandlerFunc(api.GetAllMembers).
 		Methods("GET")
 
+	r.Path(rootPath + "/formations").
+		Queries("gn", "{gn}").
+		HandlerFunc(api.GetAllFormations).
+		Methods("GET")
+
+	r.Path(rootPath + "/songs").
+		Queries("gn", "{gn}").
+		HandlerFunc(api.GetAllSongs).
+		Methods("GET")
+
+
 	cgi.Serve(r)
 }
