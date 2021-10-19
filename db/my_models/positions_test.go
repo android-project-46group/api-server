@@ -21,24 +21,24 @@ var (
 	_ = queries.Equal
 )
 
-func testMemberInfos(t *testing.T) {
+func testPositions(t *testing.T) {
 	t.Parallel()
 
-	query := MemberInfos()
+	query := Positions()
 
 	if query.Query == nil {
 		t.Error("expected a query, got nothing")
 	}
 }
 
-func testMemberInfosDelete(t *testing.T) {
+func testPositionsDelete(t *testing.T) {
 	t.Parallel()
 
 	seed := randomize.NewSeed()
 	var err error
-	o := &MemberInfo{}
-	if err = randomize.Struct(seed, o, memberInfoDBTypes, true, memberInfoColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize MemberInfo struct: %s", err)
+	o := &Position{}
+	if err = randomize.Struct(seed, o, positionDBTypes, true, positionColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize Position struct: %s", err)
 	}
 
 	ctx := context.Background()
@@ -54,7 +54,7 @@ func testMemberInfosDelete(t *testing.T) {
 		t.Error("should only have deleted one row, but affected:", rowsAff)
 	}
 
-	count, err := MemberInfos().Count(ctx, tx)
+	count, err := Positions().Count(ctx, tx)
 	if err != nil {
 		t.Error(err)
 	}
@@ -64,14 +64,14 @@ func testMemberInfosDelete(t *testing.T) {
 	}
 }
 
-func testMemberInfosQueryDeleteAll(t *testing.T) {
+func testPositionsQueryDeleteAll(t *testing.T) {
 	t.Parallel()
 
 	seed := randomize.NewSeed()
 	var err error
-	o := &MemberInfo{}
-	if err = randomize.Struct(seed, o, memberInfoDBTypes, true, memberInfoColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize MemberInfo struct: %s", err)
+	o := &Position{}
+	if err = randomize.Struct(seed, o, positionDBTypes, true, positionColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize Position struct: %s", err)
 	}
 
 	ctx := context.Background()
@@ -81,13 +81,13 @@ func testMemberInfosQueryDeleteAll(t *testing.T) {
 		t.Error(err)
 	}
 
-	if rowsAff, err := MemberInfos().DeleteAll(ctx, tx); err != nil {
+	if rowsAff, err := Positions().DeleteAll(ctx, tx); err != nil {
 		t.Error(err)
 	} else if rowsAff != 1 {
 		t.Error("should only have deleted one row, but affected:", rowsAff)
 	}
 
-	count, err := MemberInfos().Count(ctx, tx)
+	count, err := Positions().Count(ctx, tx)
 	if err != nil {
 		t.Error(err)
 	}
@@ -97,14 +97,14 @@ func testMemberInfosQueryDeleteAll(t *testing.T) {
 	}
 }
 
-func testMemberInfosSliceDeleteAll(t *testing.T) {
+func testPositionsSliceDeleteAll(t *testing.T) {
 	t.Parallel()
 
 	seed := randomize.NewSeed()
 	var err error
-	o := &MemberInfo{}
-	if err = randomize.Struct(seed, o, memberInfoDBTypes, true, memberInfoColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize MemberInfo struct: %s", err)
+	o := &Position{}
+	if err = randomize.Struct(seed, o, positionDBTypes, true, positionColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize Position struct: %s", err)
 	}
 
 	ctx := context.Background()
@@ -114,7 +114,7 @@ func testMemberInfosSliceDeleteAll(t *testing.T) {
 		t.Error(err)
 	}
 
-	slice := MemberInfoSlice{o}
+	slice := PositionSlice{o}
 
 	if rowsAff, err := slice.DeleteAll(ctx, tx); err != nil {
 		t.Error(err)
@@ -122,7 +122,7 @@ func testMemberInfosSliceDeleteAll(t *testing.T) {
 		t.Error("should only have deleted one row, but affected:", rowsAff)
 	}
 
-	count, err := MemberInfos().Count(ctx, tx)
+	count, err := Positions().Count(ctx, tx)
 	if err != nil {
 		t.Error(err)
 	}
@@ -132,14 +132,14 @@ func testMemberInfosSliceDeleteAll(t *testing.T) {
 	}
 }
 
-func testMemberInfosExists(t *testing.T) {
+func testPositionsExists(t *testing.T) {
 	t.Parallel()
 
 	seed := randomize.NewSeed()
 	var err error
-	o := &MemberInfo{}
-	if err = randomize.Struct(seed, o, memberInfoDBTypes, true, memberInfoColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize MemberInfo struct: %s", err)
+	o := &Position{}
+	if err = randomize.Struct(seed, o, positionDBTypes, true, positionColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize Position struct: %s", err)
 	}
 
 	ctx := context.Background()
@@ -149,23 +149,23 @@ func testMemberInfosExists(t *testing.T) {
 		t.Error(err)
 	}
 
-	e, err := MemberInfoExists(ctx, tx, o.MemberInfoID)
+	e, err := PositionExists(ctx, tx, o.PositionID)
 	if err != nil {
-		t.Errorf("Unable to check if MemberInfo exists: %s", err)
+		t.Errorf("Unable to check if Position exists: %s", err)
 	}
 	if !e {
-		t.Errorf("Expected MemberInfoExists to return true, but got false.")
+		t.Errorf("Expected PositionExists to return true, but got false.")
 	}
 }
 
-func testMemberInfosFind(t *testing.T) {
+func testPositionsFind(t *testing.T) {
 	t.Parallel()
 
 	seed := randomize.NewSeed()
 	var err error
-	o := &MemberInfo{}
-	if err = randomize.Struct(seed, o, memberInfoDBTypes, true, memberInfoColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize MemberInfo struct: %s", err)
+	o := &Position{}
+	if err = randomize.Struct(seed, o, positionDBTypes, true, positionColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize Position struct: %s", err)
 	}
 
 	ctx := context.Background()
@@ -175,24 +175,24 @@ func testMemberInfosFind(t *testing.T) {
 		t.Error(err)
 	}
 
-	memberInfoFound, err := FindMemberInfo(ctx, tx, o.MemberInfoID)
+	positionFound, err := FindPosition(ctx, tx, o.PositionID)
 	if err != nil {
 		t.Error(err)
 	}
 
-	if memberInfoFound == nil {
+	if positionFound == nil {
 		t.Error("want a record, got nil")
 	}
 }
 
-func testMemberInfosBind(t *testing.T) {
+func testPositionsBind(t *testing.T) {
 	t.Parallel()
 
 	seed := randomize.NewSeed()
 	var err error
-	o := &MemberInfo{}
-	if err = randomize.Struct(seed, o, memberInfoDBTypes, true, memberInfoColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize MemberInfo struct: %s", err)
+	o := &Position{}
+	if err = randomize.Struct(seed, o, positionDBTypes, true, positionColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize Position struct: %s", err)
 	}
 
 	ctx := context.Background()
@@ -202,19 +202,19 @@ func testMemberInfosBind(t *testing.T) {
 		t.Error(err)
 	}
 
-	if err = MemberInfos().Bind(ctx, tx, o); err != nil {
+	if err = Positions().Bind(ctx, tx, o); err != nil {
 		t.Error(err)
 	}
 }
 
-func testMemberInfosOne(t *testing.T) {
+func testPositionsOne(t *testing.T) {
 	t.Parallel()
 
 	seed := randomize.NewSeed()
 	var err error
-	o := &MemberInfo{}
-	if err = randomize.Struct(seed, o, memberInfoDBTypes, true, memberInfoColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize MemberInfo struct: %s", err)
+	o := &Position{}
+	if err = randomize.Struct(seed, o, positionDBTypes, true, positionColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize Position struct: %s", err)
 	}
 
 	ctx := context.Background()
@@ -224,38 +224,38 @@ func testMemberInfosOne(t *testing.T) {
 		t.Error(err)
 	}
 
-	if x, err := MemberInfos().One(ctx, tx); err != nil {
+	if x, err := Positions().One(ctx, tx); err != nil {
 		t.Error(err)
 	} else if x == nil {
 		t.Error("expected to get a non nil record")
 	}
 }
 
-func testMemberInfosAll(t *testing.T) {
+func testPositionsAll(t *testing.T) {
 	t.Parallel()
 
 	seed := randomize.NewSeed()
 	var err error
-	memberInfoOne := &MemberInfo{}
-	memberInfoTwo := &MemberInfo{}
-	if err = randomize.Struct(seed, memberInfoOne, memberInfoDBTypes, false, memberInfoColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize MemberInfo struct: %s", err)
+	positionOne := &Position{}
+	positionTwo := &Position{}
+	if err = randomize.Struct(seed, positionOne, positionDBTypes, false, positionColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize Position struct: %s", err)
 	}
-	if err = randomize.Struct(seed, memberInfoTwo, memberInfoDBTypes, false, memberInfoColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize MemberInfo struct: %s", err)
+	if err = randomize.Struct(seed, positionTwo, positionDBTypes, false, positionColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize Position struct: %s", err)
 	}
 
 	ctx := context.Background()
 	tx := MustTx(boil.BeginTx(ctx, nil))
 	defer func() { _ = tx.Rollback() }()
-	if err = memberInfoOne.Insert(ctx, tx, boil.Infer()); err != nil {
+	if err = positionOne.Insert(ctx, tx, boil.Infer()); err != nil {
 		t.Error(err)
 	}
-	if err = memberInfoTwo.Insert(ctx, tx, boil.Infer()); err != nil {
+	if err = positionTwo.Insert(ctx, tx, boil.Infer()); err != nil {
 		t.Error(err)
 	}
 
-	slice, err := MemberInfos().All(ctx, tx)
+	slice, err := Positions().All(ctx, tx)
 	if err != nil {
 		t.Error(err)
 	}
@@ -265,31 +265,31 @@ func testMemberInfosAll(t *testing.T) {
 	}
 }
 
-func testMemberInfosCount(t *testing.T) {
+func testPositionsCount(t *testing.T) {
 	t.Parallel()
 
 	var err error
 	seed := randomize.NewSeed()
-	memberInfoOne := &MemberInfo{}
-	memberInfoTwo := &MemberInfo{}
-	if err = randomize.Struct(seed, memberInfoOne, memberInfoDBTypes, false, memberInfoColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize MemberInfo struct: %s", err)
+	positionOne := &Position{}
+	positionTwo := &Position{}
+	if err = randomize.Struct(seed, positionOne, positionDBTypes, false, positionColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize Position struct: %s", err)
 	}
-	if err = randomize.Struct(seed, memberInfoTwo, memberInfoDBTypes, false, memberInfoColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize MemberInfo struct: %s", err)
+	if err = randomize.Struct(seed, positionTwo, positionDBTypes, false, positionColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize Position struct: %s", err)
 	}
 
 	ctx := context.Background()
 	tx := MustTx(boil.BeginTx(ctx, nil))
 	defer func() { _ = tx.Rollback() }()
-	if err = memberInfoOne.Insert(ctx, tx, boil.Infer()); err != nil {
+	if err = positionOne.Insert(ctx, tx, boil.Infer()); err != nil {
 		t.Error(err)
 	}
-	if err = memberInfoTwo.Insert(ctx, tx, boil.Infer()); err != nil {
+	if err = positionTwo.Insert(ctx, tx, boil.Infer()); err != nil {
 		t.Error(err)
 	}
 
-	count, err := MemberInfos().Count(ctx, tx)
+	count, err := Positions().Count(ctx, tx)
 	if err != nil {
 		t.Error(err)
 	}
@@ -299,155 +299,155 @@ func testMemberInfosCount(t *testing.T) {
 	}
 }
 
-func memberInfoBeforeInsertHook(ctx context.Context, e boil.ContextExecutor, o *MemberInfo) error {
-	*o = MemberInfo{}
+func positionBeforeInsertHook(ctx context.Context, e boil.ContextExecutor, o *Position) error {
+	*o = Position{}
 	return nil
 }
 
-func memberInfoAfterInsertHook(ctx context.Context, e boil.ContextExecutor, o *MemberInfo) error {
-	*o = MemberInfo{}
+func positionAfterInsertHook(ctx context.Context, e boil.ContextExecutor, o *Position) error {
+	*o = Position{}
 	return nil
 }
 
-func memberInfoAfterSelectHook(ctx context.Context, e boil.ContextExecutor, o *MemberInfo) error {
-	*o = MemberInfo{}
+func positionAfterSelectHook(ctx context.Context, e boil.ContextExecutor, o *Position) error {
+	*o = Position{}
 	return nil
 }
 
-func memberInfoBeforeUpdateHook(ctx context.Context, e boil.ContextExecutor, o *MemberInfo) error {
-	*o = MemberInfo{}
+func positionBeforeUpdateHook(ctx context.Context, e boil.ContextExecutor, o *Position) error {
+	*o = Position{}
 	return nil
 }
 
-func memberInfoAfterUpdateHook(ctx context.Context, e boil.ContextExecutor, o *MemberInfo) error {
-	*o = MemberInfo{}
+func positionAfterUpdateHook(ctx context.Context, e boil.ContextExecutor, o *Position) error {
+	*o = Position{}
 	return nil
 }
 
-func memberInfoBeforeDeleteHook(ctx context.Context, e boil.ContextExecutor, o *MemberInfo) error {
-	*o = MemberInfo{}
+func positionBeforeDeleteHook(ctx context.Context, e boil.ContextExecutor, o *Position) error {
+	*o = Position{}
 	return nil
 }
 
-func memberInfoAfterDeleteHook(ctx context.Context, e boil.ContextExecutor, o *MemberInfo) error {
-	*o = MemberInfo{}
+func positionAfterDeleteHook(ctx context.Context, e boil.ContextExecutor, o *Position) error {
+	*o = Position{}
 	return nil
 }
 
-func memberInfoBeforeUpsertHook(ctx context.Context, e boil.ContextExecutor, o *MemberInfo) error {
-	*o = MemberInfo{}
+func positionBeforeUpsertHook(ctx context.Context, e boil.ContextExecutor, o *Position) error {
+	*o = Position{}
 	return nil
 }
 
-func memberInfoAfterUpsertHook(ctx context.Context, e boil.ContextExecutor, o *MemberInfo) error {
-	*o = MemberInfo{}
+func positionAfterUpsertHook(ctx context.Context, e boil.ContextExecutor, o *Position) error {
+	*o = Position{}
 	return nil
 }
 
-func testMemberInfosHooks(t *testing.T) {
+func testPositionsHooks(t *testing.T) {
 	t.Parallel()
 
 	var err error
 
 	ctx := context.Background()
-	empty := &MemberInfo{}
-	o := &MemberInfo{}
+	empty := &Position{}
+	o := &Position{}
 
 	seed := randomize.NewSeed()
-	if err = randomize.Struct(seed, o, memberInfoDBTypes, false); err != nil {
-		t.Errorf("Unable to randomize MemberInfo object: %s", err)
+	if err = randomize.Struct(seed, o, positionDBTypes, false); err != nil {
+		t.Errorf("Unable to randomize Position object: %s", err)
 	}
 
-	AddMemberInfoHook(boil.BeforeInsertHook, memberInfoBeforeInsertHook)
+	AddPositionHook(boil.BeforeInsertHook, positionBeforeInsertHook)
 	if err = o.doBeforeInsertHooks(ctx, nil); err != nil {
 		t.Errorf("Unable to execute doBeforeInsertHooks: %s", err)
 	}
 	if !reflect.DeepEqual(o, empty) {
 		t.Errorf("Expected BeforeInsertHook function to empty object, but got: %#v", o)
 	}
-	memberInfoBeforeInsertHooks = []MemberInfoHook{}
+	positionBeforeInsertHooks = []PositionHook{}
 
-	AddMemberInfoHook(boil.AfterInsertHook, memberInfoAfterInsertHook)
+	AddPositionHook(boil.AfterInsertHook, positionAfterInsertHook)
 	if err = o.doAfterInsertHooks(ctx, nil); err != nil {
 		t.Errorf("Unable to execute doAfterInsertHooks: %s", err)
 	}
 	if !reflect.DeepEqual(o, empty) {
 		t.Errorf("Expected AfterInsertHook function to empty object, but got: %#v", o)
 	}
-	memberInfoAfterInsertHooks = []MemberInfoHook{}
+	positionAfterInsertHooks = []PositionHook{}
 
-	AddMemberInfoHook(boil.AfterSelectHook, memberInfoAfterSelectHook)
+	AddPositionHook(boil.AfterSelectHook, positionAfterSelectHook)
 	if err = o.doAfterSelectHooks(ctx, nil); err != nil {
 		t.Errorf("Unable to execute doAfterSelectHooks: %s", err)
 	}
 	if !reflect.DeepEqual(o, empty) {
 		t.Errorf("Expected AfterSelectHook function to empty object, but got: %#v", o)
 	}
-	memberInfoAfterSelectHooks = []MemberInfoHook{}
+	positionAfterSelectHooks = []PositionHook{}
 
-	AddMemberInfoHook(boil.BeforeUpdateHook, memberInfoBeforeUpdateHook)
+	AddPositionHook(boil.BeforeUpdateHook, positionBeforeUpdateHook)
 	if err = o.doBeforeUpdateHooks(ctx, nil); err != nil {
 		t.Errorf("Unable to execute doBeforeUpdateHooks: %s", err)
 	}
 	if !reflect.DeepEqual(o, empty) {
 		t.Errorf("Expected BeforeUpdateHook function to empty object, but got: %#v", o)
 	}
-	memberInfoBeforeUpdateHooks = []MemberInfoHook{}
+	positionBeforeUpdateHooks = []PositionHook{}
 
-	AddMemberInfoHook(boil.AfterUpdateHook, memberInfoAfterUpdateHook)
+	AddPositionHook(boil.AfterUpdateHook, positionAfterUpdateHook)
 	if err = o.doAfterUpdateHooks(ctx, nil); err != nil {
 		t.Errorf("Unable to execute doAfterUpdateHooks: %s", err)
 	}
 	if !reflect.DeepEqual(o, empty) {
 		t.Errorf("Expected AfterUpdateHook function to empty object, but got: %#v", o)
 	}
-	memberInfoAfterUpdateHooks = []MemberInfoHook{}
+	positionAfterUpdateHooks = []PositionHook{}
 
-	AddMemberInfoHook(boil.BeforeDeleteHook, memberInfoBeforeDeleteHook)
+	AddPositionHook(boil.BeforeDeleteHook, positionBeforeDeleteHook)
 	if err = o.doBeforeDeleteHooks(ctx, nil); err != nil {
 		t.Errorf("Unable to execute doBeforeDeleteHooks: %s", err)
 	}
 	if !reflect.DeepEqual(o, empty) {
 		t.Errorf("Expected BeforeDeleteHook function to empty object, but got: %#v", o)
 	}
-	memberInfoBeforeDeleteHooks = []MemberInfoHook{}
+	positionBeforeDeleteHooks = []PositionHook{}
 
-	AddMemberInfoHook(boil.AfterDeleteHook, memberInfoAfterDeleteHook)
+	AddPositionHook(boil.AfterDeleteHook, positionAfterDeleteHook)
 	if err = o.doAfterDeleteHooks(ctx, nil); err != nil {
 		t.Errorf("Unable to execute doAfterDeleteHooks: %s", err)
 	}
 	if !reflect.DeepEqual(o, empty) {
 		t.Errorf("Expected AfterDeleteHook function to empty object, but got: %#v", o)
 	}
-	memberInfoAfterDeleteHooks = []MemberInfoHook{}
+	positionAfterDeleteHooks = []PositionHook{}
 
-	AddMemberInfoHook(boil.BeforeUpsertHook, memberInfoBeforeUpsertHook)
+	AddPositionHook(boil.BeforeUpsertHook, positionBeforeUpsertHook)
 	if err = o.doBeforeUpsertHooks(ctx, nil); err != nil {
 		t.Errorf("Unable to execute doBeforeUpsertHooks: %s", err)
 	}
 	if !reflect.DeepEqual(o, empty) {
 		t.Errorf("Expected BeforeUpsertHook function to empty object, but got: %#v", o)
 	}
-	memberInfoBeforeUpsertHooks = []MemberInfoHook{}
+	positionBeforeUpsertHooks = []PositionHook{}
 
-	AddMemberInfoHook(boil.AfterUpsertHook, memberInfoAfterUpsertHook)
+	AddPositionHook(boil.AfterUpsertHook, positionAfterUpsertHook)
 	if err = o.doAfterUpsertHooks(ctx, nil); err != nil {
 		t.Errorf("Unable to execute doAfterUpsertHooks: %s", err)
 	}
 	if !reflect.DeepEqual(o, empty) {
 		t.Errorf("Expected AfterUpsertHook function to empty object, but got: %#v", o)
 	}
-	memberInfoAfterUpsertHooks = []MemberInfoHook{}
+	positionAfterUpsertHooks = []PositionHook{}
 }
 
-func testMemberInfosInsert(t *testing.T) {
+func testPositionsInsert(t *testing.T) {
 	t.Parallel()
 
 	seed := randomize.NewSeed()
 	var err error
-	o := &MemberInfo{}
-	if err = randomize.Struct(seed, o, memberInfoDBTypes, true, memberInfoColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize MemberInfo struct: %s", err)
+	o := &Position{}
+	if err = randomize.Struct(seed, o, positionDBTypes, true, positionColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize Position struct: %s", err)
 	}
 
 	ctx := context.Background()
@@ -457,7 +457,7 @@ func testMemberInfosInsert(t *testing.T) {
 		t.Error(err)
 	}
 
-	count, err := MemberInfos().Count(ctx, tx)
+	count, err := Positions().Count(ctx, tx)
 	if err != nil {
 		t.Error(err)
 	}
@@ -467,24 +467,24 @@ func testMemberInfosInsert(t *testing.T) {
 	}
 }
 
-func testMemberInfosInsertWhitelist(t *testing.T) {
+func testPositionsInsertWhitelist(t *testing.T) {
 	t.Parallel()
 
 	seed := randomize.NewSeed()
 	var err error
-	o := &MemberInfo{}
-	if err = randomize.Struct(seed, o, memberInfoDBTypes, true); err != nil {
-		t.Errorf("Unable to randomize MemberInfo struct: %s", err)
+	o := &Position{}
+	if err = randomize.Struct(seed, o, positionDBTypes, true); err != nil {
+		t.Errorf("Unable to randomize Position struct: %s", err)
 	}
 
 	ctx := context.Background()
 	tx := MustTx(boil.BeginTx(ctx, nil))
 	defer func() { _ = tx.Rollback() }()
-	if err = o.Insert(ctx, tx, boil.Whitelist(memberInfoColumnsWithoutDefault...)); err != nil {
+	if err = o.Insert(ctx, tx, boil.Whitelist(positionColumnsWithoutDefault...)); err != nil {
 		t.Error(err)
 	}
 
-	count, err := MemberInfos().Count(ctx, tx)
+	count, err := Positions().Count(ctx, tx)
 	if err != nil {
 		t.Error(err)
 	}
@@ -494,17 +494,17 @@ func testMemberInfosInsertWhitelist(t *testing.T) {
 	}
 }
 
-func testMemberInfoToOneMemberUsingMember(t *testing.T) {
+func testPositionToOneMemberUsingMember(t *testing.T) {
 	ctx := context.Background()
 	tx := MustTx(boil.BeginTx(ctx, nil))
 	defer func() { _ = tx.Rollback() }()
 
-	var local MemberInfo
+	var local Position
 	var foreign Member
 
 	seed := randomize.NewSeed()
-	if err := randomize.Struct(seed, &local, memberInfoDBTypes, false, memberInfoColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize MemberInfo struct: %s", err)
+	if err := randomize.Struct(seed, &local, positionDBTypes, false, positionColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize Position struct: %s", err)
 	}
 	if err := randomize.Struct(seed, &foreign, memberDBTypes, false, memberColumnsWithDefault...); err != nil {
 		t.Errorf("Unable to randomize Member struct: %s", err)
@@ -528,8 +528,8 @@ func testMemberInfoToOneMemberUsingMember(t *testing.T) {
 		t.Errorf("want: %v, got %v", foreign.MemberID, check.MemberID)
 	}
 
-	slice := MemberInfoSlice{&local}
-	if err = local.L.LoadMember(ctx, tx, false, (*[]*MemberInfo)(&slice), nil); err != nil {
+	slice := PositionSlice{&local}
+	if err = local.L.LoadMember(ctx, tx, false, (*[]*Position)(&slice), nil); err != nil {
 		t.Fatal(err)
 	}
 	if local.R.Member == nil {
@@ -545,18 +545,69 @@ func testMemberInfoToOneMemberUsingMember(t *testing.T) {
 	}
 }
 
-func testMemberInfoToOneSetOpMemberUsingMember(t *testing.T) {
+func testPositionToOneSongUsingSong(t *testing.T) {
+	ctx := context.Background()
+	tx := MustTx(boil.BeginTx(ctx, nil))
+	defer func() { _ = tx.Rollback() }()
+
+	var local Position
+	var foreign Song
+
+	seed := randomize.NewSeed()
+	if err := randomize.Struct(seed, &local, positionDBTypes, false, positionColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize Position struct: %s", err)
+	}
+	if err := randomize.Struct(seed, &foreign, songDBTypes, false, songColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize Song struct: %s", err)
+	}
+
+	if err := foreign.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+
+	local.SongID = foreign.SongID
+	if err := local.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+
+	check, err := local.Song().One(ctx, tx)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if check.SongID != foreign.SongID {
+		t.Errorf("want: %v, got %v", foreign.SongID, check.SongID)
+	}
+
+	slice := PositionSlice{&local}
+	if err = local.L.LoadSong(ctx, tx, false, (*[]*Position)(&slice), nil); err != nil {
+		t.Fatal(err)
+	}
+	if local.R.Song == nil {
+		t.Error("struct should have been eager loaded")
+	}
+
+	local.R.Song = nil
+	if err = local.L.LoadSong(ctx, tx, true, &local, nil); err != nil {
+		t.Fatal(err)
+	}
+	if local.R.Song == nil {
+		t.Error("struct should have been eager loaded")
+	}
+}
+
+func testPositionToOneSetOpMemberUsingMember(t *testing.T) {
 	var err error
 
 	ctx := context.Background()
 	tx := MustTx(boil.BeginTx(ctx, nil))
 	defer func() { _ = tx.Rollback() }()
 
-	var a MemberInfo
+	var a Position
 	var b, c Member
 
 	seed := randomize.NewSeed()
-	if err = randomize.Struct(seed, &a, memberInfoDBTypes, false, strmangle.SetComplement(memberInfoPrimaryKeyColumns, memberInfoColumnsWithoutDefault)...); err != nil {
+	if err = randomize.Struct(seed, &a, positionDBTypes, false, strmangle.SetComplement(positionPrimaryKeyColumns, positionColumnsWithoutDefault)...); err != nil {
 		t.Fatal(err)
 	}
 	if err = randomize.Struct(seed, &b, memberDBTypes, false, strmangle.SetComplement(memberPrimaryKeyColumns, memberColumnsWithoutDefault)...); err != nil {
@@ -583,7 +634,7 @@ func testMemberInfoToOneSetOpMemberUsingMember(t *testing.T) {
 			t.Error("relationship struct not set to correct value")
 		}
 
-		if x.R.MemberInfos[0] != &a {
+		if x.R.Positions[0] != &a {
 			t.Error("failed to append to foreign relationship struct")
 		}
 		if a.MemberID != x.MemberID {
@@ -602,15 +653,72 @@ func testMemberInfoToOneSetOpMemberUsingMember(t *testing.T) {
 		}
 	}
 }
+func testPositionToOneSetOpSongUsingSong(t *testing.T) {
+	var err error
 
-func testMemberInfosReload(t *testing.T) {
+	ctx := context.Background()
+	tx := MustTx(boil.BeginTx(ctx, nil))
+	defer func() { _ = tx.Rollback() }()
+
+	var a Position
+	var b, c Song
+
+	seed := randomize.NewSeed()
+	if err = randomize.Struct(seed, &a, positionDBTypes, false, strmangle.SetComplement(positionPrimaryKeyColumns, positionColumnsWithoutDefault)...); err != nil {
+		t.Fatal(err)
+	}
+	if err = randomize.Struct(seed, &b, songDBTypes, false, strmangle.SetComplement(songPrimaryKeyColumns, songColumnsWithoutDefault)...); err != nil {
+		t.Fatal(err)
+	}
+	if err = randomize.Struct(seed, &c, songDBTypes, false, strmangle.SetComplement(songPrimaryKeyColumns, songColumnsWithoutDefault)...); err != nil {
+		t.Fatal(err)
+	}
+
+	if err := a.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+	if err = b.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+
+	for i, x := range []*Song{&b, &c} {
+		err = a.SetSong(ctx, tx, i != 0, x)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		if a.R.Song != x {
+			t.Error("relationship struct not set to correct value")
+		}
+
+		if x.R.Positions[0] != &a {
+			t.Error("failed to append to foreign relationship struct")
+		}
+		if a.SongID != x.SongID {
+			t.Error("foreign key was wrong value", a.SongID)
+		}
+
+		zero := reflect.Zero(reflect.TypeOf(a.SongID))
+		reflect.Indirect(reflect.ValueOf(&a.SongID)).Set(zero)
+
+		if err = a.Reload(ctx, tx); err != nil {
+			t.Fatal("failed to reload", err)
+		}
+
+		if a.SongID != x.SongID {
+			t.Error("foreign key was wrong value", a.SongID, x.SongID)
+		}
+	}
+}
+
+func testPositionsReload(t *testing.T) {
 	t.Parallel()
 
 	seed := randomize.NewSeed()
 	var err error
-	o := &MemberInfo{}
-	if err = randomize.Struct(seed, o, memberInfoDBTypes, true, memberInfoColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize MemberInfo struct: %s", err)
+	o := &Position{}
+	if err = randomize.Struct(seed, o, positionDBTypes, true, positionColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize Position struct: %s", err)
 	}
 
 	ctx := context.Background()
@@ -625,14 +733,14 @@ func testMemberInfosReload(t *testing.T) {
 	}
 }
 
-func testMemberInfosReloadAll(t *testing.T) {
+func testPositionsReloadAll(t *testing.T) {
 	t.Parallel()
 
 	seed := randomize.NewSeed()
 	var err error
-	o := &MemberInfo{}
-	if err = randomize.Struct(seed, o, memberInfoDBTypes, true, memberInfoColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize MemberInfo struct: %s", err)
+	o := &Position{}
+	if err = randomize.Struct(seed, o, positionDBTypes, true, positionColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize Position struct: %s", err)
 	}
 
 	ctx := context.Background()
@@ -642,21 +750,21 @@ func testMemberInfosReloadAll(t *testing.T) {
 		t.Error(err)
 	}
 
-	slice := MemberInfoSlice{o}
+	slice := PositionSlice{o}
 
 	if err = slice.ReloadAll(ctx, tx); err != nil {
 		t.Error(err)
 	}
 }
 
-func testMemberInfosSelect(t *testing.T) {
+func testPositionsSelect(t *testing.T) {
 	t.Parallel()
 
 	seed := randomize.NewSeed()
 	var err error
-	o := &MemberInfo{}
-	if err = randomize.Struct(seed, o, memberInfoDBTypes, true, memberInfoColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize MemberInfo struct: %s", err)
+	o := &Position{}
+	if err = randomize.Struct(seed, o, positionDBTypes, true, positionColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize Position struct: %s", err)
 	}
 
 	ctx := context.Background()
@@ -666,7 +774,7 @@ func testMemberInfosSelect(t *testing.T) {
 		t.Error(err)
 	}
 
-	slice, err := MemberInfos().All(ctx, tx)
+	slice, err := Positions().All(ctx, tx)
 	if err != nil {
 		t.Error(err)
 	}
@@ -677,25 +785,25 @@ func testMemberInfosSelect(t *testing.T) {
 }
 
 var (
-	memberInfoDBTypes = map[string]string{`MemberInfoID`: `integer`, `MemberID`: `integer`, `Birthday`: `character varying`, `BloodType`: `character varying`, `Height`: `character varying`, `Generation`: `character varying`, `BlogURL`: `character varying`, `ImgURL`: `character varying`}
-	_                 = bytes.MinRead
+	positionDBTypes = map[string]string{`PositionID`: `integer`, `SongID`: `integer`, `MemberID`: `integer`, `Position`: `character varying`, `IsCenter`: `boolean`}
+	_               = bytes.MinRead
 )
 
-func testMemberInfosUpdate(t *testing.T) {
+func testPositionsUpdate(t *testing.T) {
 	t.Parallel()
 
-	if 0 == len(memberInfoPrimaryKeyColumns) {
+	if 0 == len(positionPrimaryKeyColumns) {
 		t.Skip("Skipping table with no primary key columns")
 	}
-	if len(memberInfoAllColumns) == len(memberInfoPrimaryKeyColumns) {
+	if len(positionAllColumns) == len(positionPrimaryKeyColumns) {
 		t.Skip("Skipping table with only primary key columns")
 	}
 
 	seed := randomize.NewSeed()
 	var err error
-	o := &MemberInfo{}
-	if err = randomize.Struct(seed, o, memberInfoDBTypes, true, memberInfoColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize MemberInfo struct: %s", err)
+	o := &Position{}
+	if err = randomize.Struct(seed, o, positionDBTypes, true, positionColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize Position struct: %s", err)
 	}
 
 	ctx := context.Background()
@@ -705,7 +813,7 @@ func testMemberInfosUpdate(t *testing.T) {
 		t.Error(err)
 	}
 
-	count, err := MemberInfos().Count(ctx, tx)
+	count, err := Positions().Count(ctx, tx)
 	if err != nil {
 		t.Error(err)
 	}
@@ -714,8 +822,8 @@ func testMemberInfosUpdate(t *testing.T) {
 		t.Error("want one record, got:", count)
 	}
 
-	if err = randomize.Struct(seed, o, memberInfoDBTypes, true, memberInfoPrimaryKeyColumns...); err != nil {
-		t.Errorf("Unable to randomize MemberInfo struct: %s", err)
+	if err = randomize.Struct(seed, o, positionDBTypes, true, positionPrimaryKeyColumns...); err != nil {
+		t.Errorf("Unable to randomize Position struct: %s", err)
 	}
 
 	if rowsAff, err := o.Update(ctx, tx, boil.Infer()); err != nil {
@@ -725,18 +833,18 @@ func testMemberInfosUpdate(t *testing.T) {
 	}
 }
 
-func testMemberInfosSliceUpdateAll(t *testing.T) {
+func testPositionsSliceUpdateAll(t *testing.T) {
 	t.Parallel()
 
-	if len(memberInfoAllColumns) == len(memberInfoPrimaryKeyColumns) {
+	if len(positionAllColumns) == len(positionPrimaryKeyColumns) {
 		t.Skip("Skipping table with only primary key columns")
 	}
 
 	seed := randomize.NewSeed()
 	var err error
-	o := &MemberInfo{}
-	if err = randomize.Struct(seed, o, memberInfoDBTypes, true, memberInfoColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize MemberInfo struct: %s", err)
+	o := &Position{}
+	if err = randomize.Struct(seed, o, positionDBTypes, true, positionColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize Position struct: %s", err)
 	}
 
 	ctx := context.Background()
@@ -746,7 +854,7 @@ func testMemberInfosSliceUpdateAll(t *testing.T) {
 		t.Error(err)
 	}
 
-	count, err := MemberInfos().Count(ctx, tx)
+	count, err := Positions().Count(ctx, tx)
 	if err != nil {
 		t.Error(err)
 	}
@@ -755,18 +863,18 @@ func testMemberInfosSliceUpdateAll(t *testing.T) {
 		t.Error("want one record, got:", count)
 	}
 
-	if err = randomize.Struct(seed, o, memberInfoDBTypes, true, memberInfoPrimaryKeyColumns...); err != nil {
-		t.Errorf("Unable to randomize MemberInfo struct: %s", err)
+	if err = randomize.Struct(seed, o, positionDBTypes, true, positionPrimaryKeyColumns...); err != nil {
+		t.Errorf("Unable to randomize Position struct: %s", err)
 	}
 
 	// Remove Primary keys and unique columns from what we plan to update
 	var fields []string
-	if strmangle.StringSliceMatch(memberInfoAllColumns, memberInfoPrimaryKeyColumns) {
-		fields = memberInfoAllColumns
+	if strmangle.StringSliceMatch(positionAllColumns, positionPrimaryKeyColumns) {
+		fields = positionAllColumns
 	} else {
 		fields = strmangle.SetComplement(
-			memberInfoAllColumns,
-			memberInfoPrimaryKeyColumns,
+			positionAllColumns,
+			positionPrimaryKeyColumns,
 		)
 	}
 
@@ -784,7 +892,7 @@ func testMemberInfosSliceUpdateAll(t *testing.T) {
 		}
 	}
 
-	slice := MemberInfoSlice{o}
+	slice := PositionSlice{o}
 	if rowsAff, err := slice.UpdateAll(ctx, tx, updateMap); err != nil {
 		t.Error(err)
 	} else if rowsAff != 1 {
@@ -792,29 +900,29 @@ func testMemberInfosSliceUpdateAll(t *testing.T) {
 	}
 }
 
-func testMemberInfosUpsert(t *testing.T) {
+func testPositionsUpsert(t *testing.T) {
 	t.Parallel()
 
-	if len(memberInfoAllColumns) == len(memberInfoPrimaryKeyColumns) {
+	if len(positionAllColumns) == len(positionPrimaryKeyColumns) {
 		t.Skip("Skipping table with only primary key columns")
 	}
 
 	seed := randomize.NewSeed()
 	var err error
 	// Attempt the INSERT side of an UPSERT
-	o := MemberInfo{}
-	if err = randomize.Struct(seed, &o, memberInfoDBTypes, true); err != nil {
-		t.Errorf("Unable to randomize MemberInfo struct: %s", err)
+	o := Position{}
+	if err = randomize.Struct(seed, &o, positionDBTypes, true); err != nil {
+		t.Errorf("Unable to randomize Position struct: %s", err)
 	}
 
 	ctx := context.Background()
 	tx := MustTx(boil.BeginTx(ctx, nil))
 	defer func() { _ = tx.Rollback() }()
 	if err = o.Upsert(ctx, tx, false, nil, boil.Infer(), boil.Infer()); err != nil {
-		t.Errorf("Unable to upsert MemberInfo: %s", err)
+		t.Errorf("Unable to upsert Position: %s", err)
 	}
 
-	count, err := MemberInfos().Count(ctx, tx)
+	count, err := Positions().Count(ctx, tx)
 	if err != nil {
 		t.Error(err)
 	}
@@ -823,15 +931,15 @@ func testMemberInfosUpsert(t *testing.T) {
 	}
 
 	// Attempt the UPDATE side of an UPSERT
-	if err = randomize.Struct(seed, &o, memberInfoDBTypes, false, memberInfoPrimaryKeyColumns...); err != nil {
-		t.Errorf("Unable to randomize MemberInfo struct: %s", err)
+	if err = randomize.Struct(seed, &o, positionDBTypes, false, positionPrimaryKeyColumns...); err != nil {
+		t.Errorf("Unable to randomize Position struct: %s", err)
 	}
 
 	if err = o.Upsert(ctx, tx, true, nil, boil.Infer(), boil.Infer()); err != nil {
-		t.Errorf("Unable to upsert MemberInfo: %s", err)
+		t.Errorf("Unable to upsert Position: %s", err)
 	}
 
-	count, err = MemberInfos().Count(ctx, tx)
+	count, err = Positions().Count(ctx, tx)
 	if err != nil {
 		t.Error(err)
 	}

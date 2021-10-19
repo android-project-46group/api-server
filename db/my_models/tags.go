@@ -14,7 +14,6 @@ import (
 	"time"
 
 	"github.com/friendsofgo/errors"
-	"github.com/volatiletech/null/v8"
 	"github.com/volatiletech/sqlboiler/v4/boil"
 	"github.com/volatiletech/sqlboiler/v4/queries"
 	"github.com/volatiletech/sqlboiler/v4/queries/qm"
@@ -24,8 +23,8 @@ import (
 
 // Tag is an object representing the database table.
 type Tag struct {
-	TagID   int         `boil:"tag_id" json:"tag_id" toml:"tag_id" yaml:"tag_id"`
-	TagName null.String `boil:"tag_name" json:"tag_name,omitempty" toml:"tag_name" yaml:"tag_name,omitempty"`
+	TagID   int    `boil:"tag_id" json:"tag_id" toml:"tag_id" yaml:"tag_id"`
+	TagName string `boil:"tag_name" json:"tag_name" toml:"tag_name" yaml:"tag_name"`
 
 	R *tagR `boil:"-" json:"-" toml:"-" yaml:"-"`
 	L tagL  `boil:"-" json:"-" toml:"-" yaml:"-"`
@@ -51,10 +50,10 @@ var TagTableColumns = struct {
 
 var TagWhere = struct {
 	TagID   whereHelperint
-	TagName whereHelpernull_String
+	TagName whereHelperstring
 }{
 	TagID:   whereHelperint{field: "\"tags\".\"tag_id\""},
-	TagName: whereHelpernull_String{field: "\"tags\".\"tag_name\""},
+	TagName: whereHelperstring{field: "\"tags\".\"tag_name\""},
 }
 
 // TagRels is where relationship names are stored.

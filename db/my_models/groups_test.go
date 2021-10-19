@@ -494,84 +494,6 @@ func testGroupsInsertWhitelist(t *testing.T) {
 	}
 }
 
-func testGroupToManyFormations(t *testing.T) {
-	var err error
-	ctx := context.Background()
-	tx := MustTx(boil.BeginTx(ctx, nil))
-	defer func() { _ = tx.Rollback() }()
-
-	var a Group
-	var b, c Formation
-
-	seed := randomize.NewSeed()
-	if err = randomize.Struct(seed, &a, groupDBTypes, true, groupColumnsWithDefault...); err != nil {
-		t.Errorf("Unable to randomize Group struct: %s", err)
-	}
-
-	if err := a.Insert(ctx, tx, boil.Infer()); err != nil {
-		t.Fatal(err)
-	}
-
-	if err = randomize.Struct(seed, &b, formationDBTypes, false, formationColumnsWithDefault...); err != nil {
-		t.Fatal(err)
-	}
-	if err = randomize.Struct(seed, &c, formationDBTypes, false, formationColumnsWithDefault...); err != nil {
-		t.Fatal(err)
-	}
-
-	b.GroupID = a.GroupID
-	c.GroupID = a.GroupID
-
-	if err = b.Insert(ctx, tx, boil.Infer()); err != nil {
-		t.Fatal(err)
-	}
-	if err = c.Insert(ctx, tx, boil.Infer()); err != nil {
-		t.Fatal(err)
-	}
-
-	check, err := a.Formations().All(ctx, tx)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	bFound, cFound := false, false
-	for _, v := range check {
-		if v.GroupID == b.GroupID {
-			bFound = true
-		}
-		if v.GroupID == c.GroupID {
-			cFound = true
-		}
-	}
-
-	if !bFound {
-		t.Error("expected to find b")
-	}
-	if !cFound {
-		t.Error("expected to find c")
-	}
-
-	slice := GroupSlice{&a}
-	if err = a.L.LoadFormations(ctx, tx, false, (*[]*Group)(&slice), nil); err != nil {
-		t.Fatal(err)
-	}
-	if got := len(a.R.Formations); got != 2 {
-		t.Error("number of eager loaded records wrong, got:", got)
-	}
-
-	a.R.Formations = nil
-	if err = a.L.LoadFormations(ctx, tx, true, &a, nil); err != nil {
-		t.Fatal(err)
-	}
-	if got := len(a.R.Formations); got != 2 {
-		t.Error("number of eager loaded records wrong, got:", got)
-	}
-
-	if t.Failed() {
-		t.Logf("%#v", check)
-	}
-}
-
 func testGroupToManyMembers(t *testing.T) {
 	var err error
 	ctx := context.Background()
@@ -650,30 +572,34 @@ func testGroupToManyMembers(t *testing.T) {
 	}
 }
 
-func testGroupToManyAddOpFormations(t *testing.T) {
+func testGroupToManySongs(t *testing.T) {
 	var err error
-
 	ctx := context.Background()
 	tx := MustTx(boil.BeginTx(ctx, nil))
 	defer func() { _ = tx.Rollback() }()
 
 	var a Group
-	var b, c, d, e Formation
+	var b, c Song
 
 	seed := randomize.NewSeed()
-	if err = randomize.Struct(seed, &a, groupDBTypes, false, strmangle.SetComplement(groupPrimaryKeyColumns, groupColumnsWithoutDefault)...); err != nil {
-		t.Fatal(err)
-	}
-	foreigners := []*Formation{&b, &c, &d, &e}
-	for _, x := range foreigners {
-		if err = randomize.Struct(seed, x, formationDBTypes, false, strmangle.SetComplement(formationPrimaryKeyColumns, formationColumnsWithoutDefault)...); err != nil {
-			t.Fatal(err)
-		}
+	if err = randomize.Struct(seed, &a, groupDBTypes, true, groupColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize Group struct: %s", err)
 	}
 
 	if err := a.Insert(ctx, tx, boil.Infer()); err != nil {
 		t.Fatal(err)
 	}
+
+	if err = randomize.Struct(seed, &b, songDBTypes, false, songColumnsWithDefault...); err != nil {
+		t.Fatal(err)
+	}
+	if err = randomize.Struct(seed, &c, songDBTypes, false, songColumnsWithDefault...); err != nil {
+		t.Fatal(err)
+	}
+
+	b.GroupID = a.GroupID
+	c.GroupID = a.GroupID
+
 	if err = b.Insert(ctx, tx, boil.Infer()); err != nil {
 		t.Fatal(err)
 	}
@@ -681,50 +607,49 @@ func testGroupToManyAddOpFormations(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	foreignersSplitByInsertion := [][]*Formation{
-		{&b, &c},
-		{&d, &e},
+	check, err := a.Songs().All(ctx, tx)
+	if err != nil {
+		t.Fatal(err)
 	}
 
-	for i, x := range foreignersSplitByInsertion {
-		err = a.AddFormations(ctx, tx, i != 0, x...)
-		if err != nil {
-			t.Fatal(err)
+	bFound, cFound := false, false
+	for _, v := range check {
+		if v.GroupID == b.GroupID {
+			bFound = true
 		}
+		if v.GroupID == c.GroupID {
+			cFound = true
+		}
+	}
 
-		first := x[0]
-		second := x[1]
+	if !bFound {
+		t.Error("expected to find b")
+	}
+	if !cFound {
+		t.Error("expected to find c")
+	}
 
-		if a.GroupID != first.GroupID {
-			t.Error("foreign key was wrong value", a.GroupID, first.GroupID)
-		}
-		if a.GroupID != second.GroupID {
-			t.Error("foreign key was wrong value", a.GroupID, second.GroupID)
-		}
+	slice := GroupSlice{&a}
+	if err = a.L.LoadSongs(ctx, tx, false, (*[]*Group)(&slice), nil); err != nil {
+		t.Fatal(err)
+	}
+	if got := len(a.R.Songs); got != 2 {
+		t.Error("number of eager loaded records wrong, got:", got)
+	}
 
-		if first.R.Group != &a {
-			t.Error("relationship was not added properly to the foreign slice")
-		}
-		if second.R.Group != &a {
-			t.Error("relationship was not added properly to the foreign slice")
-		}
+	a.R.Songs = nil
+	if err = a.L.LoadSongs(ctx, tx, true, &a, nil); err != nil {
+		t.Fatal(err)
+	}
+	if got := len(a.R.Songs); got != 2 {
+		t.Error("number of eager loaded records wrong, got:", got)
+	}
 
-		if a.R.Formations[i*2] != first {
-			t.Error("relationship struct slice not set to correct value")
-		}
-		if a.R.Formations[i*2+1] != second {
-			t.Error("relationship struct slice not set to correct value")
-		}
-
-		count, err := a.Formations().Count(ctx, tx)
-		if err != nil {
-			t.Fatal(err)
-		}
-		if want := int64((i + 1) * 2); count != want {
-			t.Error("want", want, "got", count)
-		}
+	if t.Failed() {
+		t.Logf("%#v", check)
 	}
 }
+
 func testGroupToManyAddOpMembers(t *testing.T) {
 	var err error
 
@@ -792,6 +717,81 @@ func testGroupToManyAddOpMembers(t *testing.T) {
 		}
 
 		count, err := a.Members().Count(ctx, tx)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if want := int64((i + 1) * 2); count != want {
+			t.Error("want", want, "got", count)
+		}
+	}
+}
+func testGroupToManyAddOpSongs(t *testing.T) {
+	var err error
+
+	ctx := context.Background()
+	tx := MustTx(boil.BeginTx(ctx, nil))
+	defer func() { _ = tx.Rollback() }()
+
+	var a Group
+	var b, c, d, e Song
+
+	seed := randomize.NewSeed()
+	if err = randomize.Struct(seed, &a, groupDBTypes, false, strmangle.SetComplement(groupPrimaryKeyColumns, groupColumnsWithoutDefault)...); err != nil {
+		t.Fatal(err)
+	}
+	foreigners := []*Song{&b, &c, &d, &e}
+	for _, x := range foreigners {
+		if err = randomize.Struct(seed, x, songDBTypes, false, strmangle.SetComplement(songPrimaryKeyColumns, songColumnsWithoutDefault)...); err != nil {
+			t.Fatal(err)
+		}
+	}
+
+	if err := a.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+	if err = b.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+	if err = c.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+
+	foreignersSplitByInsertion := [][]*Song{
+		{&b, &c},
+		{&d, &e},
+	}
+
+	for i, x := range foreignersSplitByInsertion {
+		err = a.AddSongs(ctx, tx, i != 0, x...)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		first := x[0]
+		second := x[1]
+
+		if a.GroupID != first.GroupID {
+			t.Error("foreign key was wrong value", a.GroupID, first.GroupID)
+		}
+		if a.GroupID != second.GroupID {
+			t.Error("foreign key was wrong value", a.GroupID, second.GroupID)
+		}
+
+		if first.R.Group != &a {
+			t.Error("relationship was not added properly to the foreign slice")
+		}
+		if second.R.Group != &a {
+			t.Error("relationship was not added properly to the foreign slice")
+		}
+
+		if a.R.Songs[i*2] != first {
+			t.Error("relationship struct slice not set to correct value")
+		}
+		if a.R.Songs[i*2+1] != second {
+			t.Error("relationship struct slice not set to correct value")
+		}
+
+		count, err := a.Songs().Count(ctx, tx)
 		if err != nil {
 			t.Fatal(err)
 		}

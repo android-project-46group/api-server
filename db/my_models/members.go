@@ -64,29 +64,6 @@ var MemberTableColumns = struct {
 
 // Generated where
 
-type whereHelperstring struct{ field string }
-
-func (w whereHelperstring) EQ(x string) qm.QueryMod  { return qmhelper.Where(w.field, qmhelper.EQ, x) }
-func (w whereHelperstring) NEQ(x string) qm.QueryMod { return qmhelper.Where(w.field, qmhelper.NEQ, x) }
-func (w whereHelperstring) LT(x string) qm.QueryMod  { return qmhelper.Where(w.field, qmhelper.LT, x) }
-func (w whereHelperstring) LTE(x string) qm.QueryMod { return qmhelper.Where(w.field, qmhelper.LTE, x) }
-func (w whereHelperstring) GT(x string) qm.QueryMod  { return qmhelper.Where(w.field, qmhelper.GT, x) }
-func (w whereHelperstring) GTE(x string) qm.QueryMod { return qmhelper.Where(w.field, qmhelper.GTE, x) }
-func (w whereHelperstring) IN(slice []string) qm.QueryMod {
-	values := make([]interface{}, 0, len(slice))
-	for _, value := range slice {
-		values = append(values, value)
-	}
-	return qm.WhereIn(fmt.Sprintf("%s IN ?", w.field), values...)
-}
-func (w whereHelperstring) NIN(slice []string) qm.QueryMod {
-	values := make([]interface{}, 0, len(slice))
-	for _, value := range slice {
-		values = append(values, value)
-	}
-	return qm.WhereNotIn(fmt.Sprintf("%s NOT IN ?", w.field), values...)
-}
-
 type whereHelpernull_Time struct{ field string }
 
 func (w whereHelpernull_Time) EQ(x null.Time) qm.QueryMod {
@@ -128,22 +105,22 @@ var MemberWhere = struct {
 // MemberRels is where relationship names are stored.
 var MemberRels = struct {
 	Group       string
-	Formations  string
 	MemberInfos string
 	MemberTags  string
+	Positions   string
 }{
 	Group:       "Group",
-	Formations:  "Formations",
 	MemberInfos: "MemberInfos",
 	MemberTags:  "MemberTags",
+	Positions:   "Positions",
 }
 
 // memberR is where relationships are stored.
 type memberR struct {
 	Group       *Group          `boil:"Group" json:"Group" toml:"Group" yaml:"Group"`
-	Formations  FormationSlice  `boil:"Formations" json:"Formations" toml:"Formations" yaml:"Formations"`
 	MemberInfos MemberInfoSlice `boil:"MemberInfos" json:"MemberInfos" toml:"MemberInfos" yaml:"MemberInfos"`
 	MemberTags  MemberTagSlice  `boil:"MemberTags" json:"MemberTags" toml:"MemberTags" yaml:"MemberTags"`
+	Positions   PositionSlice   `boil:"Positions" json:"Positions" toml:"Positions" yaml:"Positions"`
 }
 
 // NewStruct creates a new relationship struct
@@ -450,27 +427,6 @@ func (o *Member) Group(mods ...qm.QueryMod) groupQuery {
 	return query
 }
 
-// Formations retrieves all the formation's Formations with an executor.
-func (o *Member) Formations(mods ...qm.QueryMod) formationQuery {
-	var queryMods []qm.QueryMod
-	if len(mods) != 0 {
-		queryMods = append(queryMods, mods...)
-	}
-
-	queryMods = append(queryMods,
-		qm.Where("\"formations\".\"member_id\"=?", o.MemberID),
-	)
-
-	query := Formations(queryMods...)
-	queries.SetFrom(query.Query, "\"formations\"")
-
-	if len(queries.GetSelect(query.Query)) == 0 {
-		queries.SetSelect(query.Query, []string{"\"formations\".*"})
-	}
-
-	return query
-}
-
 // MemberInfos retrieves all the member_info's MemberInfos with an executor.
 func (o *Member) MemberInfos(mods ...qm.QueryMod) memberInfoQuery {
 	var queryMods []qm.QueryMod
@@ -508,6 +464,27 @@ func (o *Member) MemberTags(mods ...qm.QueryMod) memberTagQuery {
 
 	if len(queries.GetSelect(query.Query)) == 0 {
 		queries.SetSelect(query.Query, []string{"\"member_tags\".*"})
+	}
+
+	return query
+}
+
+// Positions retrieves all the position's Positions with an executor.
+func (o *Member) Positions(mods ...qm.QueryMod) positionQuery {
+	var queryMods []qm.QueryMod
+	if len(mods) != 0 {
+		queryMods = append(queryMods, mods...)
+	}
+
+	queryMods = append(queryMods,
+		qm.Where("\"positions\".\"member_id\"=?", o.MemberID),
+	)
+
+	query := Positions(queryMods...)
+	queries.SetFrom(query.Query, "\"positions\"")
+
+	if len(queries.GetSelect(query.Query)) == 0 {
+		queries.SetSelect(query.Query, []string{"\"positions\".*"})
 	}
 
 	return query
@@ -609,104 +586,6 @@ func (memberL) LoadGroup(ctx context.Context, e boil.ContextExecutor, singular b
 					foreign.R = &groupR{}
 				}
 				foreign.R.Members = append(foreign.R.Members, local)
-				break
-			}
-		}
-	}
-
-	return nil
-}
-
-// LoadFormations allows an eager lookup of values, cached into the
-// loaded structs of the objects. This is for a 1-M or N-M relationship.
-func (memberL) LoadFormations(ctx context.Context, e boil.ContextExecutor, singular bool, maybeMember interface{}, mods queries.Applicator) error {
-	var slice []*Member
-	var object *Member
-
-	if singular {
-		object = maybeMember.(*Member)
-	} else {
-		slice = *maybeMember.(*[]*Member)
-	}
-
-	args := make([]interface{}, 0, 1)
-	if singular {
-		if object.R == nil {
-			object.R = &memberR{}
-		}
-		args = append(args, object.MemberID)
-	} else {
-	Outer:
-		for _, obj := range slice {
-			if obj.R == nil {
-				obj.R = &memberR{}
-			}
-
-			for _, a := range args {
-				if a == obj.MemberID {
-					continue Outer
-				}
-			}
-
-			args = append(args, obj.MemberID)
-		}
-	}
-
-	if len(args) == 0 {
-		return nil
-	}
-
-	query := NewQuery(
-		qm.From(`formations`),
-		qm.WhereIn(`formations.member_id in ?`, args...),
-	)
-	if mods != nil {
-		mods.Apply(query)
-	}
-
-	results, err := query.QueryContext(ctx, e)
-	if err != nil {
-		return errors.Wrap(err, "failed to eager load formations")
-	}
-
-	var resultSlice []*Formation
-	if err = queries.Bind(results, &resultSlice); err != nil {
-		return errors.Wrap(err, "failed to bind eager loaded slice formations")
-	}
-
-	if err = results.Close(); err != nil {
-		return errors.Wrap(err, "failed to close results in eager load on formations")
-	}
-	if err = results.Err(); err != nil {
-		return errors.Wrap(err, "error occurred during iteration of eager loaded relations for formations")
-	}
-
-	if len(formationAfterSelectHooks) != 0 {
-		for _, obj := range resultSlice {
-			if err := obj.doAfterSelectHooks(ctx, e); err != nil {
-				return err
-			}
-		}
-	}
-	if singular {
-		object.R.Formations = resultSlice
-		for _, foreign := range resultSlice {
-			if foreign.R == nil {
-				foreign.R = &formationR{}
-			}
-			foreign.R.Member = object
-		}
-		return nil
-	}
-
-	for _, foreign := range resultSlice {
-		for _, local := range slice {
-			if local.MemberID == foreign.MemberID {
-				local.R.Formations = append(local.R.Formations, foreign)
-				if foreign.R == nil {
-					foreign.R = &formationR{}
-				}
-				foreign.R.Member = local
 				break
 			}
 		}
@@ -911,6 +790,104 @@ func (memberL) LoadMemberTags(ctx context.Context, e boil.ContextExecutor, singu
 	return nil
 }
 
+// LoadPositions allows an eager lookup of values, cached into the
+// loaded structs of the objects. This is for a 1-M or N-M relationship.
+func (memberL) LoadPositions(ctx context.Context, e boil.ContextExecutor, singular bool, maybeMember interface{}, mods queries.Applicator) error {
+	var slice []*Member
+	var object *Member
+
+	if singular {
+		object = maybeMember.(*Member)
+	} else {
+		slice = *maybeMember.(*[]*Member)
+	}
+
+	args := make([]interface{}, 0, 1)
+	if singular {
+		if object.R == nil {
+			object.R = &memberR{}
+		}
+		args = append(args, object.MemberID)
+	} else {
+	Outer:
+		for _, obj := range slice {
+			if obj.R == nil {
+				obj.R = &memberR{}
+			}
+
+			for _, a := range args {
+				if a == obj.MemberID {
+					continue Outer
+				}
+			}
+
+			args = append(args, obj.MemberID)
+		}
+	}
+
+	if len(args) == 0 {
+		return nil
+	}
+
+	query := NewQuery(
+		qm.From(`positions`),
+		qm.WhereIn(`positions.member_id in ?`, args...),
+	)
+	if mods != nil {
+		mods.Apply(query)
+	}
+
+	results, err := query.QueryContext(ctx, e)
+	if err != nil {
+		return errors.Wrap(err, "failed to eager load positions")
+	}
+
+	var resultSlice []*Position
+	if err = queries.Bind(results, &resultSlice); err != nil {
+		return errors.Wrap(err, "failed to bind eager loaded slice positions")
+	}
+
+	if err = results.Close(); err != nil {
+		return errors.Wrap(err, "failed to close results in eager load on positions")
+	}
+	if err = results.Err(); err != nil {
+		return errors.Wrap(err, "error occurred during iteration of eager loaded relations for positions")
+	}
+
+	if len(positionAfterSelectHooks) != 0 {
+		for _, obj := range resultSlice {
+			if err := obj.doAfterSelectHooks(ctx, e); err != nil {
+				return err
+			}
+		}
+	}
+	if singular {
+		object.R.Positions = resultSlice
+		for _, foreign := range resultSlice {
+			if foreign.R == nil {
+				foreign.R = &positionR{}
+			}
+			foreign.R.Member = object
+		}
+		return nil
+	}
+
+	for _, foreign := range resultSlice {
+		for _, local := range slice {
+			if local.MemberID == foreign.MemberID {
+				local.R.Positions = append(local.R.Positions, foreign)
+				if foreign.R == nil {
+					foreign.R = &positionR{}
+				}
+				foreign.R.Member = local
+				break
+			}
+		}
+	}
+
+	return nil
+}
+
 // SetGroup of the member to the related item.
 // Sets o.R.Group to related.
 // Adds o to related.R.Members.
@@ -955,59 +932,6 @@ func (o *Member) SetGroup(ctx context.Context, exec boil.ContextExecutor, insert
 		related.R.Members = append(related.R.Members, o)
 	}
 
-	return nil
-}
-
-// AddFormations adds the given related objects to the existing relationships
-// of the member, optionally inserting them as new records.
-// Appends related to o.R.Formations.
-// Sets related.R.Member appropriately.
-func (o *Member) AddFormations(ctx context.Context, exec boil.ContextExecutor, insert bool, related ...*Formation) error {
-	var err error
-	for _, rel := range related {
-		if insert {
-			rel.MemberID = o.MemberID
-			if err = rel.Insert(ctx, exec, boil.Infer()); err != nil {
-				return errors.Wrap(err, "failed to insert into foreign table")
-			}
-		} else {
-			updateQuery := fmt.Sprintf(
-				"UPDATE \"formations\" SET %s WHERE %s",
-				strmangle.SetParamNames("\"", "\"", 1, []string{"member_id"}),
-				strmangle.WhereClause("\"", "\"", 2, formationPrimaryKeyColumns),
-			)
-			values := []interface{}{o.MemberID, rel.FormationID}
-
-			if boil.IsDebug(ctx) {
-				writer := boil.DebugWriterFrom(ctx)
-				fmt.Fprintln(writer, updateQuery)
-				fmt.Fprintln(writer, values)
-			}
-			if _, err = exec.ExecContext(ctx, updateQuery, values...); err != nil {
-				return errors.Wrap(err, "failed to update foreign table")
-			}
-
-			rel.MemberID = o.MemberID
-		}
-	}
-
-	if o.R == nil {
-		o.R = &memberR{
-			Formations: related,
-		}
-	} else {
-		o.R.Formations = append(o.R.Formations, related...)
-	}
-
-	for _, rel := range related {
-		if rel.R == nil {
-			rel.R = &formationR{
-				Member: o,
-			}
-		} else {
-			rel.R.Member = o
-		}
-	}
 	return nil
 }
 
@@ -1108,6 +1032,59 @@ func (o *Member) AddMemberTags(ctx context.Context, exec boil.ContextExecutor, i
 	for _, rel := range related {
 		if rel.R == nil {
 			rel.R = &memberTagR{
+				Member: o,
+			}
+		} else {
+			rel.R.Member = o
+		}
+	}
+	return nil
+}
+
+// AddPositions adds the given related objects to the existing relationships
+// of the member, optionally inserting them as new records.
+// Appends related to o.R.Positions.
+// Sets related.R.Member appropriately.
+func (o *Member) AddPositions(ctx context.Context, exec boil.ContextExecutor, insert bool, related ...*Position) error {
+	var err error
+	for _, rel := range related {
+		if insert {
+			rel.MemberID = o.MemberID
+			if err = rel.Insert(ctx, exec, boil.Infer()); err != nil {
+				return errors.Wrap(err, "failed to insert into foreign table")
+			}
+		} else {
+			updateQuery := fmt.Sprintf(
+				"UPDATE \"positions\" SET %s WHERE %s",
+				strmangle.SetParamNames("\"", "\"", 1, []string{"member_id"}),
+				strmangle.WhereClause("\"", "\"", 2, positionPrimaryKeyColumns),
+			)
+			values := []interface{}{o.MemberID, rel.PositionID}
+
+			if boil.IsDebug(ctx) {
+				writer := boil.DebugWriterFrom(ctx)
+				fmt.Fprintln(writer, updateQuery)
+				fmt.Fprintln(writer, values)
+			}
+			if _, err = exec.ExecContext(ctx, updateQuery, values...); err != nil {
+				return errors.Wrap(err, "failed to update foreign table")
+			}
+
+			rel.MemberID = o.MemberID
+		}
+	}
+
+	if o.R == nil {
+		o.R = &memberR{
+			Positions: related,
+		}
+	} else {
+		o.R.Positions = append(o.R.Positions, related...)
+	}
+
+	for _, rel := range related {
+		if rel.R == nil {
+			rel.R = &positionR{
 				Member: o,
 			}
 		} else {
