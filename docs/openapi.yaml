@@ -4,7 +4,7 @@ servers:
   # Added by API Auto Mocking Plugin
   - description: SwaggerHub API Auto Mocking
     url: https://virtserver.swaggerhub.com/kokoichi206/Sakamichi/1.0.0
-  - url: https://kokoichi0206.mydns.jp/cgi-bin/server.cgi/
+  - url: https://kokoichi0206.mydns.jp/api/v1/
     description: New Server 2
 info:
   description: This is a simple API
