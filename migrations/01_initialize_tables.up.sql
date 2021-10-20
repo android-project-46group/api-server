@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS members(
 CREATE TABLE IF NOT EXISTS member_infos(
     member_info_id  serial PRIMARY KEY,
     member_id       INT NOT NULL,
-    birthday        VARCHAR (10) NOT NULL,
+    birthday        VARCHAR (11) NOT NULL,
     blood_type      VARCHAR (3) NOT NULL,
     height          VARCHAR (10) NOT NULL,
     generation      VARCHAR (10) NOT NULL,
