@@ -10,6 +10,7 @@ type MemberInfoResponse struct {
 	Birthday	string	`json:"birthday"`
 	Height		string	`json:"height"`
 	BloodType	string	`json:"blood_type"`
+	Generation	string	`json:"generation"`
 	BlogURL		string	`json:"blog_url"`
 	ImgURL		string	`json:"img_url"`
 }
@@ -33,7 +34,8 @@ type GetSongsResponse struct {
 }
 
 type GetPositionsResponse struct {
-	MemberName	string		`json:"member_name"`
-	Position	string		`json:"position"`
-	IsCenter	bool		`json:"is_center"`
+	MemberName	string	`json:"member_name"`
+	ImgURL		string	`json:"img_url"`
+	Position	string	`json:"position"`
+	IsCenter	bool	`json:"is_center"`
 }

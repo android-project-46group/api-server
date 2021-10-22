@@ -228,7 +228,7 @@ components:
           example: https://blog.nogizaka46.com/renka.iwamoto
         img_url:
           type: string
-          example: https://firebasestorage.googleapis.com/v0/b/my-memory-3b3bd.appspot.com/o/saka%2Fnogizaka%2Fiwamotorenka.jpeg?alt=media
+          example: https://kokoichi0206.mydns.jp/imgs/nogi/iwamotorenka.jpeg
     Formation:
       required:
         - name
@@ -252,6 +252,9 @@ components:
         position:
           type: string
           example: '003'
+        img_url:
+          type: string
+          example: https://kokoichi0206.mydns.jp/imgs/nogi/iwamotorenka.jpeg
         is_center:
           type: boolean
           example: true
