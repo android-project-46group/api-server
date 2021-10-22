@@ -38,6 +38,7 @@ func GetAllMembers(w http.ResponseWriter, r *http.Request) {
 			Birthday: info.MemberInfo.Birthday,
 			Height: info.MemberInfo.Height,
 			BloodType: info.MemberInfo.BloodType,
+			Generation: info.MemberInfo.Generation,
 			BlogURL: info.MemberInfo.BlogURL.String,
 			ImgURL: info.MemberInfo.ImgURL.String,
 		}
