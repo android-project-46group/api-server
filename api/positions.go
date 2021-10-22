@@ -34,6 +34,7 @@ func GetPositions(w http.ResponseWriter, r *http.Request) {
 	for _, pm := range pMs {
 		m := GetPositionsResponse{
 			MemberName: pm.Member.NameJa,
+			ImgURL: pm.MemberInfo.ImgURL.String,
 			Position: pm.Position.Position,
 			IsCenter: pm.Position.IsCenter.Bool,
 		}
