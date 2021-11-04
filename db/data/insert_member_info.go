@@ -54,7 +54,11 @@ func InsertMemberInfosFromGroupName(group string) {
 		m.BlogURL.Valid = true
 		m.ImgURL.String = info.ImgUrl
 		m.ImgURL.Valid = true
-		
-		m.Insert(Ctx, DB, boil.Infer())
+		fmt.Println(m)
+		err := m.Insert(Ctx, DB, boil.Infer())
+		if err != nil {
+			fmt.Println(err)
+			fmt.Println("Error" + info.Name)
+		}
 	}
 }

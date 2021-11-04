@@ -6,6 +6,8 @@ package models
 import "testing"
 
 func TestUpsert(t *testing.T) {
+	t.Run("APIKeys", testAPIKeysUpsert)
+
 	t.Run("Formations", testFormationsUpsert)
 
 	t.Run("Groups", testGroupsUpsert)
