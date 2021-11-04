@@ -11,6 +11,15 @@ import (
 func GetAllFormations(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 
+	key := r.FormValue("key")
+	
+	if !IsApiKeyValid(key) {
+		// return error message
+		w.WriteHeader(http.StatusForbidden)
+		fmt.Fprint(w, ErrorJson("No valid api key"))
+		return
+	}
+
 	// get group name from query parameters
 	group := r.FormValue("gn")
 
