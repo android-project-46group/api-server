@@ -12,6 +12,7 @@ import "testing"
 // It does NOT run each operation group in parallel.
 // Separating the tests thusly grants avoidance of Postgres deadlocks.
 func TestParent(t *testing.T) {
+	t.Run("APIKeys", testAPIKeys)
 	t.Run("Formations", testFormations)
 	t.Run("Groups", testGroups)
 	t.Run("MemberInfos", testMemberInfos)
@@ -24,6 +25,7 @@ func TestParent(t *testing.T) {
 }
 
 func TestDelete(t *testing.T) {
+	t.Run("APIKeys", testAPIKeysDelete)
 	t.Run("Formations", testFormationsDelete)
 	t.Run("Groups", testGroupsDelete)
 	t.Run("MemberInfos", testMemberInfosDelete)
@@ -36,6 +38,7 @@ func TestDelete(t *testing.T) {
 }
 
 func TestQueryDeleteAll(t *testing.T) {
+	t.Run("APIKeys", testAPIKeysQueryDeleteAll)
 	t.Run("Formations", testFormationsQueryDeleteAll)
 	t.Run("Groups", testGroupsQueryDeleteAll)
 	t.Run("MemberInfos", testMemberInfosQueryDeleteAll)
@@ -48,6 +51,7 @@ func TestQueryDeleteAll(t *testing.T) {
 }
 
 func TestSliceDeleteAll(t *testing.T) {
+	t.Run("APIKeys", testAPIKeysSliceDeleteAll)
 	t.Run("Formations", testFormationsSliceDeleteAll)
 	t.Run("Groups", testGroupsSliceDeleteAll)
 	t.Run("MemberInfos", testMemberInfosSliceDeleteAll)
@@ -60,6 +64,7 @@ func TestSliceDeleteAll(t *testing.T) {
 }
 
 func TestExists(t *testing.T) {
+	t.Run("APIKeys", testAPIKeysExists)
 	t.Run("Formations", testFormationsExists)
 	t.Run("Groups", testGroupsExists)
 	t.Run("MemberInfos", testMemberInfosExists)
@@ -72,6 +77,7 @@ func TestExists(t *testing.T) {
 }
 
 func TestFind(t *testing.T) {
+	t.Run("APIKeys", testAPIKeysFind)
 	t.Run("Formations", testFormationsFind)
 	t.Run("Groups", testGroupsFind)
 	t.Run("MemberInfos", testMemberInfosFind)
@@ -84,6 +90,7 @@ func TestFind(t *testing.T) {
 }
 
 func TestBind(t *testing.T) {
+	t.Run("APIKeys", testAPIKeysBind)
 	t.Run("Formations", testFormationsBind)
 	t.Run("Groups", testGroupsBind)
 	t.Run("MemberInfos", testMemberInfosBind)
@@ -96,6 +103,7 @@ func TestBind(t *testing.T) {
 }
 
 func TestOne(t *testing.T) {
+	t.Run("APIKeys", testAPIKeysOne)
 	t.Run("Formations", testFormationsOne)
 	t.Run("Groups", testGroupsOne)
 	t.Run("MemberInfos", testMemberInfosOne)
@@ -108,6 +116,7 @@ func TestOne(t *testing.T) {
 }
 
 func TestAll(t *testing.T) {
+	t.Run("APIKeys", testAPIKeysAll)
 	t.Run("Formations", testFormationsAll)
 	t.Run("Groups", testGroupsAll)
 	t.Run("MemberInfos", testMemberInfosAll)
@@ -120,6 +129,7 @@ func TestAll(t *testing.T) {
 }
 
 func TestCount(t *testing.T) {
+	t.Run("APIKeys", testAPIKeysCount)
 	t.Run("Formations", testFormationsCount)
 	t.Run("Groups", testGroupsCount)
 	t.Run("MemberInfos", testMemberInfosCount)
@@ -132,6 +142,7 @@ func TestCount(t *testing.T) {
 }
 
 func TestHooks(t *testing.T) {
+	t.Run("APIKeys", testAPIKeysHooks)
 	t.Run("Formations", testFormationsHooks)
 	t.Run("Groups", testGroupsHooks)
 	t.Run("MemberInfos", testMemberInfosHooks)
@@ -144,6 +155,8 @@ func TestHooks(t *testing.T) {
 }
 
 func TestInsert(t *testing.T) {
+	t.Run("APIKeys", testAPIKeysInsert)
+	t.Run("APIKeys", testAPIKeysInsertWhitelist)
 	t.Run("Formations", testFormationsInsert)
 	t.Run("Formations", testFormationsInsertWhitelist)
 	t.Run("Groups", testGroupsInsert)
@@ -241,6 +254,7 @@ func TestToManySet(t *testing.T) {}
 func TestToManyRemove(t *testing.T) {}
 
 func TestReload(t *testing.T) {
+	t.Run("APIKeys", testAPIKeysReload)
 	t.Run("Formations", testFormationsReload)
 	t.Run("Groups", testGroupsReload)
 	t.Run("MemberInfos", testMemberInfosReload)
@@ -253,6 +267,7 @@ func TestReload(t *testing.T) {
 }
 
 func TestReloadAll(t *testing.T) {
+	t.Run("APIKeys", testAPIKeysReloadAll)
 	t.Run("Formations", testFormationsReloadAll)
 	t.Run("Groups", testGroupsReloadAll)
 	t.Run("MemberInfos", testMemberInfosReloadAll)
@@ -265,6 +280,7 @@ func TestReloadAll(t *testing.T) {
 }
 
 func TestSelect(t *testing.T) {
+	t.Run("APIKeys", testAPIKeysSelect)
 	t.Run("Formations", testFormationsSelect)
 	t.Run("Groups", testGroupsSelect)
 	t.Run("MemberInfos", testMemberInfosSelect)
@@ -277,6 +293,7 @@ func TestSelect(t *testing.T) {
 }
 
 func TestUpdate(t *testing.T) {
+	t.Run("APIKeys", testAPIKeysUpdate)
 	t.Run("Formations", testFormationsUpdate)
 	t.Run("Groups", testGroupsUpdate)
 	t.Run("MemberInfos", testMemberInfosUpdate)
@@ -289,6 +306,7 @@ func TestUpdate(t *testing.T) {
 }
 
 func TestSliceUpdateAll(t *testing.T) {
+	t.Run("APIKeys", testAPIKeysSliceUpdateAll)
 	t.Run("Formations", testFormationsSliceUpdateAll)
 	t.Run("Groups", testGroupsSliceUpdateAll)
 	t.Run("MemberInfos", testMemberInfosSliceUpdateAll)

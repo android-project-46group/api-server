@@ -79,3 +79,8 @@ CREATE TABLE IF NOT EXISTS member_tags(
         FOREIGN KEY(tag_id)
             REFERENCES tags(tag_id)
 );
+
+CREATE TABLE IF NOT EXISTS api_keys(
+    key_id   serial PRIMARY KEY,
+    key_val VARCHAR(70) UNIQUE NOT NULL
+);
