@@ -15,6 +15,15 @@ func GetAllMembers(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 
+	key := r.FormValue("key")
+	
+	if !IsApiKeyValid(key) {
+		// return error message
+		w.WriteHeader(http.StatusForbidden)
+		fmt.Fprint(w, ErrorJson("No valid api key"))
+		return
+	}
+
 	// get group name from query parameters
 	group := r.FormValue("gn")
 
@@ -38,6 +47,7 @@ func GetAllMembers(w http.ResponseWriter, r *http.Request) {
 			Birthday: info.MemberInfo.Birthday,
 			Height: info.MemberInfo.Height,
 			BloodType: info.MemberInfo.BloodType,
+			Generation: info.MemberInfo.Generation,
 			BlogURL: info.MemberInfo.BlogURL.String,
 			ImgURL: info.MemberInfo.ImgURL.String,
 		}

@@ -15,6 +15,15 @@ func GetPositions(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 
+	key := r.FormValue("key")
+	
+	if !IsApiKeyValid(key) {
+		// return error message
+		w.WriteHeader(http.StatusForbidden)
+		fmt.Fprint(w, ErrorJson("No valid api key"))
+		return
+	}
+
 	// get group name from query parameters
 	title := r.FormValue("title")
 
@@ -34,6 +43,7 @@ func GetPositions(w http.ResponseWriter, r *http.Request) {
 	for _, pm := range pMs {
 		m := GetPositionsResponse{
 			MemberName: pm.Member.NameJa,
+			ImgURL: pm.MemberInfo.ImgURL.String,
 			Position: pm.Position.Position,
 			IsCenter: pm.Position.IsCenter.Bool,
 		}
