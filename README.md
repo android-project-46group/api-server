@@ -10,10 +10,12 @@ API server with ubuntu 20.04 on raspberry pi 4
 ## URL examples
 
 ### DB Access (API)
-- https://kokoichi0206.mydns.jp/api/v1/members?gn=nogizaka
-- https://kokoichi0206.mydns.jp/api/v1/songs?gn=nogizaka
-- https://kokoichi0206.mydns.jp/api/v1/positions?title=%E3%81%A3%E3%81%A6%E3%81%8B
-- https://kokoichi0206.mydns.jp/api/v1/formations?gn=hinatazaka
+Test API KEY
+
+- https://kokoichi0206.mydns.jp/api/v1/members?gn=nogizaka&key=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+- https://kokoichi0206.mydns.jp/api/v1/songs?gn=nogizaka&key=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+- https://kokoichi0206.mydns.jp/api/v1/positions?title=%E3%81%A3%E3%81%A6%E3%81%8B&key=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+- https://kokoichi0206.mydns.jp/api/v1/formations?gn=hinatazaka&key=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
 
 ### Face Images
 - https://kokoichi0206.mydns.jp/imgs/nogi/iwamotorenka.jpeg
