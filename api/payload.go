@@ -15,6 +15,13 @@ type MemberInfoResponse struct {
 	ImgURL		string	`json:"img_url"`
 }
 
+type BlogResponse struct {
+	MemberName		string `json:"name"`
+	BlogURL       	string `json:"blog_url"`
+	LastBlogImg   	string `json:"last_blog_img"`
+	LastUpdatedAt 	string `json:"last_updated_at"`
+}
+
 type FormationResponse struct {
 	Single		string		`json:"single"`
 	Title		string		`json:"title"`
