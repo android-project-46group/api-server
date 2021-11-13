@@ -27,6 +27,11 @@ func main() {
 		HandlerFunc(api.GetAllMembers).
 		Methods("GET")
 
+	r.Path(rootPath + "/blogs").
+		Queries("gn", "{gn}").
+		HandlerFunc(api.GetAllBlogs).
+		Methods("GET")
+
 	r.Path(rootPath + "/formations").
 		Queries("gn", "{gn}").
 		HandlerFunc(api.GetAllFormations).

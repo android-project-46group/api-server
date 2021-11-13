@@ -494,6 +494,84 @@ func testMembersInsertWhitelist(t *testing.T) {
 	}
 }
 
+func testMemberToManyBlogs(t *testing.T) {
+	var err error
+	ctx := context.Background()
+	tx := MustTx(boil.BeginTx(ctx, nil))
+	defer func() { _ = tx.Rollback() }()
+
+	var a Member
+	var b, c Blog
+
+	seed := randomize.NewSeed()
+	if err = randomize.Struct(seed, &a, memberDBTypes, true, memberColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize Member struct: %s", err)
+	}
+
+	if err := a.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+
+	if err = randomize.Struct(seed, &b, blogDBTypes, false, blogColumnsWithDefault...); err != nil {
+		t.Fatal(err)
+	}
+	if err = randomize.Struct(seed, &c, blogDBTypes, false, blogColumnsWithDefault...); err != nil {
+		t.Fatal(err)
+	}
+
+	b.MemberID = a.MemberID
+	c.MemberID = a.MemberID
+
+	if err = b.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+	if err = c.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+
+	check, err := a.Blogs().All(ctx, tx)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	bFound, cFound := false, false
+	for _, v := range check {
+		if v.MemberID == b.MemberID {
+			bFound = true
+		}
+		if v.MemberID == c.MemberID {
+			cFound = true
+		}
+	}
+
+	if !bFound {
+		t.Error("expected to find b")
+	}
+	if !cFound {
+		t.Error("expected to find c")
+	}
+
+	slice := MemberSlice{&a}
+	if err = a.L.LoadBlogs(ctx, tx, false, (*[]*Member)(&slice), nil); err != nil {
+		t.Fatal(err)
+	}
+	if got := len(a.R.Blogs); got != 2 {
+		t.Error("number of eager loaded records wrong, got:", got)
+	}
+
+	a.R.Blogs = nil
+	if err = a.L.LoadBlogs(ctx, tx, true, &a, nil); err != nil {
+		t.Fatal(err)
+	}
+	if got := len(a.R.Blogs); got != 2 {
+		t.Error("number of eager loaded records wrong, got:", got)
+	}
+
+	if t.Failed() {
+		t.Logf("%#v", check)
+	}
+}
+
 func testMemberToManyMemberInfos(t *testing.T) {
 	var err error
 	ctx := context.Background()
@@ -728,6 +806,81 @@ func testMemberToManyPositions(t *testing.T) {
 	}
 }
 
+func testMemberToManyAddOpBlogs(t *testing.T) {
+	var err error
+
+	ctx := context.Background()
+	tx := MustTx(boil.BeginTx(ctx, nil))
+	defer func() { _ = tx.Rollback() }()
+
+	var a Member
+	var b, c, d, e Blog
+
+	seed := randomize.NewSeed()
+	if err = randomize.Struct(seed, &a, memberDBTypes, false, strmangle.SetComplement(memberPrimaryKeyColumns, memberColumnsWithoutDefault)...); err != nil {
+		t.Fatal(err)
+	}
+	foreigners := []*Blog{&b, &c, &d, &e}
+	for _, x := range foreigners {
+		if err = randomize.Struct(seed, x, blogDBTypes, false, strmangle.SetComplement(blogPrimaryKeyColumns, blogColumnsWithoutDefault)...); err != nil {
+			t.Fatal(err)
+		}
+	}
+
+	if err := a.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+	if err = b.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+	if err = c.Insert(ctx, tx, boil.Infer()); err != nil {
+		t.Fatal(err)
+	}
+
+	foreignersSplitByInsertion := [][]*Blog{
+		{&b, &c},
+		{&d, &e},
+	}
+
+	for i, x := range foreignersSplitByInsertion {
+		err = a.AddBlogs(ctx, tx, i != 0, x...)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		first := x[0]
+		second := x[1]
+
+		if a.MemberID != first.MemberID {
+			t.Error("foreign key was wrong value", a.MemberID, first.MemberID)
+		}
+		if a.MemberID != second.MemberID {
+			t.Error("foreign key was wrong value", a.MemberID, second.MemberID)
+		}
+
+		if first.R.Member != &a {
+			t.Error("relationship was not added properly to the foreign slice")
+		}
+		if second.R.Member != &a {
+			t.Error("relationship was not added properly to the foreign slice")
+		}
+
+		if a.R.Blogs[i*2] != first {
+			t.Error("relationship struct slice not set to correct value")
+		}
+		if a.R.Blogs[i*2+1] != second {
+			t.Error("relationship struct slice not set to correct value")
+		}
+
+		count, err := a.Blogs().Count(ctx, tx)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if want := int64((i + 1) * 2); count != want {
+			t.Error("want", want, "got", count)
+		}
+	}
+}
 func testMemberToManyAddOpMemberInfos(t *testing.T) {
 	var err error
 

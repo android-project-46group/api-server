@@ -13,6 +13,7 @@ import "testing"
 // Separating the tests thusly grants avoidance of Postgres deadlocks.
 func TestParent(t *testing.T) {
 	t.Run("APIKeys", testAPIKeys)
+	t.Run("Blogs", testBlogs)
 	t.Run("Formations", testFormations)
 	t.Run("Groups", testGroups)
 	t.Run("MemberInfos", testMemberInfos)
@@ -26,6 +27,7 @@ func TestParent(t *testing.T) {
 
 func TestDelete(t *testing.T) {
 	t.Run("APIKeys", testAPIKeysDelete)
+	t.Run("Blogs", testBlogsDelete)
 	t.Run("Formations", testFormationsDelete)
 	t.Run("Groups", testGroupsDelete)
 	t.Run("MemberInfos", testMemberInfosDelete)
@@ -39,6 +41,7 @@ func TestDelete(t *testing.T) {
 
 func TestQueryDeleteAll(t *testing.T) {
 	t.Run("APIKeys", testAPIKeysQueryDeleteAll)
+	t.Run("Blogs", testBlogsQueryDeleteAll)
 	t.Run("Formations", testFormationsQueryDeleteAll)
 	t.Run("Groups", testGroupsQueryDeleteAll)
 	t.Run("MemberInfos", testMemberInfosQueryDeleteAll)
@@ -52,6 +55,7 @@ func TestQueryDeleteAll(t *testing.T) {
 
 func TestSliceDeleteAll(t *testing.T) {
 	t.Run("APIKeys", testAPIKeysSliceDeleteAll)
+	t.Run("Blogs", testBlogsSliceDeleteAll)
 	t.Run("Formations", testFormationsSliceDeleteAll)
 	t.Run("Groups", testGroupsSliceDeleteAll)
 	t.Run("MemberInfos", testMemberInfosSliceDeleteAll)
@@ -65,6 +69,7 @@ func TestSliceDeleteAll(t *testing.T) {
 
 func TestExists(t *testing.T) {
 	t.Run("APIKeys", testAPIKeysExists)
+	t.Run("Blogs", testBlogsExists)
 	t.Run("Formations", testFormationsExists)
 	t.Run("Groups", testGroupsExists)
 	t.Run("MemberInfos", testMemberInfosExists)
@@ -78,6 +83,7 @@ func TestExists(t *testing.T) {
 
 func TestFind(t *testing.T) {
 	t.Run("APIKeys", testAPIKeysFind)
+	t.Run("Blogs", testBlogsFind)
 	t.Run("Formations", testFormationsFind)
 	t.Run("Groups", testGroupsFind)
 	t.Run("MemberInfos", testMemberInfosFind)
@@ -91,6 +97,7 @@ func TestFind(t *testing.T) {
 
 func TestBind(t *testing.T) {
 	t.Run("APIKeys", testAPIKeysBind)
+	t.Run("Blogs", testBlogsBind)
 	t.Run("Formations", testFormationsBind)
 	t.Run("Groups", testGroupsBind)
 	t.Run("MemberInfos", testMemberInfosBind)
@@ -104,6 +111,7 @@ func TestBind(t *testing.T) {
 
 func TestOne(t *testing.T) {
 	t.Run("APIKeys", testAPIKeysOne)
+	t.Run("Blogs", testBlogsOne)
 	t.Run("Formations", testFormationsOne)
 	t.Run("Groups", testGroupsOne)
 	t.Run("MemberInfos", testMemberInfosOne)
@@ -117,6 +125,7 @@ func TestOne(t *testing.T) {
 
 func TestAll(t *testing.T) {
 	t.Run("APIKeys", testAPIKeysAll)
+	t.Run("Blogs", testBlogsAll)
 	t.Run("Formations", testFormationsAll)
 	t.Run("Groups", testGroupsAll)
 	t.Run("MemberInfos", testMemberInfosAll)
@@ -130,6 +139,7 @@ func TestAll(t *testing.T) {
 
 func TestCount(t *testing.T) {
 	t.Run("APIKeys", testAPIKeysCount)
+	t.Run("Blogs", testBlogsCount)
 	t.Run("Formations", testFormationsCount)
 	t.Run("Groups", testGroupsCount)
 	t.Run("MemberInfos", testMemberInfosCount)
@@ -143,6 +153,7 @@ func TestCount(t *testing.T) {
 
 func TestHooks(t *testing.T) {
 	t.Run("APIKeys", testAPIKeysHooks)
+	t.Run("Blogs", testBlogsHooks)
 	t.Run("Formations", testFormationsHooks)
 	t.Run("Groups", testGroupsHooks)
 	t.Run("MemberInfos", testMemberInfosHooks)
@@ -157,6 +168,8 @@ func TestHooks(t *testing.T) {
 func TestInsert(t *testing.T) {
 	t.Run("APIKeys", testAPIKeysInsert)
 	t.Run("APIKeys", testAPIKeysInsertWhitelist)
+	t.Run("Blogs", testBlogsInsert)
+	t.Run("Blogs", testBlogsInsertWhitelist)
 	t.Run("Formations", testFormationsInsert)
 	t.Run("Formations", testFormationsInsertWhitelist)
 	t.Run("Groups", testGroupsInsert)
@@ -180,6 +193,7 @@ func TestInsert(t *testing.T) {
 // TestToOne tests cannot be run in parallel
 // or deadlocks can occur.
 func TestToOne(t *testing.T) {
+	t.Run("BlogToMemberUsingMember", testBlogToOneMemberUsingMember)
 	t.Run("MemberInfoToMemberUsingMember", testMemberInfoToOneMemberUsingMember)
 	t.Run("MemberTagToMemberUsingMember", testMemberTagToOneMemberUsingMember)
 	t.Run("MemberTagToTagUsingTag", testMemberTagToOneTagUsingTag)
@@ -200,6 +214,7 @@ func TestToMany(t *testing.T) {
 	t.Run("FormationToSongs", testFormationToManySongs)
 	t.Run("GroupToMembers", testGroupToManyMembers)
 	t.Run("GroupToSongs", testGroupToManySongs)
+	t.Run("MemberToBlogs", testMemberToManyBlogs)
 	t.Run("MemberToMemberInfos", testMemberToManyMemberInfos)
 	t.Run("MemberToMemberTags", testMemberToManyMemberTags)
 	t.Run("MemberToPositions", testMemberToManyPositions)
@@ -210,6 +225,7 @@ func TestToMany(t *testing.T) {
 // TestToOneSet tests cannot be run in parallel
 // or deadlocks can occur.
 func TestToOneSet(t *testing.T) {
+	t.Run("BlogToMemberUsingBlogs", testBlogToOneSetOpMemberUsingMember)
 	t.Run("MemberInfoToMemberUsingMemberInfos", testMemberInfoToOneSetOpMemberUsingMember)
 	t.Run("MemberTagToMemberUsingMemberTags", testMemberTagToOneSetOpMemberUsingMember)
 	t.Run("MemberTagToTagUsingMemberTags", testMemberTagToOneSetOpTagUsingTag)
@@ -238,6 +254,7 @@ func TestToManyAdd(t *testing.T) {
 	t.Run("FormationToSongs", testFormationToManyAddOpSongs)
 	t.Run("GroupToMembers", testGroupToManyAddOpMembers)
 	t.Run("GroupToSongs", testGroupToManyAddOpSongs)
+	t.Run("MemberToBlogs", testMemberToManyAddOpBlogs)
 	t.Run("MemberToMemberInfos", testMemberToManyAddOpMemberInfos)
 	t.Run("MemberToMemberTags", testMemberToManyAddOpMemberTags)
 	t.Run("MemberToPositions", testMemberToManyAddOpPositions)
@@ -255,6 +272,7 @@ func TestToManyRemove(t *testing.T) {}
 
 func TestReload(t *testing.T) {
 	t.Run("APIKeys", testAPIKeysReload)
+	t.Run("Blogs", testBlogsReload)
 	t.Run("Formations", testFormationsReload)
 	t.Run("Groups", testGroupsReload)
 	t.Run("MemberInfos", testMemberInfosReload)
@@ -268,6 +286,7 @@ func TestReload(t *testing.T) {
 
 func TestReloadAll(t *testing.T) {
 	t.Run("APIKeys", testAPIKeysReloadAll)
+	t.Run("Blogs", testBlogsReloadAll)
 	t.Run("Formations", testFormationsReloadAll)
 	t.Run("Groups", testGroupsReloadAll)
 	t.Run("MemberInfos", testMemberInfosReloadAll)
@@ -281,6 +300,7 @@ func TestReloadAll(t *testing.T) {
 
 func TestSelect(t *testing.T) {
 	t.Run("APIKeys", testAPIKeysSelect)
+	t.Run("Blogs", testBlogsSelect)
 	t.Run("Formations", testFormationsSelect)
 	t.Run("Groups", testGroupsSelect)
 	t.Run("MemberInfos", testMemberInfosSelect)
@@ -294,6 +314,7 @@ func TestSelect(t *testing.T) {
 
 func TestUpdate(t *testing.T) {
 	t.Run("APIKeys", testAPIKeysUpdate)
+	t.Run("Blogs", testBlogsUpdate)
 	t.Run("Formations", testFormationsUpdate)
 	t.Run("Groups", testGroupsUpdate)
 	t.Run("MemberInfos", testMemberInfosUpdate)
@@ -307,6 +328,7 @@ func TestUpdate(t *testing.T) {
 
 func TestSliceUpdateAll(t *testing.T) {
 	t.Run("APIKeys", testAPIKeysSliceUpdateAll)
+	t.Run("Blogs", testBlogsSliceUpdateAll)
 	t.Run("Formations", testFormationsSliceUpdateAll)
 	t.Run("Groups", testGroupsSliceUpdateAll)
 	t.Run("MemberInfos", testMemberInfosSliceUpdateAll)

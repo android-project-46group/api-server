@@ -28,6 +28,17 @@ CREATE TABLE IF NOT EXISTS member_infos(
             REFERENCES members(member_id)
 );
 
+CREATE TABLE IF NOT EXISTS blogs(
+    blog_id         serial PRIMARY KEY,
+    member_id       INT NOT NULL,
+    blog_url        VARCHAR (200) UNIQUE NOT NULL,
+    last_blog_img   VARCHAR (200) NOT NULL,
+    last_updated_at VARCHAR (20) NOT NULL,
+    CONSTRAINT fk_blog
+        FOREIGN KEY(member_id)
+            REFERENCES members(member_id)
+);
+
 CREATE TABLE IF NOT EXISTS formations(
     formation_id    serial PRIMARY KEY,
     first_row_num   SMALLINT,
