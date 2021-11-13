@@ -1,12 +1,11 @@
 package data
 
-
 import (
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"os"
-	"encoding/json"
-	
+
 	_ "github.com/lib/pq"
 )
 
@@ -32,6 +31,12 @@ type Formation struct {
 	Position	[]Position `json:"positions"`
 }
 
+type Blog struct {
+	Name			string `json:"name"`
+	BlogUrl			string `json:"blog_url"`
+	LastBlogImg		string `json:"last_blog_img"`
+	LastUpdatedAt	string `json:"last_updated_at"`
+}
 
 func LoadMemberInfoFile(group string) []*Info {
 	// 実行ファイルからの相対パスなのでこの方式にしてる
@@ -51,7 +56,6 @@ func LoadMemberInfoFile(group string) []*Info {
 	return data
 }
 
-
 func LoadFormationFile(group string) []*Formation {
 	// 実行ファイルからの相対パスなのでこの方式にしてる
 	raw, err := ioutil.ReadFile("./db/data/positions_" + group + ".json")
@@ -68,4 +72,22 @@ func LoadFormationFile(group string) []*Formation {
     }
 
 	return formations
+}
+
+func LoadBlogInfoFile(group string) []*Blog {
+	// 実行ファイルからの相対パスなのでこの方式にしてる
+	raw, err := ioutil.ReadFile("./db/data/blogs/" + group + ".json")
+	if err != nil {
+		fmt.Println(err.Error())
+		os.Exit(1)
+	}
+	
+	data := make([]*Blog, 0)
+
+	err = json.Unmarshal(raw, &data)
+    if err != nil {
+        fmt.Println(err)
+    }
+
+	return data
 }

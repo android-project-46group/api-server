@@ -2,7 +2,7 @@ package data
 
 import (
 	"fmt"
-	
+
 	_ "github.com/lib/pq"
 )
 
@@ -44,4 +44,7 @@ func InsertMain() {
 
 	// tags table
 	InsertMemberTags()
+
+	// blogs table
+	InsertBlogs()
 }
