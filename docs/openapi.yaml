@@ -61,6 +61,62 @@ paths:
           description: internal server error
       tags:
         - developers
+  /blogs:
+    get:
+      summary: searches blogs
+      operationId: searchBlogs
+      description: |
+        ## By passing in the appropriate options, you can search for blog information.
+        available inventory in the system
+      parameters:
+        - in: query
+          name: gn
+          description: pass an Group Name for looking up blogs
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: key
+          description: pass an api key
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: search results matching criteria
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  blogs:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Blog'
+        '400':
+          description: bad input parameter
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  error:
+                    type: "string"
+                    example: "group name does not exist"
+        '403':
+          description: wrong or no api key
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  error:
+                    type: "string"
+                    example: "No valid api key"
+        '500':
+          description: internal server error
+      tags:
+        - developers
   /formations:
     get:
       summary: searches inventory
@@ -229,6 +285,21 @@ components:
         img_url:
           type: string
           example: https://kokoichi0206.mydns.jp/imgs/nogi/iwamotorenka.jpeg
+    Blog:
+      properties:
+        name:
+          type: string
+          example: 伊藤 理々杏
+        blog_url:
+          type: string
+          example: https://blog.nogizaka46.com/riria.itou
+        last_blog_img:
+          type: string
+          example: https://kokoichi0206.mydns.jp/imgs/nogi/iwamotorenka.jpeg
+        last_updated_at:
+          type: string
+          example: 2021/10/08 17:24
+      type: object
     Formation:
       required:
         - name
