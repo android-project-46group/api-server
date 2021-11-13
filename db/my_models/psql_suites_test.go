@@ -8,6 +8,8 @@ import "testing"
 func TestUpsert(t *testing.T) {
 	t.Run("APIKeys", testAPIKeysUpsert)
 
+	t.Run("Blogs", testBlogsUpsert)
+
 	t.Run("Formations", testFormationsUpsert)
 
 	t.Run("Groups", testGroupsUpsert)

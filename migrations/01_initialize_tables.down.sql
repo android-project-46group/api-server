@@ -1,3 +1,4 @@
+DROP TABLE IF EXISTS blogs;
 DROP TABLE IF EXISTS member_infos;
 DROP TABLE IF EXISTS member_tags;
 DROP TABLE IF EXISTS positions;
