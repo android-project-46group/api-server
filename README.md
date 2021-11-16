@@ -7,10 +7,17 @@ API server with ubuntu 20.04 on raspberry pi 4
 - golang
 - postgres
 
-## URL examples
+## System Architecture
+![System Architecture](./docs/system_architecture.png)
+
+## Database design
+![Database design](./docs/er.png)
+
+## API design
+[OpenAPI](./docs/openapi.yaml)
 
 ### DB Access (API)
-Test API KEY
+Using test API key
 
 - https://kokoichi0206.mydns.jp/api/v1/members?gn=nogizaka&key=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
 - https://kokoichi0206.mydns.jp/api/v1/songs?gn=nogizaka&key=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
