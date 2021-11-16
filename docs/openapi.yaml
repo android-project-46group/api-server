@@ -2,16 +2,15 @@ openapi: 3.0.0
 servers:
   # Added by API Auto Mocking Plugin
   # Added by API Auto Mocking Plugin
+  - url: https://kokoichi0206.mydns.jp/api/v1/
+    description: Raspberry Pi Server
   - description: SwaggerHub API Auto Mocking
     url: https://virtserver.swaggerhub.com/kokoichi206/Sakamichi/1.0.0
-  - url: https://kokoichi0206.mydns.jp/api/v1/
-    description: New Server 2
+
 info:
   description: This is a simple API
   version: "1.0.0"
-  title: Simple Inventory API
-  contact:
-    email: you@your-company.com
+  title: Sakamichi API
   license:
     name: Apache 2.0
     url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
@@ -26,12 +25,17 @@ paths:
       summary: searches members
       operationId: searchMembers
       description: |
-        ## By passing in the appropriate options, you can search for******
-        available inventory in the system
+        ## By passing the appropriate query parameter, you can get information about members.
       parameters:
         - in: query
           name: gn
-          description: pass an Group Name for looking up members
+          description: Group Name for searching members
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: key
+          description: API key
           required: true
           schema:
             type: string
@@ -57,6 +61,16 @@ paths:
                   error:
                     type: "string"
                     example: "group name does not exist"
+        '403':
+          description: wrong or no api key
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  error:
+                    type: "string"
+                    example: "No valid api key"
         '500':
           description: internal server error
       tags:
@@ -66,18 +80,17 @@ paths:
       summary: searches blogs
       operationId: searchBlogs
       description: |
-        ## By passing in the appropriate options, you can search for blog information.
-        available inventory in the system
+        ## By passing the appropriate query parameter, you can get information about blogs.
       parameters:
         - in: query
           name: gn
-          description: pass an Group Name for looking up blogs
+          description: Group Name for searching blogs
           required: true
           schema:
             type: string
         - in: query
           name: key
-          description: pass an api key
+          description: API key
           required: true
           schema:
             type: string
@@ -117,72 +130,23 @@ paths:
           description: internal server error
       tags:
         - developers
-  /formations:
-    get:
-      summary: searches inventory
-      operationId: searchFormations
-      description: |
-        By passing in the appropriate options, you can search for
-        available inventory in the system
-      parameters:
-        - in: query
-          name: searchString
-          description: pass an optional search string for looking up inventory
-          required: false
-          schema:
-            type: string
-        - in: query
-          name: skip
-          description: number of records to skip for pagination
-          schema:
-            type: integer
-            format: int32
-            minimum: 0
-        - in: query
-          name: limit
-          description: maximum number of records to return
-          schema:
-            type: integer
-            format: int32
-            minimum: 0
-            maximum: 50
-      responses:
-        '200':
-          description: search results matching criteria
-          content:
-            application/json:
-              schema:
-                type: "object"
-                properties:
-                  formations:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/Formation'
-        '400':
-          description: bad input parameter
-          content:
-            application/json:
-              schema:
-                type: "object"
-                properties:
-                  error:
-                    type: "string"
-                    example: "TODO: explain why failed"
-        '500':
-          description: internal server error
-      tags:
-        - developers
   /positions:
     get:
-      summary: searches inventory
+      summary: searches positions
       operationId: searchPositions
       description: |
-        Positions of a specific song
+        ## By passing the appropriate query parameter, you can get information about positions.
       parameters:
         - in: query
           name: title
-          description: pass the **title** of which you want to get the formation
-          required: false
+          description: Song title
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: key
+          description: API key
+          required: true
           schema:
             type: string
       responses:
@@ -206,7 +170,17 @@ paths:
                 properties:
                   error:
                     type: "string"
-                    example: "TODO: explain why failed"
+                    example: "Invalid title"
+        '403':
+          description: wrong or no api key
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  error:
+                    type: "string"
+                    example: "No valid api key"
         '500':
           description: internal server error
       tags:
@@ -221,6 +195,12 @@ paths:
         - in: query
           name: gn
           description: pass the group name
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: key
+          description: API key
           required: true
           schema:
             type: string
@@ -245,7 +225,17 @@ paths:
                 properties:
                   error:
                     type: "string"
-                    example: "TODO: explain why failed"
+                    example: "Invalid group name"
+        '403':
+          description: wrong or no api key
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  error:
+                    type: "string"
+                    example: "No valid api key"
         '500':
           description: internal server error
       tags:
@@ -299,21 +289,6 @@ components:
         last_updated_at:
           type: string
           example: 2021/10/08 17:24
-      type: object
-    Formation:
-      required:
-        - name
-      properties:
-        single:
-          type: string
-          example: '6th'
-        title:
-          type: string
-          example: 'ってか'
-        positions:
-          type: array
-          items:
-            $ref: '#/components/schemas/Position'
       type: object
     Position:
       properties:
