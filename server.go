@@ -32,11 +32,6 @@ func main() {
 		HandlerFunc(api.GetAllBlogs).
 		Methods("GET")
 
-	r.Path(rootPath + "/formations").
-		Queries("gn", "{gn}").
-		HandlerFunc(api.GetAllFormations).
-		Methods("GET")
-
 	r.Path(rootPath + "/songs").
 		Queries("gn", "{gn}").
 		HandlerFunc(api.GetAllSongs).

@@ -76,7 +76,7 @@ func LoadFormationFile(group string) []*Formation {
 
 func LoadBlogInfoFile(group string) []*Blog {
 	// 実行ファイルからの相対パスなのでこの方式にしてる
-	raw, err := ioutil.ReadFile("./db/data/blogs/" + group + ".json")
+	raw, err := ioutil.ReadFile("/home/ubuntu/work/go/web/db/data/blogs/" + group + ".json")
 	if err != nil {
 		fmt.Println(err.Error())
 		os.Exit(1)
