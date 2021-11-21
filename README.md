@@ -2,10 +2,10 @@
 API server with ubuntu 20.04 on raspberry pi 4
 
 ## Tech Stack
-- ubuntu
-- apache2
-- golang
-- postgres
+- ubuntu: 20.04
+- apache2: 2.4.41 (Ubuntu)
+- golang: 1.16 linux/arm64
+- postgres: 12.8 (Ubuntu 12.8-0ubuntu0.20.04.1)
 
 ## System Architecture
 ![System Architecture](./docs/system_architecture.png)
