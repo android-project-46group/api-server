@@ -8,13 +8,13 @@ import (
 	"github.com/android-project-46group/api-server/db"
 )
 
-func GetAllSongs(w http.ResponseWriter, r *http.Request) {
+func (server *Server) getAllSongs(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 
 	key := r.FormValue("key")
 
-	if !IsApiKeyValid(key) {
+	if !server.isApiKeyValid(key) {
 		// return error message
 		w.WriteHeader(http.StatusForbidden)
 		fmt.Fprint(w, ErrorJson("No valid api key"))

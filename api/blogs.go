@@ -11,13 +11,13 @@ import (
 /*
 * /blogs?gn=sakurazaka&key=xxxyyyzzzhogehoge
  */
-func GetAllBlogs(w http.ResponseWriter, r *http.Request) {
+func (server *Server) getAllBlogs(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 
 	key := r.FormValue("key")
 
-	if !IsApiKeyValid(key) {
+	if !server.isApiKeyValid(key) {
 		w.WriteHeader(http.StatusForbidden)
 		fmt.Fprint(w, ErrorJson("No valid api key"))
 		return
