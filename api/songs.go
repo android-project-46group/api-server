@@ -4,8 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-
-	"github.com/android-project-46group/api-server/db"
 )
 
 func (server *Server) getAllSongs(w http.ResponseWriter, r *http.Request) {
@@ -24,14 +22,14 @@ func (server *Server) getAllSongs(w http.ResponseWriter, r *http.Request) {
 	// get group name from query parameters
 	group := r.FormValue("gn")
 
-	if !db.ExistGroup(group) {
+	if !server.querier.ExistGroup(group) {
 		// return error message
 		w.WriteHeader(http.StatusBadRequest)
 		fmt.Fprint(w, ErrorJson("Invalid group name"))
 		return
 	}
 
-	dr, err := db.GetAllSongs(group)
+	dr, err := server.querier.GetAllSongs(group)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
@@ -42,7 +40,7 @@ func (server *Server) getAllSongs(w http.ResponseWriter, r *http.Request) {
 
 	for _, r := range dr {
 
-		center := db.GetCenter(r.Title)
+		center := server.querier.GetCenter(r.Title)
 		res = append(res, GetSongsResponse{
 			Single: r.Single,
 			Title:  r.Title,

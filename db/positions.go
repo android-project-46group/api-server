@@ -9,11 +9,11 @@ import (
 
 // Custom struct using two generated structs
 type PositionsInfoBind struct {
-	models.MemberInfo	`boil:",bind"`
-	models.Member		`boil:",bind"`
+	models.MemberInfo `boil:",bind"`
+	models.Member     `boil:",bind"`
 }
 
-func GetAllPositions(groupName string) ([]MemberInfoBind, error) {
+func (q *SqlQuerier) GetAllPositions(groupName string) ([]MemberInfoBind, error) {
 	var jMember []MemberInfoBind
 	err := models.Members(
 		qm.Select("member_infos.*", "members.*"),
@@ -25,12 +25,12 @@ func GetAllPositions(groupName string) ([]MemberInfoBind, error) {
 }
 
 type PositionMemberBind struct {
-	models.Position		`boil:",bind"`
-	models.Member		`boil:",bind"`
-	models.MemberInfo	`boil:",bind"`
+	models.Position   `boil:",bind"`
+	models.Member     `boil:",bind"`
+	models.MemberInfo `boil:",bind"`
 }
 
-func GetPositionFromTitle(title string) ([]PositionMemberBind, error) {
+func (q *SqlQuerier) GetPositionFromTitle(title string) ([]PositionMemberBind, error) {
 	var pMs []PositionMemberBind
 	err := models.Positions(
 		qm.Select("positions.*", "members.*", "member_infos.*"),

@@ -13,7 +13,7 @@ type MemberInfoBind struct {
 	models.Member     `boil:",bind"`
 }
 
-func GetAllMemberInfos(groupName string) ([]MemberInfoBind, error) {
+func (q *SqlQuerier) GetAllMemberInfos(groupName string) ([]MemberInfoBind, error) {
 	var jMember []MemberInfoBind
 	err := models.Members(
 		qm.Select("member_infos.*", "members.*"),

@@ -4,8 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-
-	"github.com/android-project-46group/api-server/db"
 )
 
 /*
@@ -27,7 +25,7 @@ func (server *Server) getPositions(w http.ResponseWriter, r *http.Request) {
 	// get group name from query parameters
 	title := r.FormValue("title")
 
-	pMs, err := db.GetPositionFromTitle(title)
+	pMs, err := server.querier.GetPositionFromTitle(title)
 	if len(pMs) == 0 {
 		// db error
 		w.WriteHeader(http.StatusBadRequest)

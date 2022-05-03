@@ -20,7 +20,7 @@ func main() {
 	}
 	defer _db.Close()
 
-	server, err := api.NewServer(config)
+	server, err := api.NewServer(config, &db.SqlQuerier{})
 	if err != nil {
 		log.Fatal("cannot create server:", err)
 	}

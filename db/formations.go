@@ -16,11 +16,11 @@ type PositionSongsBind struct {
 	models.Member   `boil:",bind"`
 }
 
-func GetAllFormations(groupName string) ([]PositionSongsBind, error) {
+func (q *SqlQuerier) GetAllFormations(groupName string) ([]PositionSongsBind, error) {
 
 	var sPositions []PositionSongsBind
 
-	g, gErr := FindGroupByName(groupName)
+	g, gErr := q.FindGroupByName(groupName)
 	if gErr != nil {
 		return sPositions, gErr
 	}
@@ -42,9 +42,7 @@ type SongFormationsBind struct {
 	Center           string `json:"center" boil:",bind"`
 }
 
-// models.Member	`boil:",bind"`
-
-func GetFormations(groupName string) ([]PositionSongsBind, error) {
+func (q *SqlQuerier) GetFormations(groupName string) ([]PositionSongsBind, error) {
 	var jMember []PositionSongsBind
 	err := models.Positions(
 		qm.Select("positions.*", "songs.*", "members.name_ja"),

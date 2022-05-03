@@ -4,8 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-
-	"github.com/android-project-46group/api-server/db"
 )
 
 /*
@@ -27,13 +25,13 @@ func (server *Server) getAllMembers(w http.ResponseWriter, r *http.Request) {
 	// get group name from query parameters
 	group := r.FormValue("gn")
 
-	if !db.ExistGroup(group) {
+	if !server.querier.ExistGroup(group) {
 		// return error message
 		w.WriteHeader(http.StatusBadRequest)
 		fmt.Fprint(w, ErrorJson("Error while"))
 		return
 	}
-	infos, err := db.GetAllMemberInfos(group)
+	infos, err := server.querier.GetAllMemberInfos(group)
 	if err != nil {
 		// db error
 		w.WriteHeader(http.StatusInternalServerError)

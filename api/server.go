@@ -7,19 +7,22 @@ import (
 
 	"github.com/gorilla/mux"
 
+	"github.com/android-project-46group/api-server/db"
 	"github.com/android-project-46group/api-server/util"
 )
 
 // Server serves HTTP requests for this service.
 type Server struct {
-	config util.Config
-	router *mux.Router
+	config  util.Config
+	querier db.Querier
+	router  *mux.Router
 }
 
 // Create a new server from the given config file.
-func NewServer(config util.Config) (*Server, error) {
+func NewServer(config util.Config, querier db.Querier) (*Server, error) {
 	server := &Server{
-		config: config,
+		config:  config,
+		querier: querier,
 	}
 
 	server.setupRouter()

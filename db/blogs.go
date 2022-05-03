@@ -12,9 +12,9 @@ type MemberBlogBind struct {
 	models.Member `boil:",bind"`
 }
 
-func GetAllBlogs(groupName string) ([]MemberBlogBind, error) {
+func (q *SqlQuerier) GetAllBlogs(groupName string) ([]MemberBlogBind, error) {
 
-	g, _ := FindGroupByName(groupName)
+	g, _ := q.FindGroupByName(groupName)
 
 	var mBlog []MemberBlogBind
 

@@ -5,10 +5,9 @@ import (
 	"github.com/volatiletech/sqlboiler/v4/queries/qm"
 
 	models "github.com/android-project-46group/api-server/db/my_models"
-	// "fmt"
 )
 
-func GetAllSongs(groupName string) (models.SongSlice, error) {
+func (q *SqlQuerier) GetAllSongs(groupName string) (models.SongSlice, error) {
 	s, err := models.Songs(
 		qm.InnerJoin("groups on groups.group_id = songs.group_id"),
 		qm.Where("groups.group_name = ?", groupName),
@@ -19,11 +18,11 @@ func GetAllSongs(groupName string) (models.SongSlice, error) {
 // Member まで持ってきているのは過剰かも。
 // NameJa など string でやろうとしたらできなかった
 type PositionMember struct {
-	models.Position	`boil:",bind"`
-	models.Member	`boil:",bind"`
+	models.Position `boil:",bind"`
+	models.Member   `boil:",bind"`
 }
 
-func GetCenter(title string) []string {
+func (q *SqlQuerier) GetCenter(title string) []string {
 	// センターは複数人になりうる
 	var pms []PositionSongsBind
 	var res []string

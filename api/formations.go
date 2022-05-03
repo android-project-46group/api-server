@@ -4,8 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-
-	"github.com/android-project-46group/api-server/db"
 )
 
 func (server *Server) getAllFormations(w http.ResponseWriter, r *http.Request) {
@@ -23,14 +21,14 @@ func (server *Server) getAllFormations(w http.ResponseWriter, r *http.Request) {
 	// get group name from query parameters
 	group := r.FormValue("gn")
 
-	if !db.ExistGroup(group) {
+	if !server.querier.ExistGroup(group) {
 		// return error message
 		w.WriteHeader(http.StatusBadRequest)
 		fmt.Fprint(w, ErrorJson("Invalid group name"))
 		return
 	}
 
-	dbRes, err := db.GetAllFormations(group)
+	dbRes, err := server.querier.GetAllFormations(group)
 	if err != nil {
 		// db error
 		w.WriteHeader(http.StatusInternalServerError)
