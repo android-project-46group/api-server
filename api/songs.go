@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"web/db"
+	"github.com/android-project-46group/api-server/db"
 )
 
 func GetAllSongs(w http.ResponseWriter, r *http.Request) {

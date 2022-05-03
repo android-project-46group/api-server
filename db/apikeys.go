@@ -5,11 +5,10 @@ import (
 	"github.com/volatiletech/sqlboiler/v4/boil"
 	"github.com/volatiletech/sqlboiler/v4/queries/qm"
 
-	models "web/db/my_models"
+	models "github.com/android-project-46group/api-server/db/my_models"
 )
 
-
-func InsertApiKey(key string) (error) {
+func InsertApiKey(key string) error {
 
 	s := &models.APIKey{KeyVal: key}
 

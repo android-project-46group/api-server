@@ -4,7 +4,7 @@ import (
 	_ "github.com/lib/pq"
 	"github.com/volatiletech/sqlboiler/v4/queries/qm"
 
-	models "web/db/my_models"
+	models "github.com/android-project-46group/api-server/db/my_models"
 )
 
 // Custom struct using two generated structs

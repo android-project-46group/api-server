@@ -1,7 +1,7 @@
 package api
 
 import (
-	"web/db"
+	"github.com/android-project-46group/api-server/db"
 )
 
 func IsApiKeyValid(key string) bool {
