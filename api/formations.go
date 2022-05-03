@@ -1,9 +1,9 @@
 package api
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
-	"encoding/json"
 
 	"web/db"
 )
@@ -12,7 +12,7 @@ func GetAllFormations(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 
 	key := r.FormValue("key")
-	
+
 	if !IsApiKeyValid(key) {
 		// return error message
 		w.WriteHeader(http.StatusForbidden)
@@ -50,14 +50,14 @@ func GetAllFormations(w http.ResponseWriter, r *http.Request) {
 
 		tmp = append(tmp, Position{
 			MemberName: r.Member.NameJa,
-			Position: r.Position.Position,
-			IsCenter: r.Position.IsCenter.Bool,
+			Position:   r.Position.Position,
+			IsCenter:   r.Position.IsCenter.Bool,
 		})
 
-		if i == len(dbRes) - 1{
+		if i == len(dbRes)-1 {
 			res = append(res, FormationResponse{
-				Single: r.Song.Single,
-				Title: r.Song.Title,
+				Single:    r.Song.Single,
+				Title:     r.Song.Title,
 				Positions: tmp,
 			})
 		} else {
@@ -65,8 +65,8 @@ func GetAllFormations(w http.ResponseWriter, r *http.Request) {
 			if dbRes[i+1].Song.SongID != currentSongId {
 				currentSongId = dbRes[i+1].Song.SongID
 				res = append(res, FormationResponse{
-					Single: r.Song.Single,
-					Title: r.Song.Title,
+					Single:    r.Song.Single,
+					Title:     r.Song.Title,
 					Positions: tmp,
 				})
 				tmp = nil
@@ -75,7 +75,7 @@ func GetAllFormations(w http.ResponseWriter, r *http.Request) {
 	}
 
 	jRes, _ := json.Marshal(
-		map[string]interface{} {
+		map[string]interface{}{
 			"formations": res,
 		},
 	)

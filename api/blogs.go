@@ -1,22 +1,22 @@
 package api
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
-	"encoding/json"
 
 	"web/db"
 )
 
 /*
 * /blogs?gn=sakurazaka&key=xxxyyyzzzhogehoge
-*/
+ */
 func GetAllBlogs(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 
 	key := r.FormValue("key")
-	
+
 	if !IsApiKeyValid(key) {
 		w.WriteHeader(http.StatusForbidden)
 		fmt.Fprint(w, ErrorJson("No valid api key"))
@@ -41,9 +41,9 @@ func GetAllBlogs(w http.ResponseWriter, r *http.Request) {
 	var res []BlogResponse
 	for _, b := range blogs {
 		m := BlogResponse{
-			MemberName: b.Member.NameJa,
-			BlogURL: b.Blog.BlogURL,
-			LastBlogImg: b.Blog.LastBlogImg,
+			MemberName:    b.Member.NameJa,
+			BlogURL:       b.Blog.BlogURL,
+			LastBlogImg:   b.Blog.LastBlogImg,
 			LastUpdatedAt: b.Blog.LastUpdatedAt,
 		}
 		res = append(res, m)
@@ -51,11 +51,11 @@ func GetAllBlogs(w http.ResponseWriter, r *http.Request) {
 
 	// make json for http response
 	jsonRes, _ := json.Marshal(
-		map[string]interface{} {
+		map[string]interface{}{
 			"blogs": res,
 		},
 	)
-	
+
 	w.WriteHeader(http.StatusOK)
 	fmt.Fprint(w, string(jsonRes))
 }

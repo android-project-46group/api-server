@@ -1,20 +1,19 @@
 package api
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
-	"encoding/json"
 
 	"web/db"
 )
 
-
 func GetAllSongs(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
-	
+
 	key := r.FormValue("key")
-	
+
 	if !IsApiKeyValid(key) {
 		// return error message
 		w.WriteHeader(http.StatusForbidden)
@@ -46,13 +45,13 @@ func GetAllSongs(w http.ResponseWriter, r *http.Request) {
 		center := db.GetCenter(r.Title)
 		res = append(res, GetSongsResponse{
 			Single: r.Single,
-			Title: r.Title,
+			Title:  r.Title,
 			Center: center,
 		})
 	}
 
 	jRes, _ := json.Marshal(
-		map[string]interface{} {
+		map[string]interface{}{
 			"songs": res,
 		},
 	)
