@@ -1,14 +1,9 @@
 package api
 
-import (
-	"web/db"
-)
-
-
-func IsApiKeyValid(key string) bool {
+func (server *Server) isApiKeyValid(key string) bool {
 	if key == "" {
 		return false
 	}
-	_, err := db.FindApiKeyByName(key)
+	_, err := server.querier.FindApiKeyByName(key)
 	return err == nil
 }

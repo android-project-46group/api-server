@@ -1,35 +1,26 @@
 package data
 
 import (
-	"database/sql"
-	"fmt"
 	"context"
-	
+	"database/sql"
+	"log"
+
+	"github.com/android-project-46group/api-server/util"
 	_ "github.com/lib/pq"
 )
 
-
 var (
-	// TODO: get from env
-	// DbPass = os.Getenv("DBPASSWORD")
-	DbName = "sakamichi"
-	DbPass = "sakamichi"
-	
-	UserInfo   = "host=localhost port=5432 user=ubuntu password=" + DbPass + " dbname=" + DbName + " sslmode=disable"
-
 	DB  *sql.DB
 	Ctx context.Context
 )
 
 func DbInit() (*sql.DB, error) {
-	con, err := Connect()
-	Ctx = context.Background()
-	return con, err
-}
+	config, err := util.LoadConfig(".")
+	if err != nil {
+		log.Fatal("cannot load config:", err)
+	}
 
-func Connect() (*sql.DB, error){
-	connection, err := sql.Open("postgres", UserInfo)
-	DB = connection
-	fmt.Println(DB)
-	return connection, err
+	Ctx = context.Background()
+	DB, err = sql.Open(config.DBDriver, config.DBSource)
+	return DB, err
 }

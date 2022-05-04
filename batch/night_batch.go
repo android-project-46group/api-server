@@ -1,7 +1,7 @@
 package main
 
 import (
-	"web/db/data"
+	"github.com/android-project-46group/api-server/db/data"
 )
 
 func main() {
