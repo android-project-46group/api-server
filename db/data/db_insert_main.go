@@ -1,20 +1,25 @@
 package data
 
 import (
-	"fmt"
+	"os"
 
+	models "github.com/android-project-46group/api-server/db/my_models"
 	_ "github.com/lib/pq"
 )
 
 func InsertMain() {
 	DB, err := DbInit()
 	if err != nil {
-		fmt.Println("connection error")
+		panic("connection error")
 	}
 	defer DB.Close()
 
 	if err := DB.Ping(); err != nil {
-		fmt.Println("PingError")
+		panic("db PingError")
+	}
+
+	if !shouldInsert() {
+		os.Exit(0)
 	}
 
 	// groups table
@@ -47,4 +52,12 @@ func InsertMain() {
 
 	// blogs table
 	InsertBlogs()
+}
+
+func shouldInsert() bool {
+	count, err := models.Members().Count(Ctx, DB)
+	if err != nil {
+		return false
+	}
+	return count == 0
 }

@@ -22,9 +22,9 @@ migratedown1:
 	migrate -path migrations -database "$(DB_URL)" -verbose down 1
 
 populate:
-    
+	go run db/data/populate/main.go
 
 mock:
 	mockgen -package mockdb -destination db/mock/querier.go github.com/android-project-46group/api-server/db Querier
 
-.PHONY: server postgres createdb dropdb migrateup migratedown migrateup1 migratedown1 mock
+.PHONY: server postgres createdb dropdb migrateup migratedown migrateup1 migratedown1 mock populate

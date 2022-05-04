@@ -12,7 +12,6 @@ import (
 func FindMemberByNameEn(nameEn string) (int, error) {
 	IMG_URL_BASE := "https://kokoichi0206.mydns.jp/imgs/"
 
-	fmt.Println(fmt.Sprintf("%s%s/%s.jpeg", IMG_URL_BASE, "nogi", nameEn))
 	member_info, err := models.MemberInfos(
 		qm.Select("*"),
 		qm.Where("img_url=?", fmt.Sprintf("%s%s/%s.jpeg", IMG_URL_BASE, "nogi", nameEn)),
