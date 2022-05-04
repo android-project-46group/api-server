@@ -15,6 +15,7 @@ COPY --from=builder /app/populate .
 COPY --from=builder /app/migrate ./migrate
 COPY app.env .
 COPY start.sh .
+COPY wait-for.sh .
 COPY migrations ./migrations
 COPY ./db/data/blogs ./db/data/blogs
 COPY ./db/data/info ./db/data/info
