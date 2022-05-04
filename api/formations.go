@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+
+	"github.com/android-project-46group/api-server/db"
 )
 
 func (server *Server) getAllFormations(w http.ResponseWriter, r *http.Request) {
@@ -34,13 +36,24 @@ func (server *Server) getAllFormations(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-	var res []FormationResponse
+
+	res := createFormationResponse(dbRes)
+
+	jRes, _ := json.Marshal(
+		map[string]interface{}{
+			"formations": res,
+		},
+	)
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprint(w, string(jRes))
+}
+
+func createFormationResponse(dbRes []db.PositionSongsBind) []FormationResponse {
 	if len(dbRes) == 0 {
-		// return error message
-		w.WriteHeader(http.StatusBadRequest)
-		fmt.Fprint(w, ErrorJson("No formation was registerd for this group"))
-		return
+		return nil
 	}
+
+	var res []FormationResponse
 
 	currentSongId := dbRes[0].Song.SongID
 	var tmp []Position
@@ -71,12 +84,5 @@ func (server *Server) getAllFormations(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 	}
-
-	jRes, _ := json.Marshal(
-		map[string]interface{}{
-			"formations": res,
-		},
-	)
-	w.WriteHeader(http.StatusOK)
-	fmt.Fprint(w, string(jRes))
+	return res
 }

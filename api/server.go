@@ -53,6 +53,11 @@ func (server *Server) setupRouter() {
 		HandlerFunc(server.getPositions).
 		Methods("GET")
 
+	r.Path(rootPath+"/formations").
+		Queries("gn", "{gn}").
+		HandlerFunc(server.getAllFormations).
+		Methods("GET")
+
 	server.router = r
 }
 

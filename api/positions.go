@@ -26,12 +26,6 @@ func (server *Server) getPositions(w http.ResponseWriter, r *http.Request) {
 	title := r.FormValue("title")
 
 	pMs, err := server.querier.GetPositionFromTitle(title)
-	if len(pMs) == 0 {
-		// db error
-		w.WriteHeader(http.StatusBadRequest)
-		fmt.Fprint(w, ErrorJson("Invalid title"))
-		return
-	}
 	if err != nil {
 		// db error
 		w.WriteHeader(http.StatusInternalServerError)
