@@ -20,6 +20,6 @@ func (q *SqlQuerier) GetAllMemberInfos(groupName string) ([]MemberInfoBind, erro
 		qm.InnerJoin("member_infos on members.member_id = member_infos.member_id"),
 		qm.InnerJoin("groups on groups.group_id = members.group_id"),
 		qm.Where("groups.group_name = ?", groupName),
-	).Bind(Ctx, DB, &jMember)
+	).Bind(q.ctx, q.DB, &jMember)
 	return jMember, err
 }

@@ -20,7 +20,7 @@ func (q *SqlQuerier) GetAllPositions(groupName string) ([]MemberInfoBind, error)
 		qm.InnerJoin("member_infos on members.member_id = member_infos.member_id"),
 		qm.InnerJoin("groups on groups.group_id = members.group_id"),
 		qm.Where("groups.group_name = ?", groupName),
-	).Bind(Ctx, DB, &jMember)
+	).Bind(q.ctx, q.DB, &jMember)
 	return jMember, err
 }
 
@@ -38,6 +38,6 @@ func (q *SqlQuerier) GetPositionFromTitle(title string) ([]PositionMemberBind, e
 		qm.InnerJoin("member_infos on member_infos.member_id = members.member_id"),
 		qm.InnerJoin("songs on songs.song_id = positions.song_id"),
 		qm.Where("songs.title = ?", title),
-	).Bind(Ctx, DB, &pMs)
+	).Bind(q.ctx, q.DB, &pMs)
 	return pMs, err
 }

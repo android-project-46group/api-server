@@ -14,13 +14,14 @@ func main() {
 		log.Fatal("cannot load config:", err)
 	}
 
-	_db, err := db.DbInit()
+	querier, err := db.NewQuerier(config)
 	if err != nil {
 		log.Fatal("cannot connect to db:", err)
 	}
-	defer _db.Close()
+	defer querier.DB.Close()
 
-	server, err := api.NewServer(config, &db.SqlQuerier{})
+	// DI to server
+	server, err := api.NewServer(config, querier)
 	if err != nil {
 		log.Fatal("cannot create server:", err)
 	}

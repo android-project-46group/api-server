@@ -4,9 +4,6 @@ import (
 	models "github.com/android-project-46group/api-server/db/my_models"
 )
 
-type SqlQuerier struct {
-}
-
 type Querier interface {
 	InsertApiKey(key string) error
 	FindApiKeyByName(key string) (*models.APIKey, error)

@@ -22,7 +22,7 @@ func (q *SqlQuerier) GetAllBlogs(groupName string) ([]MemberBlogBind, error) {
 		qm.Select("blogs.*", "members.*"),
 		qm.InnerJoin("members on members.member_id = blogs.member_id"),
 		qm.Where("members.group_id = ?", g.GroupID),
-	).Bind(Ctx, DB, &mBlog)
+	).Bind(q.ctx, q.DB, &mBlog)
 
 	return mBlog, err
 }

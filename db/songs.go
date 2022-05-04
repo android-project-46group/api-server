@@ -11,7 +11,7 @@ func (q *SqlQuerier) GetAllSongs(groupName string) (models.SongSlice, error) {
 	s, err := models.Songs(
 		qm.InnerJoin("groups on groups.group_id = songs.group_id"),
 		qm.Where("groups.group_name = ?", groupName),
-	).All(Ctx, DB)
+	).All(q.ctx, q.DB)
 	return s, err
 }
 
@@ -30,7 +30,7 @@ func (q *SqlQuerier) GetCenter(title string) []string {
 		qm.InnerJoin("songs on songs.song_id = positions.song_id"),
 		qm.Where("positions.is_center = true"),
 		qm.Where("groups.group_name = ?", title),
-	).Bind(Ctx, DB, &pms)
+	).Bind(q.ctx, q.DB, &pms)
 	if err != nil {
 		return res
 	}

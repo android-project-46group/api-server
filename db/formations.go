@@ -31,7 +31,7 @@ func (q *SqlQuerier) GetAllFormations(groupName string) ([]PositionSongsBind, er
 		qm.InnerJoin("members on members.member_id = positions.member_id"),
 		qm.Where("songs.group_id = ?", g.GroupID),
 		qm.OrderBy("songs.song_id DESC"),
-	).Bind(Ctx, DB, &sPositions)
+	).Bind(q.ctx, q.DB, &sPositions)
 	return sPositions, err
 }
 
@@ -49,6 +49,6 @@ func (q *SqlQuerier) GetFormations(groupName string) ([]PositionSongsBind, error
 		qm.InnerJoin("songs on songs.song_id = positions.song_id"),
 		qm.InnerJoin("members on members.member_id = positions.member_id"),
 		qm.Where("groups.group_name = ?", groupName),
-	).Bind(Ctx, DB, &jMember)
+	).Bind(q.ctx, q.DB, &jMember)
 	return jMember, err
 }
