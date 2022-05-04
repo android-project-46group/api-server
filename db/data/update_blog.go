@@ -3,7 +3,7 @@ package data
 import (
 	"fmt"
 
-	models "github.com/android-project-46group/api-server/db/my_models"
+	models "web/db/my_models"
 
 	"github.com/volatiletech/sqlboiler/v4/boil"
 	"github.com/volatiletech/sqlboiler/v4/queries/qm"
@@ -43,7 +43,7 @@ func UpdateBlogs() {
 				fmt.Println(err)
 				continue
 			}
-
+			
 			// Update information
 			g.LastUpdatedAt = blog.LastUpdatedAt
 			fmt.Println(g)
@@ -51,7 +51,7 @@ func UpdateBlogs() {
 				fmt.Printf("member_id %d の blog の更新に失敗しました", mId)
 				fmt.Println(err)
 			}
-
+			
 		}
 	}
 }
@@ -61,6 +61,6 @@ func FindBlogByMemberId(id int) (*models.Blog, error) {
 	g, err := models.Blogs(
 		qm.Where("member_id = ?", id),
 	).One(Ctx, DB)
-
+	
 	return g, err
 }

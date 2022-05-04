@@ -1,14 +1,15 @@
 package data
 
 import (
-	"fmt"
+    "fmt"
 
-	models "github.com/android-project-46group/api-server/db/my_models"
 	_ "github.com/lib/pq"
+	models "web/db/my_models"
 
 	"github.com/volatiletech/sqlboiler/v4/boil"
 	"github.com/volatiletech/sqlboiler/v4/queries/qm"
 )
+
 
 func InsertMemberTags() {
 	members, err := models.Members(qm.Select("*")).All(Ctx, DB)
@@ -33,16 +34,16 @@ func InsertMemberTags() {
 			continue
 		}
 
-		m := &models.MemberTag{
+		m := &models.MemberTag {
 			MemberID: member.MemberID,
-			TagID:    kTagId,
+			TagID: kTagId,
 		}
 
 		m.Insert(Ctx, DB, boil.Infer())
 	}
 
 	// 2nd tag
-	azatoMembers := []string{
+	azatoMembers := [] string {
 		"宮田 愛萌", "渡邉 美穂", "齊藤 京子", "加藤 史帆", "影山 優佳",
 	}
 	// Tagid を入手する
@@ -58,9 +59,9 @@ func InsertMemberTags() {
 		if ExistMemberTag(mId, aTagId) {
 			continue
 		}
-		m := &models.MemberTag{
+		m := &models.MemberTag {
 			MemberID: mId,
-			TagID:    aTagId,
+			TagID: aTagId,
 		}
 
 		m.Insert(Ctx, DB, boil.Infer())

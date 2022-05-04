@@ -3,28 +3,34 @@ package db
 import (
 	"context"
 	"database/sql"
-
-	"github.com/android-project-46group/api-server/util"
+	"fmt"
+	
 	_ "github.com/lib/pq"
 )
 
-// Implementation of Querier interface
-type SqlQuerier struct {
+
+var (
+	// TODO: get from env
+	// DbPass = os.Getenv("DBPASSWORD")
+	DbName = "sakamichi"
+	DbPass = "sakamichi"
+	
+	ConnectionString = 
+		fmt.Sprintf("host=localhost port=5432 user=ubuntu password=%s dbname=%s sslmode=disable", DbPass, DbName)
+
 	DB  *sql.DB
-	ctx context.Context
+	Ctx context.Context
+)
+
+func DbInit() (*sql.DB, error) {
+	con, err := Connect()
+	Ctx = context.Background()
+	return con, err
 }
 
-func NewQuerier(config util.Config) (*SqlQuerier, error) {
-
-	con, err := sql.Open(config.DBDriver, config.DBSource)
-	if err != nil {
-		return nil, err
-	}
-
-	querier := &SqlQuerier{
-		DB:  con,
-		ctx: context.Background(),
-	}
-
-	return querier, nil
+func Connect() (*sql.DB, error){
+	connection, err := sql.Open("postgres", ConnectionString)
+	DB = connection
+	
+	return connection, err
 }
