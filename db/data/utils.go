@@ -40,7 +40,7 @@ type Blog struct {
 
 func LoadMemberInfoFile(group string) []*Info {
 	// 実行ファイルからの相対パスなのでこの方式にしてる
-	raw, err := ioutil.ReadFile("./db/data/" + group + ".json")
+	raw, err := ioutil.ReadFile("./db/data/info/" + group + ".json")
 	if err != nil {
 		fmt.Println(err.Error())
 		os.Exit(1)
@@ -58,7 +58,7 @@ func LoadMemberInfoFile(group string) []*Info {
 
 func LoadFormationFile(group string) []*Formation {
 	// 実行ファイルからの相対パスなのでこの方式にしてる
-	raw, err := ioutil.ReadFile("./db/data/positions_" + group + ".json")
+	raw, err := ioutil.ReadFile("./db/data/info/positions_" + group + ".json")
 	if err != nil {
 		fmt.Println(err.Error())
 		os.Exit(1)

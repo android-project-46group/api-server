@@ -1,8 +1,6 @@
 package data
 
 import (
-	"fmt"
-
 	models "github.com/android-project-46group/api-server/db/my_models"
 
 	"github.com/volatiletech/sqlboiler/v4/boil"
@@ -15,13 +13,9 @@ func InsertSongs(groupName string) {
 	if err != nil {
 		return
 	}
-	fmt.Println(formations)
 	for _, formation := range formations {
 
-		fmt.Println(formation.Title)
 		formationId, err := FindFormationIdByPositions(formation.Position)
-
-		fmt.Println(formationId)
 
 		if err != nil {
 			continue
@@ -38,7 +32,6 @@ func InsertSongs(groupName string) {
 
 func FindFormationIdByPositions(positions []Position) (int, error) {
 	f := MakeFormations(positions)
-	fmt.Println(f)
 	ss, err := models.Formations(
 		qm.Where("first_row_num = ?", f[0]),
 		qm.Where("second_row_num = ?", f[1]),

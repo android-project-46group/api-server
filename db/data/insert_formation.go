@@ -1,8 +1,6 @@
 package data
 
 import (
-	"fmt"
-
 	models "github.com/android-project-46group/api-server/db/my_models"
 
 	"github.com/volatiletech/sqlboiler/v4/boil"
@@ -24,7 +22,6 @@ func InsertFormations() {
 		// 既に存在していたら追加しない
 		_, err := FindFormationIdByPositions(formation.Position)
 		if err == nil {
-			fmt.Println("Found formation of " + formation.Title)
 			continue
 		}
 		m.Insert(Ctx, DB, boil.Infer())
