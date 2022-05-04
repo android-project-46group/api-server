@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sakamichi-api-deployment
+  labels:
+    app: sakamichi-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sakamichi-api
+  template:
+    metadata:
+      labels:
+        app: sakamichi-api
+    spec:
+      containers:
+      - name: sakamichi-api
+        image: 835008509196.dkr.ecr.ap-northeast-1.amazonaws.com/sakamichi:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
