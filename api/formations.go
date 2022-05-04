@@ -1,19 +1,19 @@
 package api
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
-	"encoding/json"
 
-	"web/db"
+	"github.com/android-project-46group/api-server/db"
 )
 
-func GetAllFormations(w http.ResponseWriter, r *http.Request) {
+func (server *Server) getAllFormations(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 
 	key := r.FormValue("key")
-	
-	if !IsApiKeyValid(key) {
+
+	if !server.isApiKeyValid(key) {
 		// return error message
 		w.WriteHeader(http.StatusForbidden)
 		fmt.Fprint(w, ErrorJson("No valid api key"))
@@ -23,26 +23,37 @@ func GetAllFormations(w http.ResponseWriter, r *http.Request) {
 	// get group name from query parameters
 	group := r.FormValue("gn")
 
-	if !db.ExistGroup(group) {
+	if !server.querier.ExistGroup(group) {
 		// return error message
 		w.WriteHeader(http.StatusBadRequest)
 		fmt.Fprint(w, ErrorJson("Invalid group name"))
 		return
 	}
 
-	dbRes, err := db.GetAllFormations(group)
+	dbRes, err := server.querier.GetAllFormations(group)
 	if err != nil {
 		// db error
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-	var res []FormationResponse
+
+	res := createFormationResponse(dbRes)
+
+	jRes, _ := json.Marshal(
+		map[string]interface{}{
+			"formations": res,
+		},
+	)
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprint(w, string(jRes))
+}
+
+func createFormationResponse(dbRes []db.PositionSongsBind) []FormationResponse {
 	if len(dbRes) == 0 {
-		// return error message
-		w.WriteHeader(http.StatusBadRequest)
-		fmt.Fprint(w, ErrorJson("No formation was registerd for this group"))
-		return
+		return nil
 	}
+
+	var res []FormationResponse
 
 	currentSongId := dbRes[0].Song.SongID
 	var tmp []Position
@@ -50,14 +61,14 @@ func GetAllFormations(w http.ResponseWriter, r *http.Request) {
 
 		tmp = append(tmp, Position{
 			MemberName: r.Member.NameJa,
-			Position: r.Position.Position,
-			IsCenter: r.Position.IsCenter.Bool,
+			Position:   r.Position.Position,
+			IsCenter:   r.Position.IsCenter.Bool,
 		})
 
-		if i == len(dbRes) - 1{
+		if i == len(dbRes)-1 {
 			res = append(res, FormationResponse{
-				Single: r.Song.Single,
-				Title: r.Song.Title,
+				Single:    r.Song.Single,
+				Title:     r.Song.Title,
 				Positions: tmp,
 			})
 		} else {
@@ -65,20 +76,13 @@ func GetAllFormations(w http.ResponseWriter, r *http.Request) {
 			if dbRes[i+1].Song.SongID != currentSongId {
 				currentSongId = dbRes[i+1].Song.SongID
 				res = append(res, FormationResponse{
-					Single: r.Song.Single,
-					Title: r.Song.Title,
+					Single:    r.Song.Single,
+					Title:     r.Song.Title,
 					Positions: tmp,
 				})
 				tmp = nil
 			}
 		}
 	}
-
-	jRes, _ := json.Marshal(
-		map[string]interface{} {
-			"formations": res,
-		},
-	)
-	w.WriteHeader(http.StatusOK)
-	fmt.Fprint(w, string(jRes))
+	return res
 }
