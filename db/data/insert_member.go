@@ -25,14 +25,12 @@ func InsertMembersHinata() {
 	}
 
 	for _, info := range infos {
-		fmt.Printf("%s \n", info.Name)
 		// 1, 2 期生は日向の結成日
 		date := time.Date(2019, 2, 11, 9, 0, 0, 0, time.Local)
 		if info.Generation == "3期生" && info.Name != "上村ひなの" {
 			date = time.Date(2019, 9, 7, 9, 0, 0, 0, time.Local)
 		}
 		// 今回はひなたなので２
-		fmt.Println(info.Generation)
 		m := &models.Member{GroupID: groupId, NameJa: info.Name}
 		m.JoinedAt.Time = date
 		m.JoinedAt.Valid = true
@@ -68,7 +66,6 @@ func InsertMembersNogi() {
 	new_4th := [] string {"弓木 奈於", "松尾 美佑", "林 瑠奈", "佐藤 璃果", "黒見 明香"}
 
 	for _, info := range infos {
-		fmt.Printf("%s \n", info.Name)
 		date := time.Date(2011, 8, 21, 9, 0, 0, 0, time.Local)
 		if info.Generation == "2期生" {
 			date = time.Date(2013, 3, 28, 9, 0, 0, 0, time.Local)
@@ -84,7 +81,6 @@ func InsertMembersNogi() {
 			}
 		}
 
-		fmt.Println(info.Generation)
 		m := &models.Member{GroupID: groupId, NameJa: info.Name}
 		m.JoinedAt.Time = date
 		m.JoinedAt.Valid = true
@@ -147,11 +143,9 @@ func InsertMembersSakura() {
 	}
 
 	for _, info := range infos {
-		fmt.Printf("%s \n", info.Name)
-		// 1, 2 期生は日向の結成日
+		// 1, 2 期生は櫻の結成日
 		date := time.Date(2020, 10, 14, 9, 0, 0, 0, time.Local)
 		
-		fmt.Println(info.Generation)
 		m := &models.Member{GroupID: groupId, NameJa: info.Name}
 		m.JoinedAt.Time = date
 		m.JoinedAt.Valid = true

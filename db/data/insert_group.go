@@ -1,8 +1,6 @@
 package data
 
 import (
-	"fmt"
-
 	models "github.com/android-project-46group/api-server/db/my_models"
 
 	"github.com/volatiletech/sqlboiler/v4/boil"
@@ -12,7 +10,6 @@ import (
 func InsertGroups() {
 	groups := []string{"nogizaka", "sakurazaka", "hinatazaka"}
 	for _, group := range groups {
-		fmt.Println(group)
 		m := &models.Group{GroupName: group}
 		m.Insert(Ctx, DB, boil.Infer())
 	}
