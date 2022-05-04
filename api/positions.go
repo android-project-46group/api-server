@@ -1,23 +1,21 @@
 package api
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
-	"encoding/json"
-
-	"web/db"
 )
 
 /*
 * /members?gn=sakurazaka
-*/
-func GetPositions(w http.ResponseWriter, r *http.Request) {
+ */
+func (server *Server) getPositions(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 
 	key := r.FormValue("key")
-	
-	if !IsApiKeyValid(key) {
+
+	if !server.isApiKeyValid(key) {
 		// return error message
 		w.WriteHeader(http.StatusForbidden)
 		fmt.Fprint(w, ErrorJson("No valid api key"))
@@ -27,13 +25,7 @@ func GetPositions(w http.ResponseWriter, r *http.Request) {
 	// get group name from query parameters
 	title := r.FormValue("title")
 
-	pMs, err := db.GetPositionFromTitle(title)
-	if len(pMs) == 0 {
-		// db error
-		w.WriteHeader(http.StatusBadRequest)
-		fmt.Fprint(w, ErrorJson("Invalid title"))
-		return		
-	}
+	pMs, err := server.querier.GetPositionFromTitle(title)
 	if err != nil {
 		// db error
 		w.WriteHeader(http.StatusInternalServerError)
@@ -43,20 +35,20 @@ func GetPositions(w http.ResponseWriter, r *http.Request) {
 	for _, pm := range pMs {
 		m := GetPositionsResponse{
 			MemberName: pm.Member.NameJa,
-			ImgURL: pm.MemberInfo.ImgURL.String,
-			Position: pm.Position.Position,
-			IsCenter: pm.Position.IsCenter.Bool,
+			ImgURL:     pm.MemberInfo.ImgURL.String,
+			Position:   pm.Position.Position,
+			IsCenter:   pm.Position.IsCenter.Bool,
 		}
 		res = append(res, m)
 	}
 
 	// make json for http response
 	jsonRes, _ := json.Marshal(
-		map[string]interface{} {
+		map[string]interface{}{
 			"positions": res,
 		},
 	)
-	
+
 	w.WriteHeader(http.StatusOK)
 	fmt.Fprint(w, string(jsonRes))
 }

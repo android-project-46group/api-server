@@ -1,21 +1,18 @@
 package api
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
-	"encoding/json"
-
-	"web/db"
 )
 
-
-func GetAllSongs(w http.ResponseWriter, r *http.Request) {
+func (server *Server) getAllSongs(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
-	
+
 	key := r.FormValue("key")
-	
-	if !IsApiKeyValid(key) {
+
+	if !server.isApiKeyValid(key) {
 		// return error message
 		w.WriteHeader(http.StatusForbidden)
 		fmt.Fprint(w, ErrorJson("No valid api key"))
@@ -25,14 +22,14 @@ func GetAllSongs(w http.ResponseWriter, r *http.Request) {
 	// get group name from query parameters
 	group := r.FormValue("gn")
 
-	if !db.ExistGroup(group) {
+	if !server.querier.ExistGroup(group) {
 		// return error message
 		w.WriteHeader(http.StatusBadRequest)
 		fmt.Fprint(w, ErrorJson("Invalid group name"))
 		return
 	}
 
-	dr, err := db.GetAllSongs(group)
+	dr, err := server.querier.GetAllSongs(group)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
@@ -43,16 +40,16 @@ func GetAllSongs(w http.ResponseWriter, r *http.Request) {
 
 	for _, r := range dr {
 
-		center := db.GetCenter(r.Title)
+		center := server.querier.GetCenter(r.Title)
 		res = append(res, GetSongsResponse{
 			Single: r.Single,
-			Title: r.Title,
+			Title:  r.Title,
 			Center: center,
 		})
 	}
 
 	jRes, _ := json.Marshal(
-		map[string]interface{} {
+		map[string]interface{}{
 			"songs": res,
 		},
 	)
