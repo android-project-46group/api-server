@@ -14,6 +14,7 @@ func (server *Server) getAllFormations(w http.ResponseWriter, r *http.Request) {
 	key := r.FormValue("key")
 
 	if !server.isApiKeyValid(key) {
+		fmt.Printf("getAllFormations: access with invalid api key")
 		// return error message
 		w.WriteHeader(http.StatusForbidden)
 		fmt.Fprint(w, ErrorJson("No valid api key"))
@@ -24,6 +25,7 @@ func (server *Server) getAllFormations(w http.ResponseWriter, r *http.Request) {
 	group := r.FormValue("gn")
 
 	if !server.querier.ExistGroup(group) {
+		fmt.Printf("getAllFormations: access to invalid group name")
 		// return error message
 		w.WriteHeader(http.StatusBadRequest)
 		fmt.Fprint(w, ErrorJson("Invalid group name"))
@@ -32,6 +34,7 @@ func (server *Server) getAllFormations(w http.ResponseWriter, r *http.Request) {
 
 	dbRes, err := server.querier.GetAllFormations(group)
 	if err != nil {
+		fmt.Printf("getAllFormations: %v", err)
 		// db error
 		w.WriteHeader(http.StatusInternalServerError)
 		return

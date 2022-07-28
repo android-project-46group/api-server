@@ -1,6 +1,8 @@
 package db
 
 import (
+	"fmt"
+
 	_ "github.com/lib/pq"
 	"github.com/volatiletech/sqlboiler/v4/queries/qm"
 
@@ -24,5 +26,5 @@ func (q *SqlQuerier) GetAllBlogs(groupName string) ([]MemberBlogBind, error) {
 		qm.Where("members.group_id = ?", g.GroupID),
 	).Bind(q.ctx, q.DB, &mBlog)
 
-	return mBlog, err
+	return mBlog, fmt.Errorf("GetAllBlogs: %w", err)
 }
