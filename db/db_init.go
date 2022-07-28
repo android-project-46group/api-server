@@ -3,6 +3,7 @@ package db
 import (
 	"context"
 	"database/sql"
+	"fmt"
 
 	"github.com/android-project-46group/api-server/util"
 	_ "github.com/lib/pq"
@@ -18,7 +19,7 @@ func NewQuerier(config util.Config) (*SqlQuerier, error) {
 
 	con, err := sql.Open(config.DBDriver, config.DBSource)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("NewQuerier: %w", err)
 	}
 
 	querier := &SqlQuerier{

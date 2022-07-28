@@ -1,6 +1,8 @@
 package db
 
 import (
+	"fmt"
+
 	_ "github.com/lib/pq"
 	"github.com/volatiletech/sqlboiler/v4/queries/qm"
 
@@ -21,7 +23,7 @@ func (q *SqlQuerier) GetAllPositions(groupName string) ([]MemberInfoBind, error)
 		qm.InnerJoin("groups on groups.group_id = members.group_id"),
 		qm.Where("groups.group_name = ?", groupName),
 	).Bind(q.ctx, q.DB, &jMember)
-	return jMember, err
+	return jMember, fmt.Errorf("GetAllPositions: %w", err)
 }
 
 type PositionMemberBind struct {
@@ -39,5 +41,5 @@ func (q *SqlQuerier) GetPositionFromTitle(title string) ([]PositionMemberBind, e
 		qm.InnerJoin("songs on songs.song_id = positions.song_id"),
 		qm.Where("songs.title = ?", title),
 	).Bind(q.ctx, q.DB, &pMs)
-	return pMs, err
+	return pMs, fmt.Errorf("GetPositionFromTitle: %w", err)
 }

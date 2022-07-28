@@ -1,6 +1,8 @@
 package db
 
 import (
+	"fmt"
+
 	_ "github.com/lib/pq"
 	"github.com/volatiletech/sqlboiler/v4/queries/qm"
 
@@ -21,5 +23,5 @@ func (q *SqlQuerier) GetAllMemberInfos(groupName string) ([]MemberInfoBind, erro
 		qm.InnerJoin("groups on groups.group_id = members.group_id"),
 		qm.Where("groups.group_name = ?", groupName),
 	).Bind(q.ctx, q.DB, &jMember)
-	return jMember, err
+	return jMember, fmt.Errorf("GetAllMemberInfos: %w", err)
 }

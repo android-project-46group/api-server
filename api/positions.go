@@ -16,6 +16,7 @@ func (server *Server) getPositions(w http.ResponseWriter, r *http.Request) {
 	key := r.FormValue("key")
 
 	if !server.isApiKeyValid(key) {
+		fmt.Printf("getPositions: access with invalid api key")
 		// return error message
 		w.WriteHeader(http.StatusForbidden)
 		fmt.Fprint(w, ErrorJson("No valid api key"))
@@ -27,6 +28,7 @@ func (server *Server) getPositions(w http.ResponseWriter, r *http.Request) {
 
 	pMs, err := server.querier.GetPositionFromTitle(title)
 	if err != nil {
+		fmt.Printf("getPositions: %v", err)
 		// db error
 		w.WriteHeader(http.StatusInternalServerError)
 		return

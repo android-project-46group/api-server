@@ -13,6 +13,7 @@ func (server *Server) getAllSongs(w http.ResponseWriter, r *http.Request) {
 	key := r.FormValue("key")
 
 	if !server.isApiKeyValid(key) {
+		fmt.Printf("getAllSongs: access with invalid api key")
 		// return error message
 		w.WriteHeader(http.StatusForbidden)
 		fmt.Fprint(w, ErrorJson("No valid api key"))
@@ -23,6 +24,7 @@ func (server *Server) getAllSongs(w http.ResponseWriter, r *http.Request) {
 	group := r.FormValue("gn")
 
 	if !server.querier.ExistGroup(group) {
+		fmt.Printf("getAllSongs: access to invalid group name")
 		// return error message
 		w.WriteHeader(http.StatusBadRequest)
 		fmt.Fprint(w, ErrorJson("Invalid group name"))
@@ -31,6 +33,7 @@ func (server *Server) getAllSongs(w http.ResponseWriter, r *http.Request) {
 
 	dr, err := server.querier.GetAllSongs(group)
 	if err != nil {
+		fmt.Printf("getAllSongs: %v", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}

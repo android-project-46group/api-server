@@ -1,6 +1,8 @@
 package db
 
 import (
+	"fmt"
+
 	_ "github.com/lib/pq"
 	"github.com/volatiletech/sqlboiler/v4/queries/qm"
 
@@ -22,7 +24,7 @@ func (q *SqlQuerier) GetAllFormations(groupName string) ([]PositionSongsBind, er
 
 	g, gErr := q.FindGroupByName(groupName)
 	if gErr != nil {
-		return sPositions, gErr
+		return sPositions, fmt.Errorf("GetAllFormations: %w", gErr)
 	}
 
 	err := models.Positions(
@@ -32,7 +34,7 @@ func (q *SqlQuerier) GetAllFormations(groupName string) ([]PositionSongsBind, er
 		qm.Where("songs.group_id = ?", g.GroupID),
 		qm.OrderBy("songs.song_id DESC"),
 	).Bind(q.ctx, q.DB, &sPositions)
-	return sPositions, err
+	return sPositions, fmt.Errorf("GetAllFormations: %w", err)
 }
 
 // Custom struct using two generated structs
@@ -50,5 +52,5 @@ func (q *SqlQuerier) GetFormations(groupName string) ([]PositionSongsBind, error
 		qm.InnerJoin("members on members.member_id = positions.member_id"),
 		qm.Where("groups.group_name = ?", groupName),
 	).Bind(q.ctx, q.DB, &jMember)
-	return jMember, err
+	return jMember, fmt.Errorf("GetFormations: %w", err)
 }

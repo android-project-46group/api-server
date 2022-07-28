@@ -25,6 +25,7 @@ func (server *Server) getAllBlogs(w http.ResponseWriter, r *http.Request) {
 	group := r.FormValue("gn")
 
 	if !server.querier.ExistGroup(group) {
+		fmt.Printf("getAllBlogs: access to invalid group name")
 		// return error message
 		w.WriteHeader(http.StatusBadRequest)
 		fmt.Fprint(w, ErrorJson("Error: No valid group name"))
@@ -33,6 +34,7 @@ func (server *Server) getAllBlogs(w http.ResponseWriter, r *http.Request) {
 	blogs, err := server.querier.GetAllBlogs(group)
 	if err != nil {
 		// db error
+		fmt.Printf("getAllBlogs: %v", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}

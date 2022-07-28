@@ -1,10 +1,9 @@
 package data
 
-
 import (
 	"fmt"
 	"time"
-	
+
 	_ "github.com/lib/pq"
 	// "./db/data"
 	models "github.com/android-project-46group/api-server/db/my_models"
@@ -12,8 +11,6 @@ import (
 	"github.com/volatiletech/sqlboiler/v4/boil"
 	// "github.com/volatiletech/sqlboiler/v4/queries/qm"
 )
-
-
 
 func InsertMembersHinata() {
 	groupName := "hinatazaka"
@@ -34,7 +31,7 @@ func InsertMembersHinata() {
 		m := &models.Member{GroupID: groupId, NameJa: info.Name}
 		m.JoinedAt.Time = date
 		m.JoinedAt.Valid = true
-		
+
 		m.Insert(Ctx, DB, boil.Infer())
 	}
 
@@ -62,8 +59,8 @@ func InsertMembersNogi() {
 		fmt.Println("Group name " + groupName + " does not exist.")
 		return
 	}
-	
-	new_4th := [] string {"弓木 奈於", "松尾 美佑", "林 瑠奈", "佐藤 璃果", "黒見 明香"}
+
+	new_4th := []string{"弓木 奈於", "松尾 美佑", "林 瑠奈", "佐藤 璃果", "黒見 明香"}
 
 	for _, info := range infos {
 		date := time.Date(2011, 8, 21, 9, 0, 0, 0, time.Local)
@@ -74,7 +71,7 @@ func InsertMembersNogi() {
 		} else if info.Generation == "4期生" {
 			date = time.Date(2018, 12, 3, 9, 0, 0, 0, time.Local)
 		}
-		
+
 		for _, b := range new_4th {
 			if info.Name == b {
 				date = time.Date(2020, 2, 16, 9, 0, 0, 0, time.Local)
@@ -84,7 +81,7 @@ func InsertMembersNogi() {
 		m := &models.Member{GroupID: groupId, NameJa: info.Name}
 		m.JoinedAt.Time = date
 		m.JoinedAt.Valid = true
-		
+
 		m.Insert(Ctx, DB, boil.Infer())
 	}
 
@@ -123,7 +120,7 @@ func InsertMembersNogi() {
 	m.LeftAt.Time = time.Date(2021, 3, 28, 9, 0, 0, 0, time.Local)
 	m.LeftAt.Valid = true
 	m.Insert(Ctx, DB, boil.Infer())
-	
+
 	m = &models.Member{GroupID: groupId, NameJa: "白石 麻衣"}
 	m.JoinedAt.Time = time.Date(2011, 8, 21, 9, 0, 0, 0, time.Local)
 	m.JoinedAt.Valid = true
@@ -131,7 +128,6 @@ func InsertMembersNogi() {
 	m.LeftAt.Valid = true
 	m.Insert(Ctx, DB, boil.Infer())
 }
-
 
 func InsertMembersSakura() {
 	groupName := "sakurazaka"
@@ -145,11 +141,11 @@ func InsertMembersSakura() {
 	for _, info := range infos {
 		// 1, 2 期生は櫻の結成日
 		date := time.Date(2020, 10, 14, 9, 0, 0, 0, time.Local)
-		
+
 		m := &models.Member{GroupID: groupId, NameJa: info.Name}
 		m.JoinedAt.Time = date
 		m.JoinedAt.Valid = true
-		
+
 		m.Insert(Ctx, DB, boil.Infer())
 	}
 }
