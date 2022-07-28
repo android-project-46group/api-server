@@ -1,6 +1,8 @@
 package db
 
 import (
+	"fmt"
+
 	_ "github.com/lib/pq"
 	"github.com/volatiletech/sqlboiler/v4/queries/qm"
 
@@ -12,7 +14,7 @@ func (q *SqlQuerier) GetAllSongs(groupName string) (models.SongSlice, error) {
 		qm.InnerJoin("groups on groups.group_id = songs.group_id"),
 		qm.Where("groups.group_name = ?", groupName),
 	).All(q.ctx, q.DB)
-	return s, err
+	return s, fmt.Errorf("GetAllSongs: %w", err)
 }
 
 // Member まで持ってきているのは過剰かも。
