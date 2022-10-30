@@ -8,6 +8,7 @@
 # Usage:
 #   make this file exutable
 #   sh scripts/deploy_cgi.sh
+set -eu
 
 dir_name="/home/ubuntu/work/go/web"
 
@@ -19,7 +20,9 @@ if [ `pwd` != $dir_name ]; then
     exit 0
 fi
 
-go build -ldflags "-s -w" -o server.cgi server.go && \
+sed -i -E "s@IS_CGI=false@IS_CGI=true@g" app.env
+
+go build -ldflags "-s -w" -o server.cgi main.go && \
     sudo mv server.cgi /usr/lib/cgi-bin/ && \
     sudo systemctl restart apache2
 
