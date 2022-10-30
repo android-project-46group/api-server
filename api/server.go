@@ -74,3 +74,8 @@ func (server *Server) Start() error {
 
 	return http.ListenAndServe(server.config.ServerAddress, server.router)
 }
+
+// Serve as a CGI program.
+func (server *Server) CGI() {
+	cgi.Serve(server.router)
+}

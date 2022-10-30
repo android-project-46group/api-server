@@ -23,11 +23,8 @@ else
     exit 1
 fi
 
-# use ../.env file as a variable related db
-source ../.env
-
 # sslmode=disableは、通信が暗号化されてないという意味
-POSTGRESQL_URL="postgres://ubuntu:${DBPASSWORD}@localhost:5432/${DBNAME}?sslmode=disable"
+POSTGRESQL_URL="postgres://ubuntu:sakamichi@localhost:5432/sakamichi?sslmode=disable"
 
 migrate -path ../migrations -database "${POSTGRESQL_URL}" $1 $2
 echo "----------------------------"

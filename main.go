@@ -28,8 +28,12 @@ func main() {
 		log.Fatal("cannot create server:", err)
 	}
 
-	err = server.Start()
-	if err != nil {
-		log.Fatal("cannot start server:", err)
+	if config.IsCGI {
+		server.CGI()
+	} else {
+		err = server.Start()
+		if err != nil {
+			log.Fatal("cannot start server:", err)
+		}
 	}
 }
