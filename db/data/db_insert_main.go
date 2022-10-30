@@ -1,6 +1,7 @@
 package data
 
 import (
+	"fmt"
 	"os"
 
 	models "github.com/android-project-46group/api-server/db/my_models"
@@ -19,6 +20,7 @@ func InsertMain() {
 	}
 
 	if !shouldInsert() {
+		fmt.Println("Not need to insert")
 		os.Exit(0)
 	}
 
@@ -26,11 +28,16 @@ func InsertMain() {
 	InsertGroups()
 
 	// members table
+	fmt.Println("Insert members")
 	InsertMembersNogi()
 	InsertMembersSakura()
 	InsertMembersHinata()
 
+	// locales
+	InsertLocales()
+
 	// member_infos table
+	fmt.Println("Insert member_infos")
 	InsertMemberInfosHinata()
 	InsertMemberInfosNogi()
 	InsertMemberInfosSakura()
@@ -51,7 +58,13 @@ func InsertMain() {
 	InsertMemberTags()
 
 	// blogs table
+	fmt.Println("Insert blogs")
 	InsertBlogs()
+
+	// Default API key
+	InsertApiKey()
+
+	fmt.Println("Insert Done!")
 }
 
 func shouldInsert() bool {

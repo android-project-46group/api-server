@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/gorilla/mux"
+	"golang.org/x/text/language"
 
 	"github.com/android-project-46group/api-server/db"
 	"github.com/android-project-46group/api-server/util"
@@ -16,13 +17,16 @@ type Server struct {
 	config  util.Config
 	querier db.Querier
 	router  *mux.Router
+	matcher language.Matcher
 }
 
 // Create a new server from the given config file.
-func NewServer(config util.Config, querier db.Querier) (*Server, error) {
+func NewServer(config util.Config, querier db.Querier, matcher language.Matcher) (*Server, error) {
+
 	server := &Server{
 		config:  config,
 		querier: querier,
+		matcher: matcher,
 	}
 
 	server.setupRouter()

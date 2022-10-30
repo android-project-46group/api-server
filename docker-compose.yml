@@ -6,6 +6,8 @@ services:
       - POSTGRES_USER=ubuntu
       - POSTGRES_PASSWORD=sakamichi
       - POSTGRES_DB=sakamichi
+    ports:
+      - "5432:5432"
   api:
     build:
       context: .

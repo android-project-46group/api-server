@@ -4,6 +4,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+
+	models "github.com/android-project-46group/api-server/db/my_models"
+	"golang.org/x/text/language"
 )
 
 /*
@@ -12,6 +15,11 @@ import (
 func (server *Server) getAllMembers(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+
+	lang, _ := r.Cookie("lang")
+	accept := r.Header.Get("Accept-Language")
+	tag, _ := language.MatchStrings(server.matcher, lang.String(), accept)
+	locale := tag.String()[0:2]
 
 	key := r.FormValue("key")
 
@@ -33,7 +41,16 @@ func (server *Server) getAllMembers(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprint(w, ErrorJson("Error while"))
 		return
 	}
-	infos, err := server.querier.GetAllMemberInfos(group)
+
+	// 言語情報を取得する。
+	var l *models.Locale
+	l, err := server.querier.FindLocaleByName(locale)
+	if err != nil {
+		// DB に見つからなかった場合、デフォルトの情報を取得。
+		l, _ = server.querier.FindLocaleByName("ja")
+	}
+
+	infos, err := server.querier.GetAllMemberInfos(group, l.LocaleID)
 	if err != nil {
 		fmt.Printf("getAllFormations: %v", err)
 		// db error
