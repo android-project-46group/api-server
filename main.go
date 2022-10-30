@@ -20,8 +20,10 @@ func main() {
 	}
 	defer querier.DB.Close()
 
+	matcher := util.NewMatcher()
+
 	// DI to server
-	server, err := api.NewServer(config, querier)
+	server, err := api.NewServer(config, querier, matcher)
 	if err != nil {
 		log.Fatal("cannot create server:", err)
 	}
