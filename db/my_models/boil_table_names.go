@@ -8,6 +8,7 @@ var TableNames = struct {
 	Blogs            string
 	Formations       string
 	Groups           string
+	Locales          string
 	MemberInfos      string
 	MemberTags       string
 	Members          string
@@ -20,6 +21,7 @@ var TableNames = struct {
 	Blogs:            "blogs",
 	Formations:       "formations",
 	Groups:           "groups",
+	Locales:          "locales",
 	MemberInfos:      "member_infos",
 	MemberTags:       "member_tags",
 	Members:          "members",

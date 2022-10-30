@@ -14,6 +14,8 @@ func TestUpsert(t *testing.T) {
 
 	t.Run("Groups", testGroupsUpsert)
 
+	t.Run("Locales", testLocalesUpsert)
+
 	t.Run("MemberInfos", testMemberInfosUpsert)
 
 	t.Run("MemberTags", testMemberTagsUpsert)

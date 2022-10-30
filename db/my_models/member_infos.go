@@ -32,6 +32,7 @@ type MemberInfo struct {
 	Generation   string      `boil:"generation" json:"generation" toml:"generation" yaml:"generation"`
 	BlogURL      null.String `boil:"blog_url" json:"blog_url,omitempty" toml:"blog_url" yaml:"blog_url,omitempty"`
 	ImgURL       null.String `boil:"img_url" json:"img_url,omitempty" toml:"img_url" yaml:"img_url,omitempty"`
+	LocaleID     int         `boil:"locale_id" json:"locale_id" toml:"locale_id" yaml:"locale_id"`
 
 	R *memberInfoR `boil:"-" json:"-" toml:"-" yaml:"-"`
 	L memberInfoL  `boil:"-" json:"-" toml:"-" yaml:"-"`
@@ -46,6 +47,7 @@ var MemberInfoColumns = struct {
 	Generation   string
 	BlogURL      string
 	ImgURL       string
+	LocaleID     string
 }{
 	MemberInfoID: "member_info_id",
 	MemberID:     "member_id",
@@ -55,6 +57,7 @@ var MemberInfoColumns = struct {
 	Generation:   "generation",
 	BlogURL:      "blog_url",
 	ImgURL:       "img_url",
+	LocaleID:     "locale_id",
 }
 
 var MemberInfoTableColumns = struct {
@@ -66,6 +69,7 @@ var MemberInfoTableColumns = struct {
 	Generation   string
 	BlogURL      string
 	ImgURL       string
+	LocaleID     string
 }{
 	MemberInfoID: "member_infos.member_info_id",
 	MemberID:     "member_infos.member_id",
@@ -75,6 +79,7 @@ var MemberInfoTableColumns = struct {
 	Generation:   "member_infos.generation",
 	BlogURL:      "member_infos.blog_url",
 	ImgURL:       "member_infos.img_url",
+	LocaleID:     "member_infos.locale_id",
 }
 
 // Generated where
@@ -112,6 +117,7 @@ var MemberInfoWhere = struct {
 	Generation   whereHelperstring
 	BlogURL      whereHelpernull_String
 	ImgURL       whereHelpernull_String
+	LocaleID     whereHelperint
 }{
 	MemberInfoID: whereHelperint{field: "\"member_infos\".\"member_info_id\""},
 	MemberID:     whereHelperint{field: "\"member_infos\".\"member_id\""},
@@ -121,23 +127,34 @@ var MemberInfoWhere = struct {
 	Generation:   whereHelperstring{field: "\"member_infos\".\"generation\""},
 	BlogURL:      whereHelpernull_String{field: "\"member_infos\".\"blog_url\""},
 	ImgURL:       whereHelpernull_String{field: "\"member_infos\".\"img_url\""},
+	LocaleID:     whereHelperint{field: "\"member_infos\".\"locale_id\""},
 }
 
 // MemberInfoRels is where relationship names are stored.
 var MemberInfoRels = struct {
+	Locale string
 	Member string
 }{
+	Locale: "Locale",
 	Member: "Member",
 }
 
 // memberInfoR is where relationships are stored.
 type memberInfoR struct {
+	Locale *Locale `boil:"Locale" json:"Locale" toml:"Locale" yaml:"Locale"`
 	Member *Member `boil:"Member" json:"Member" toml:"Member" yaml:"Member"`
 }
 
 // NewStruct creates a new relationship struct
 func (*memberInfoR) NewStruct() *memberInfoR {
 	return &memberInfoR{}
+}
+
+func (r *memberInfoR) GetLocale() *Locale {
+	if r == nil {
+		return nil
+	}
+	return r.Locale
 }
 
 func (r *memberInfoR) GetMember() *Member {
@@ -151,8 +168,8 @@ func (r *memberInfoR) GetMember() *Member {
 type memberInfoL struct{}
 
 var (
-	memberInfoAllColumns            = []string{"member_info_id", "member_id", "birthday", "blood_type", "height", "generation", "blog_url", "img_url"}
-	memberInfoColumnsWithoutDefault = []string{"member_id", "birthday", "blood_type", "height", "generation"}
+	memberInfoAllColumns            = []string{"member_info_id", "member_id", "birthday", "blood_type", "height", "generation", "blog_url", "img_url", "locale_id"}
+	memberInfoColumnsWithoutDefault = []string{"member_id", "birthday", "blood_type", "height", "generation", "locale_id"}
 	memberInfoColumnsWithDefault    = []string{"member_info_id", "blog_url", "img_url"}
 	memberInfoPrimaryKeyColumns     = []string{"member_info_id"}
 	memberInfoGeneratedColumns      = []string{}
@@ -436,6 +453,17 @@ func (q memberInfoQuery) Exists(ctx context.Context, exec boil.ContextExecutor) 
 	return count > 0, nil
 }
 
+// Locale pointed to by the foreign key.
+func (o *MemberInfo) Locale(mods ...qm.QueryMod) localeQuery {
+	queryMods := []qm.QueryMod{
+		qm.Where("\"locale_id\" = ?", o.LocaleID),
+	}
+
+	queryMods = append(queryMods, mods...)
+
+	return Locales(queryMods...)
+}
+
 // Member pointed to by the foreign key.
 func (o *MemberInfo) Member(mods ...qm.QueryMod) memberQuery {
 	queryMods := []qm.QueryMod{
@@ -445,6 +473,110 @@ func (o *MemberInfo) Member(mods ...qm.QueryMod) memberQuery {
 	queryMods = append(queryMods, mods...)
 
 	return Members(queryMods...)
+}
+
+// LoadLocale allows an eager lookup of values, cached into the
+// loaded structs of the objects. This is for an N-1 relationship.
+func (memberInfoL) LoadLocale(ctx context.Context, e boil.ContextExecutor, singular bool, maybeMemberInfo interface{}, mods queries.Applicator) error {
+	var slice []*MemberInfo
+	var object *MemberInfo
+
+	if singular {
+		object = maybeMemberInfo.(*MemberInfo)
+	} else {
+		slice = *maybeMemberInfo.(*[]*MemberInfo)
+	}
+
+	args := make([]interface{}, 0, 1)
+	if singular {
+		if object.R == nil {
+			object.R = &memberInfoR{}
+		}
+		args = append(args, object.LocaleID)
+
+	} else {
+	Outer:
+		for _, obj := range slice {
+			if obj.R == nil {
+				obj.R = &memberInfoR{}
+			}
+
+			for _, a := range args {
+				if a == obj.LocaleID {
+					continue Outer
+				}
+			}
+
+			args = append(args, obj.LocaleID)
+
+		}
+	}
+
+	if len(args) == 0 {
+		return nil
+	}
+
+	query := NewQuery(
+		qm.From(`locales`),
+		qm.WhereIn(`locales.locale_id in ?`, args...),
+	)
+	if mods != nil {
+		mods.Apply(query)
+	}
+
+	results, err := query.QueryContext(ctx, e)
+	if err != nil {
+		return errors.Wrap(err, "failed to eager load Locale")
+	}
+
+	var resultSlice []*Locale
+	if err = queries.Bind(results, &resultSlice); err != nil {
+		return errors.Wrap(err, "failed to bind eager loaded slice Locale")
+	}
+
+	if err = results.Close(); err != nil {
+		return errors.Wrap(err, "failed to close results of eager load for locales")
+	}
+	if err = results.Err(); err != nil {
+		return errors.Wrap(err, "error occurred during iteration of eager loaded relations for locales")
+	}
+
+	if len(memberInfoAfterSelectHooks) != 0 {
+		for _, obj := range resultSlice {
+			if err := obj.doAfterSelectHooks(ctx, e); err != nil {
+				return err
+			}
+		}
+	}
+
+	if len(resultSlice) == 0 {
+		return nil
+	}
+
+	if singular {
+		foreign := resultSlice[0]
+		object.R.Locale = foreign
+		if foreign.R == nil {
+			foreign.R = &localeR{}
+		}
+		foreign.R.MemberInfos = append(foreign.R.MemberInfos, object)
+		return nil
+	}
+
+	for _, local := range slice {
+		for _, foreign := range resultSlice {
+			if local.LocaleID == foreign.LocaleID {
+				local.R.Locale = foreign
+				if foreign.R == nil {
+					foreign.R = &localeR{}
+				}
+				foreign.R.MemberInfos = append(foreign.R.MemberInfos, local)
+				break
+			}
+		}
+	}
+
+	return nil
 }
 
 // LoadMember allows an eager lookup of values, cached into the
@@ -546,6 +678,53 @@ func (memberInfoL) LoadMember(ctx context.Context, e boil.ContextExecutor, singu
 				break
 			}
 		}
+	}
+
+	return nil
+}
+
+// SetLocale of the memberInfo to the related item.
+// Sets o.R.Locale to related.
+// Adds o to related.R.MemberInfos.
+func (o *MemberInfo) SetLocale(ctx context.Context, exec boil.ContextExecutor, insert bool, related *Locale) error {
+	var err error
+	if insert {
+		if err = related.Insert(ctx, exec, boil.Infer()); err != nil {
+			return errors.Wrap(err, "failed to insert into foreign table")
+		}
+	}
+
+	updateQuery := fmt.Sprintf(
+		"UPDATE \"member_infos\" SET %s WHERE %s",
+		strmangle.SetParamNames("\"", "\"", 1, []string{"locale_id"}),
+		strmangle.WhereClause("\"", "\"", 2, memberInfoPrimaryKeyColumns),
+	)
+	values := []interface{}{related.LocaleID, o.MemberInfoID}
+
+	if boil.IsDebug(ctx) {
+		writer := boil.DebugWriterFrom(ctx)
+		fmt.Fprintln(writer, updateQuery)
+		fmt.Fprintln(writer, values)
+	}
+	if _, err = exec.ExecContext(ctx, updateQuery, values...); err != nil {
+		return errors.Wrap(err, "failed to update local table")
+	}
+
+	o.LocaleID = related.LocaleID
+	if o.R == nil {
+		o.R = &memberInfoR{
+			Locale: related,
+		}
+	} else {
+		o.R.Locale = related
+	}
+
+	if related.R == nil {
+		related.R = &localeR{
+			MemberInfos: MemberInfoSlice{o},
+		}
+	} else {
+		related.R.MemberInfos = append(related.R.MemberInfos, o)
 	}
 
 	return nil
