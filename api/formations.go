@@ -36,8 +36,6 @@ func (server *Server) getAllFormations(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		fmt.Printf("getAllFormations: %v", err)
 		// db error
-		w.WriteHeader(http.StatusInternalServerError)
-		return
 	}
 
 	res := createFormationResponse(dbRes)

@@ -34,8 +34,6 @@ func (server *Server) getAllSongs(w http.ResponseWriter, r *http.Request) {
 	dr, err := server.querier.GetAllSongs(group)
 	if err != nil {
 		fmt.Printf("getAllSongs: %v", err)
-		w.WriteHeader(http.StatusInternalServerError)
-		return
 	}
 
 	// GetSongsResponse

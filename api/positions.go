@@ -30,8 +30,6 @@ func (server *Server) getPositions(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		fmt.Printf("getPositions: %v", err)
 		// db error
-		w.WriteHeader(http.StatusInternalServerError)
-		return
 	}
 	var res []GetPositionsResponse
 	for _, pm := range pMs {

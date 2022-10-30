@@ -35,8 +35,6 @@ func (server *Server) getAllBlogs(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		// db error
 		fmt.Printf("getAllBlogs: %v", err)
-		w.WriteHeader(http.StatusInternalServerError)
-		return
 	}
 	var res []BlogResponse
 	for _, b := range blogs {

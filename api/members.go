@@ -54,8 +54,6 @@ func (server *Server) getAllMembers(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		fmt.Printf("getAllFormations: %v", err)
 		// db error
-		w.WriteHeader(http.StatusInternalServerError)
-		return
 	}
 	var res []MemberInfoResponse
 	for _, info := range infos {
