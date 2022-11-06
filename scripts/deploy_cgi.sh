@@ -12,7 +12,7 @@ set -eu
 
 dir_name="/home/ubuntu/work/go/web"
 
-if [ `pwd` != $dir_name ]; then
+if [ "$(pwd)" != $dir_name ]; then
     echo "You should use this file at the following directory."
     echo "$dir_name"
     echo ""
