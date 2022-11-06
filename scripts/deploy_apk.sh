@@ -10,7 +10,7 @@
 #
 
 # Working dir
-WORKING_DIR="/home/ubuntu/work/tmp/`TZ='Japan' date +%Y_%m%d_%H%M%S`/"
+WORKING_DIR="/home/ubuntu/work/tmp/$(TZ='Japan' date +%Y_%m%d_%H%M%S)/"
 LOG_OUT="log"
 LOG_ERR="error"
 mkdir -p "${WORKING_DIR}"
@@ -21,11 +21,11 @@ DELETE_DIR=false
 # Log settings
 exec 1> >(
     TZ='Japan' awk '{print strftime("[%Y-%m-%d %H:%M:%S]"),$0 } { fflush() } ' \
-    >> ${WORKING_DIR}${LOG_OUT}
+    >> "${WORKING_DIR}${LOG_OUT}"
 )
 exec 2> >(
     TZ='Japan' awk '{print strftime("[%Y-%m-%d %H:%M:%S]"),$0 } { fflush() } ' \
-    >> ${WORKING_DIR}${LOG_ERR}
+    >> "${WORKING_DIR}${LOG_ERR}"
 )
 
 # Constants for GitHub api
@@ -35,12 +35,12 @@ REPO_NAME="android"
 
 # Get id of the latest apk file.
 # Assume that id comes first, then name comes.
-ACTION_ID=`curl -s \
+ACTION_ID="$(curl -s \
     -H "Accept: application/vnd.github.v3+json" \
     $GITHUB_URL/repos/$MY_NAME/$REPO_NAME/actions/artifacts | \
     awk '{if($1 == "\"id\":"){id = $2}; 
     if($1 == "\"name\":" && $2 == "\"apk\","){print id; exit}}' | \
-    tr -d ,`
+    tr -d ,)"
 
 # Log: action id
 echo "action_id ${ACTION_ID}"
@@ -53,7 +53,7 @@ APK_NAME="app-debug.apk"
 curl -s \
     --netrc-file $PATH_TO_CREDENTIAL \
     -L \
-    -o ${WORKING_DIR}apk.zip \
+    -o "${WORKING_DIR}apk.zip" \
     $GITHUB_URL/repos/$MY_NAME/$REPO_NAME/actions/artifacts/$ACTION_ID/zip -f
 
 unzip "${WORKING_DIR}apk.zip" -d "$WORKING_DIR"

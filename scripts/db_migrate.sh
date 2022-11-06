@@ -30,5 +30,4 @@ migrate -path ../migrations -database "${POSTGRESQL_URL}" $1 $2
 echo "----------------------------"
 
 # 今作り直したDBから、SQLBoilerで使う構造体にも反映させる
-cd ../db
-sqlboiler psql
+cd ../db && sqlboiler psql
