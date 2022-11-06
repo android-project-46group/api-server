@@ -47,16 +47,17 @@ echo "action_id ${ACTION_ID}"
 
 # GitHub credential (name and token)
 PATH_TO_CREDENTIAL="/home/ubuntu/work/.secret/_netrc"
-APK_NAME="app-debug.apk"
+APK_NAME="SakamichiApp.apk"
 
 # Save apk.zip file to working_dir.
 curl -s \
     --netrc-file $PATH_TO_CREDENTIAL \
     -L \
     -o "${WORKING_DIR}apk.zip" \
-    $GITHUB_URL/repos/$MY_NAME/$REPO_NAME/actions/artifacts/$ACTION_ID/zip -f
+    "$GITHUB_URL/repos/$MY_NAME/$REPO_NAME/actions/artifacts/$ACTION_ID/zip" -f
 
 unzip "${WORKING_DIR}apk.zip" -d "$WORKING_DIR"
+mv "${WORKING_DIR}"*.apk "$WORKING_DIR${APK_NAME}"
 
 # Copy the downloaded apk file to the deploy folder.
 PATH_TO_DEPLOY_DIR="/var/www/html/"
