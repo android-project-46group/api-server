@@ -47,7 +47,7 @@ echo "action_id ${ACTION_ID}"
 
 # GitHub credential (name and token)
 PATH_TO_CREDENTIAL="/home/ubuntu/work/.secret/_netrc"
-APK_NAME="SakamichiApp.apk"
+APK_NAME="sakamichi-app.apk"
 
 # Save apk.zip file to working_dir.
 curl -s \
