@@ -1,6 +1,7 @@
 # API server
 
 [![License](https://img.shields.io/badge/license-MIT-blue)](./LICENSE)
+[![GoDoc](https://img.shields.io/badge/godoc-reference-5272B4)](https://pkg.go.dev/github.com/android-project-46group/api-server)
 [![Go Report Card](https://goreportcard.com/badge/android-project-46group/api-server)](http://goreportcard.com/report/android-project-46group/api-server)
 
 [![](https://img.shields.io/badge/android-555.svg?logo=kotlin)](https://github.com/android-project-46group/android)
