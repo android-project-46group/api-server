@@ -56,3 +56,7 @@ go install github.com/volatiletech/sqlboiler/v4/drivers/sqlboiler-psql@latest
 sqlboiler --version
 SQLBoiler v4.13.0
 ```
+
+## License
+
+This repository is under [MIT License](./LICENSE).
