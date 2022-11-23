@@ -1,5 +1,14 @@
 # API server
 
+[![License](https://img.shields.io/badge/license-MIT-blue)](./LICENSE)
+[![GoDoc](https://img.shields.io/badge/godoc-reference-5272B4)](https://pkg.go.dev/github.com/android-project-46group/api-server)
+[![Go Report Card](https://goreportcard.com/badge/android-project-46group/api-server)](http://goreportcard.com/report/android-project-46group/api-server)
+
+[![](https://img.shields.io/badge/android-555.svg?logo=kotlin)](https://github.com/android-project-46group/android)
+[![](https://img.shields.io/badge/server-555.svg?logo=go)](https://github.com/android-project-46group/api-server)
+[![](https://img.shields.io/badge/crawler-555.svg?logo=python)](https://github.com/android-project-46group/api)
+[![](https://img.shields.io/badge/ios-555.svg?logo=swift)](https://github.com/android-project-46group/ios)
+
 API server with ubuntu 20.04 on raspberry pi 4
 
 ## Tech Stack
@@ -56,3 +65,7 @@ go install github.com/volatiletech/sqlboiler/v4/drivers/sqlboiler-psql@latest
 sqlboiler --version
 SQLBoiler v4.13.0
 ```
+
+## License
+
+This repository is under [MIT License](./LICENSE).
