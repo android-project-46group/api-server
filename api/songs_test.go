@@ -41,7 +41,7 @@ func TestGetAllSongsAPI(t *testing.T) {
 				querier.EXPECT().
 					FindGroupByName(groupName).
 					Times(1).
-					Return(true)
+					Return(&models.Group{}, nil)
 			},
 			checkResponse: func(t *testing.T, recorder *httptest.ResponseRecorder) {
 				require.Equal(t, http.StatusOK, recorder.Code)
@@ -64,7 +64,7 @@ func TestGetAllSongsAPI(t *testing.T) {
 					Times(0)
 			},
 			checkResponse: func(t *testing.T, recorder *httptest.ResponseRecorder) {
-				require.Equal(t, http.StatusForbidden, recorder.Code)
+				require.Equal(t, http.StatusUnauthorized, recorder.Code)
 			},
 		},
 		{
@@ -81,7 +81,7 @@ func TestGetAllSongsAPI(t *testing.T) {
 				querier.EXPECT().
 					FindGroupByName(gomock.Any()).
 					Times(1).
-					Return(false)
+					Return(&models.Group{}, fmt.Errorf("failed to FindGroupByName: %w", sql.ErrNoRows))
 			},
 			checkResponse: func(t *testing.T, recorder *httptest.ResponseRecorder) {
 				require.Equal(t, http.StatusBadRequest, recorder.Code)
@@ -102,7 +102,7 @@ func TestGetAllSongsAPI(t *testing.T) {
 				querier.EXPECT().
 					FindGroupByName(groupName).
 					Times(1).
-					Return(true)
+					Return(&models.Group{}, nil)
 			},
 			checkResponse: func(t *testing.T, recorder *httptest.ResponseRecorder) {
 				require.Equal(t, http.StatusInternalServerError, recorder.Code)

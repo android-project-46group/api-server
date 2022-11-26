@@ -2,6 +2,7 @@ package api
 
 import (
 	"database/sql"
+	"errors"
 	"testing"
 
 	mockdb "github.com/android-project-46group/api-server/db/mock"
@@ -18,7 +19,7 @@ func TestIsApiKeyValid(t *testing.T) {
 		name       string
 		key        string
 		buildStubs func(store *mockdb.MockQuerier)
-		expected   bool
+		expected   error
 	}{
 		{
 			name: "OK",
@@ -29,7 +30,7 @@ func TestIsApiKeyValid(t *testing.T) {
 					Times(1).
 					Return(nil, nil)
 			},
-			expected: true,
+			expected: nil,
 		},
 		{
 			name: "InvalidKey",
@@ -40,7 +41,7 @@ func TestIsApiKeyValid(t *testing.T) {
 					Times(1).
 					Return(nil, sql.ErrNoRows)
 			},
-			expected: false,
+			expected: sql.ErrNoRows,
 		},
 		{
 			name: "EmptyKey",
@@ -50,7 +51,7 @@ func TestIsApiKeyValid(t *testing.T) {
 					FindApiKeyByName(gomock.Any()).
 					Times(0)
 			},
-			expected: false,
+			expected: errors.New("API key is empty"),
 		},
 	}
 

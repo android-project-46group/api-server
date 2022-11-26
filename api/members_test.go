@@ -10,6 +10,7 @@ import (
 
 	"github.com/android-project-46group/api-server/db"
 	mockdb "github.com/android-project-46group/api-server/db/mock"
+	models "github.com/android-project-46group/api-server/db/my_models"
 	"github.com/android-project-46group/api-server/util"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/require"
@@ -41,7 +42,11 @@ func TestGetAllMembersAPI(t *testing.T) {
 				store.EXPECT().
 					FindGroupByName(groupName).
 					Times(1).
-					Return(true)
+					Return(&models.Group{}, nil)
+				store.EXPECT().
+					FindLocaleByName("ja").
+					Times(1).
+					Return(&models.Locale{}, nil)
 			},
 			checkResponse: func(t *testing.T, recorder *httptest.ResponseRecorder) {
 				require.Equal(t, http.StatusOK, recorder.Code)
@@ -63,7 +68,7 @@ func TestGetAllMembersAPI(t *testing.T) {
 					Times(0)
 			},
 			checkResponse: func(t *testing.T, recorder *httptest.ResponseRecorder) {
-				require.Equal(t, http.StatusForbidden, recorder.Code)
+				require.Equal(t, http.StatusUnauthorized, recorder.Code)
 			},
 		},
 		{
@@ -80,7 +85,7 @@ func TestGetAllMembersAPI(t *testing.T) {
 				store.EXPECT().
 					FindGroupByName("not_existing_group").
 					Times(1).
-					Return(false)
+					Return(&models.Group{}, fmt.Errorf("Failed to FindGroupByName: %w", sql.ErrNoRows))
 			},
 			checkResponse: func(t *testing.T, recorder *httptest.ResponseRecorder) {
 				require.Equal(t, http.StatusBadRequest, recorder.Code)
@@ -101,7 +106,11 @@ func TestGetAllMembersAPI(t *testing.T) {
 				store.EXPECT().
 					FindGroupByName(groupName).
 					Times(1).
-					Return(true)
+					Return(&models.Group{}, nil)
+				store.EXPECT().
+					FindLocaleByName("ja").
+					Times(1).
+					Return(&models.Locale{}, nil)
 			},
 			checkResponse: func(t *testing.T, recorder *httptest.ResponseRecorder) {
 				require.Equal(t, http.StatusInternalServerError, recorder.Code)
