@@ -1,7 +1,9 @@
 package api
 
 import (
+	"database/sql"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 
@@ -23,26 +25,35 @@ func (server *Server) getAllMembers(w http.ResponseWriter, r *http.Request) {
 
 	key := r.FormValue("key")
 
-	if !server.isApiKeyValid(key) {
-		// return error message
-		w.WriteHeader(http.StatusForbidden)
-		fmt.Fprint(w, ErrorJson("No valid api key"))
+	if err := server.isApiKeyValid(key); err != nil {
+		if err == sql.ErrNoRows {
+			w.WriteHeader(http.StatusUnauthorized)
+			fmt.Fprint(w, ErrorJson("No valid api key"))
+			return
+		}
+		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprint(w, ErrorJson("Error while reading api key from DB"))
 		return
 	}
 
 	// get group name from query parameters
 	group := r.FormValue("gn")
 
-	if !server.querier.ExistGroup(group) {
-		// return error message
-		w.WriteHeader(http.StatusBadRequest)
-		fmt.Fprint(w, ErrorJson("Error while"))
+	_, err := server.querier.FindGroupByName(group)
+	if err != nil {
+		if errors.Unwrap(err) == sql.ErrNoRows {
+			w.WriteHeader(http.StatusBadRequest)
+			fmt.Fprint(w, ErrorJson("Invalid group name was passed."))
+			return
+		}
+		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprint(w, ErrorJson("Error while reading group from DB"))
 		return
 	}
 
 	// 言語情報を取得する。
 	var l *models.Locale
-	l, err := server.querier.FindLocaleByName(locale)
+	l, err = server.querier.FindLocaleByName(locale)
 	if err != nil {
 		// DB に見つからなかった場合、デフォルトの情報を取得。
 		l, _ = server.querier.FindLocaleByName("ja")

@@ -11,7 +11,6 @@ type Querier interface {
 	GetAllFormations(groupName string) ([]PositionSongsBind, error)
 	GetFormations(groupName string) ([]PositionSongsBind, error)
 	FindGroupByName(groupName string) (*models.Group, error)
-	ExistGroup(groupName string) bool
 	FindLocaleByName(name string) (*models.Locale, error)
 	GetAllMemberInfos(groupName string, localeId int) ([]MemberInfoBind, error)
 	GetAllPositions(groupName string) ([]MemberInfoBind, error)

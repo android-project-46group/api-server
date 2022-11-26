@@ -1,9 +1,13 @@
 package api
 
-func (server *Server) isApiKeyValid(key string) bool {
+import (
+	"errors"
+)
+
+func (server *Server) isApiKeyValid(key string) error {
 	if key == "" {
-		return false
+		return errors.New("API key is empty")
 	}
 	_, err := server.querier.FindApiKeyByName(key)
-	return err == nil
+	return err
 }

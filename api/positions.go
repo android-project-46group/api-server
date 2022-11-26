@@ -1,6 +1,7 @@
 package api
 
 import (
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -15,10 +16,14 @@ func (server *Server) getPositions(w http.ResponseWriter, r *http.Request) {
 
 	key := r.FormValue("key")
 
-	if !server.isApiKeyValid(key) {
-		// return error message
-		w.WriteHeader(http.StatusForbidden)
-		fmt.Fprint(w, ErrorJson("No valid api key"))
+	if err := server.isApiKeyValid(key); err != nil {
+		if err == sql.ErrNoRows {
+			w.WriteHeader(http.StatusUnauthorized)
+			fmt.Fprint(w, ErrorJson("No valid api key"))
+			return
+		}
+		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprint(w, ErrorJson("Error while reading api key from DB"))
 		return
 	}
 
