@@ -10,6 +10,7 @@ import (
 
 	"github.com/android-project-46group/api-server/db"
 	mockdb "github.com/android-project-46group/api-server/db/mock"
+	models "github.com/android-project-46group/api-server/db/my_models"
 	"github.com/android-project-46group/api-server/util"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/require"
@@ -31,7 +32,7 @@ func TestGetAllMembersAPI(t *testing.T) {
 			url:  fmt.Sprintf("/members?gn=%s&key=%s", groupName, key),
 			buildStubs: func(store *mockdb.MockQuerier) {
 				store.EXPECT().
-					GetAllMemberInfos(groupName).
+					GetAllMemberInfos(groupName, gomock.Any()).
 					Times(1).
 					Return([]db.MemberInfoBind{}, nil)
 				store.EXPECT().
@@ -39,12 +40,37 @@ func TestGetAllMembersAPI(t *testing.T) {
 					Times(1).
 					Return(nil, nil)
 				store.EXPECT().
-					ExistGroup(groupName).
+					FindGroupByName(groupName).
 					Times(1).
-					Return(true)
+					Return(&models.Group{}, nil)
+				store.EXPECT().
+					FindLocaleByName("ja").
+					Times(1).
+					Return(&models.Locale{}, nil)
 			},
 			checkResponse: func(t *testing.T, recorder *httptest.ResponseRecorder) {
 				require.Equal(t, http.StatusOK, recorder.Code)
+			},
+		},
+		{
+			name: "NoAPIKeyInQueryParameter",
+			url:  fmt.Sprintf("/members?gn=%s", groupName),
+			buildStubs: func(store *mockdb.MockQuerier) {
+				store.EXPECT().
+					GetAllMemberInfos(gomock.Any(), gomock.Any()).
+					Times(0)
+				store.EXPECT().
+					FindApiKeyByName(gomock.Any()).
+					Times(0)
+				store.EXPECT().
+					FindGroupByName(gomock.Any()).
+					Times(0)
+				store.EXPECT().
+					FindLocaleByName(gomock.Any()).
+					Times(0)
+			},
+			checkResponse: func(t *testing.T, recorder *httptest.ResponseRecorder) {
+				require.Equal(t, http.StatusNotFound, recorder.Code)
 			},
 		},
 		{
@@ -52,18 +78,61 @@ func TestGetAllMembersAPI(t *testing.T) {
 			url:  fmt.Sprintf("/members?gn=%s&key=%s", groupName, "invalid_key"),
 			buildStubs: func(store *mockdb.MockQuerier) {
 				store.EXPECT().
-					GetAllMemberInfos(groupName).
+					GetAllMemberInfos(groupName, gomock.Any()).
 					Times(0)
 				store.EXPECT().
 					FindApiKeyByName("invalid_key").
 					Times(1).
 					Return(nil, sql.ErrNoRows)
 				store.EXPECT().
-					ExistGroup(groupName).
+					FindGroupByName(groupName).
 					Times(0)
 			},
 			checkResponse: func(t *testing.T, recorder *httptest.ResponseRecorder) {
-				require.Equal(t, http.StatusForbidden, recorder.Code)
+				require.Equal(t, http.StatusUnauthorized, recorder.Code)
+			},
+		},
+		{
+			name: "InternalDBErrorWhenReadingAPIKey",
+			url:  fmt.Sprintf("/members?gn=%s&key=%s", groupName, key),
+			buildStubs: func(store *mockdb.MockQuerier) {
+				store.EXPECT().
+					GetAllMemberInfos(gomock.Any(), gomock.Any()).
+					Times(0)
+				store.EXPECT().
+					FindApiKeyByName(key).
+					Times(1).
+					Return(nil, sql.ErrConnDone)
+				store.EXPECT().
+					FindGroupByName(gomock.Any()).
+					Times(0)
+				store.EXPECT().
+					FindLocaleByName(gomock.Any()).
+					Times(0)
+			},
+			checkResponse: func(t *testing.T, recorder *httptest.ResponseRecorder) {
+				require.Equal(t, http.StatusInternalServerError, recorder.Code)
+			},
+		},
+		{
+			name: "NoGroupNameInQueryParameter",
+			url:  fmt.Sprintf("/members?key=%s", key),
+			buildStubs: func(store *mockdb.MockQuerier) {
+				store.EXPECT().
+					GetAllMemberInfos(gomock.Any(), gomock.Any()).
+					Times(0)
+				store.EXPECT().
+					FindApiKeyByName(gomock.Any()).
+					Times(0)
+				store.EXPECT().
+					FindGroupByName(gomock.Any()).
+					Times(0)
+				store.EXPECT().
+					FindLocaleByName(gomock.Any()).
+					Times(0)
+			},
+			checkResponse: func(t *testing.T, recorder *httptest.ResponseRecorder) {
+				require.Equal(t, http.StatusNotFound, recorder.Code)
 			},
 		},
 		{
@@ -71,19 +140,68 @@ func TestGetAllMembersAPI(t *testing.T) {
 			url:  fmt.Sprintf("/members?gn=%s&key=%s", "not_existing_group", key),
 			buildStubs: func(store *mockdb.MockQuerier) {
 				store.EXPECT().
-					GetAllMemberInfos(groupName).
+					GetAllMemberInfos(groupName, gomock.Any()).
 					Times(0)
 				store.EXPECT().
 					FindApiKeyByName(key).
 					Times(1).
 					Return(nil, nil)
 				store.EXPECT().
-					ExistGroup("not_existing_group").
+					FindGroupByName("not_existing_group").
 					Times(1).
-					Return(false)
+					Return(&models.Group{}, fmt.Errorf("Failed to FindGroupByName: %w", sql.ErrNoRows))
 			},
 			checkResponse: func(t *testing.T, recorder *httptest.ResponseRecorder) {
 				require.Equal(t, http.StatusBadRequest, recorder.Code)
+			},
+		},
+		{
+			name: "InternalDBErrorWhenReadingGroup",
+			url:  fmt.Sprintf("/members?gn=%s&key=%s", groupName, key),
+			buildStubs: func(store *mockdb.MockQuerier) {
+				store.EXPECT().
+					GetAllMemberInfos(groupName, gomock.Any()).
+					Times(0)
+				store.EXPECT().
+					FindApiKeyByName(key).
+					Times(1).
+					Return(nil, nil)
+				store.EXPECT().
+					FindGroupByName(groupName).
+					Times(1).
+					Return(&models.Group{}, fmt.Errorf("Failed to FindGroupByName: %w", sql.ErrConnDone))
+				store.EXPECT().
+					FindLocaleByName(gomock.Any()).
+					Times(0)
+			},
+			checkResponse: func(t *testing.T, recorder *httptest.ResponseRecorder) {
+				require.Equal(t, http.StatusInternalServerError, recorder.Code)
+			},
+		},
+		{
+			name: "NoExistingLocale",
+			url:  fmt.Sprintf("/members?gn=%s&key=%s", groupName, key),
+			buildStubs: func(store *mockdb.MockQuerier) {
+				store.EXPECT().
+					GetAllMemberInfos(groupName, gomock.Any()).
+					Times(1).
+					Return([]db.MemberInfoBind{}, nil)
+				store.EXPECT().
+					FindApiKeyByName(key).
+					Times(1).
+					Return(nil, nil)
+				store.EXPECT().
+					FindGroupByName(groupName).
+					Times(1).
+					Return(&models.Group{}, nil)
+				store.EXPECT().
+					FindLocaleByName(gomock.Any()).
+					Times(2).
+					Return(&models.Locale{}, sql.ErrNoRows)
+			},
+			checkResponse: func(t *testing.T, recorder *httptest.ResponseRecorder) {
+				// Not Stopped !!
+				require.Equal(t, http.StatusOK, recorder.Code)
 			},
 		},
 		{
@@ -91,7 +209,7 @@ func TestGetAllMembersAPI(t *testing.T) {
 			url:  fmt.Sprintf("/members?gn=%s&key=%s", groupName, key),
 			buildStubs: func(store *mockdb.MockQuerier) {
 				store.EXPECT().
-					GetAllMemberInfos(groupName).
+					GetAllMemberInfos(groupName, gomock.Any()).
 					Times(1).
 					Return(nil, errors.New("internal server error"))
 				store.EXPECT().
@@ -99,9 +217,13 @@ func TestGetAllMembersAPI(t *testing.T) {
 					Times(1).
 					Return(nil, nil)
 				store.EXPECT().
-					ExistGroup(groupName).
+					FindGroupByName(groupName).
 					Times(1).
-					Return(true)
+					Return(&models.Group{}, nil)
+				store.EXPECT().
+					FindLocaleByName("ja").
+					Times(1).
+					Return(&models.Locale{}, nil)
 			},
 			checkResponse: func(t *testing.T, recorder *httptest.ResponseRecorder) {
 				require.Equal(t, http.StatusInternalServerError, recorder.Code)
@@ -122,7 +244,8 @@ func TestGetAllMembersAPI(t *testing.T) {
 			}
 			querier := mockdb.NewMockQuerier(ctrl)
 			tc.buildStubs(querier)
-			server, err := NewServer(config, querier)
+			matcher := util.NewMatcher()
+			server, err := NewServer(config, querier, matcher)
 			require.NoError(t, err)
 			recorder := httptest.NewRecorder()
 

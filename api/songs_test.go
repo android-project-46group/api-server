@@ -39,13 +39,31 @@ func TestGetAllSongsAPI(t *testing.T) {
 					Times(1).
 					Return(nil, nil)
 				querier.EXPECT().
-					ExistGroup(groupName).
+					FindGroupByName(groupName).
 					Times(1).
-					Return(true)
+					Return(&models.Group{}, nil)
 			},
 			checkResponse: func(t *testing.T, recorder *httptest.ResponseRecorder) {
 				require.Equal(t, http.StatusOK, recorder.Code)
 				require.NotNil(t, recorder.Body)
+			},
+		},
+		{
+			name: "NoAPIKeyInQueryParameter",
+			url:  fmt.Sprintf("/songs?gn=%s", groupName),
+			buildStubs: func(querier *mockdb.MockQuerier) {
+				querier.EXPECT().
+					GetAllSongs(gomock.Any()).
+					Times(0)
+				querier.EXPECT().
+					FindApiKeyByName(gomock.Any()).
+					Times(0)
+				querier.EXPECT().
+					FindGroupByName(groupName).
+					Times(0)
+			},
+			checkResponse: func(t *testing.T, recorder *httptest.ResponseRecorder) {
+				require.Equal(t, http.StatusNotFound, recorder.Code)
 			},
 		},
 		{
@@ -60,11 +78,48 @@ func TestGetAllSongsAPI(t *testing.T) {
 					Times(1).
 					Return(nil, sql.ErrNoRows)
 				querier.EXPECT().
-					ExistGroup(gomock.Any()).
+					FindGroupByName(gomock.Any()).
 					Times(0)
 			},
 			checkResponse: func(t *testing.T, recorder *httptest.ResponseRecorder) {
-				require.Equal(t, http.StatusForbidden, recorder.Code)
+				require.Equal(t, http.StatusUnauthorized, recorder.Code)
+			},
+		},
+		{
+			name: "InternalDBErrorWhenReadingAPIKey",
+			url:  fmt.Sprintf("/songs?gn=%s&key=%s", groupName, key),
+			buildStubs: func(querier *mockdb.MockQuerier) {
+				querier.EXPECT().
+					GetAllSongs(gomock.Any()).
+					Times(0)
+				querier.EXPECT().
+					FindApiKeyByName(key).
+					Times(1).
+					Return(nil, sql.ErrConnDone)
+				querier.EXPECT().
+					FindGroupByName(gomock.Any()).
+					Times(0)
+			},
+			checkResponse: func(t *testing.T, recorder *httptest.ResponseRecorder) {
+				require.Equal(t, http.StatusInternalServerError, recorder.Code)
+			},
+		},
+		{
+			name: "NoGroupNameInQueryParameter",
+			url:  fmt.Sprintf("/songs?key=%s", key),
+			buildStubs: func(querier *mockdb.MockQuerier) {
+				querier.EXPECT().
+					GetAllSongs(gomock.Any()).
+					Times(0)
+				querier.EXPECT().
+					FindApiKeyByName(gomock.Any()).
+					Times(0)
+				querier.EXPECT().
+					FindGroupByName(groupName).
+					Times(0)
+			},
+			checkResponse: func(t *testing.T, recorder *httptest.ResponseRecorder) {
+				require.Equal(t, http.StatusNotFound, recorder.Code)
 			},
 		},
 		{
@@ -79,12 +134,32 @@ func TestGetAllSongsAPI(t *testing.T) {
 					Times(1).
 					Return(nil, nil)
 				querier.EXPECT().
-					ExistGroup(gomock.Any()).
+					FindGroupByName(gomock.Any()).
 					Times(1).
-					Return(false)
+					Return(&models.Group{}, fmt.Errorf("failed to FindGroupByName: %w", sql.ErrNoRows))
 			},
 			checkResponse: func(t *testing.T, recorder *httptest.ResponseRecorder) {
 				require.Equal(t, http.StatusBadRequest, recorder.Code)
+			},
+		},
+		{
+			name: "InternalDBErrorWhenReadingGroup",
+			url:  fmt.Sprintf("/songs?gn=%s&key=%s", groupName, key),
+			buildStubs: func(querier *mockdb.MockQuerier) {
+				querier.EXPECT().
+					GetAllSongs(gomock.Any()).
+					Times(0)
+				querier.EXPECT().
+					FindApiKeyByName(key).
+					Times(1).
+					Return(nil, nil)
+				querier.EXPECT().
+					FindGroupByName(groupName).
+					Times(1).
+					Return(&models.Group{}, fmt.Errorf("Failed to FindGroupByName: %w", sql.ErrConnDone))
+			},
+			checkResponse: func(t *testing.T, recorder *httptest.ResponseRecorder) {
+				require.Equal(t, http.StatusInternalServerError, recorder.Code)
 			},
 		},
 		{
@@ -100,9 +175,9 @@ func TestGetAllSongsAPI(t *testing.T) {
 					Times(1).
 					Return(nil, nil)
 				querier.EXPECT().
-					ExistGroup(groupName).
+					FindGroupByName(groupName).
 					Times(1).
-					Return(true)
+					Return(&models.Group{}, nil)
 			},
 			checkResponse: func(t *testing.T, recorder *httptest.ResponseRecorder) {
 				require.Equal(t, http.StatusInternalServerError, recorder.Code)
@@ -123,7 +198,8 @@ func TestGetAllSongsAPI(t *testing.T) {
 			}
 			querier := mockdb.NewMockQuerier(ctrl)
 			tc.buildStubs(querier)
-			server, err := NewServer(config, querier)
+			matcher := util.NewMatcher()
+			server, err := NewServer(config, querier, matcher)
 			require.NoError(t, err)
 			recorder := httptest.NewRecorder()
 

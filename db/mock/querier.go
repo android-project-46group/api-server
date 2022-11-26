@@ -35,20 +35,6 @@ func (m *MockQuerier) EXPECT() *MockQuerierMockRecorder {
 	return m.recorder
 }
 
-// ExistGroup mocks base method.
-func (m *MockQuerier) ExistGroup(arg0 string) bool {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ExistGroup", arg0)
-	ret0, _ := ret[0].(bool)
-	return ret0
-}
-
-// ExistGroup indicates an expected call of ExistGroup.
-func (mr *MockQuerierMockRecorder) ExistGroup(arg0 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ExistGroup", reflect.TypeOf((*MockQuerier)(nil).ExistGroup), arg0)
-}
-
 // FindApiKeyByName mocks base method.
 func (m *MockQuerier) FindApiKeyByName(arg0 string) (*models.APIKey, error) {
 	m.ctrl.T.Helper()
@@ -77,6 +63,21 @@ func (m *MockQuerier) FindGroupByName(arg0 string) (*models.Group, error) {
 func (mr *MockQuerierMockRecorder) FindGroupByName(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindGroupByName", reflect.TypeOf((*MockQuerier)(nil).FindGroupByName), arg0)
+}
+
+// FindLocaleByName mocks base method.
+func (m *MockQuerier) FindLocaleByName(arg0 string) (*models.Locale, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "FindLocaleByName", arg0)
+	ret0, _ := ret[0].(*models.Locale)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// FindLocaleByName indicates an expected call of FindLocaleByName.
+func (mr *MockQuerierMockRecorder) FindLocaleByName(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindLocaleByName", reflect.TypeOf((*MockQuerier)(nil).FindLocaleByName), arg0)
 }
 
 // GetAllBlogs mocks base method.
@@ -110,18 +111,18 @@ func (mr *MockQuerierMockRecorder) GetAllFormations(arg0 interface{}) *gomock.Ca
 }
 
 // GetAllMemberInfos mocks base method.
-func (m *MockQuerier) GetAllMemberInfos(arg0 string) ([]db.MemberInfoBind, error) {
+func (m *MockQuerier) GetAllMemberInfos(arg0 string, arg1 int) ([]db.MemberInfoBind, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetAllMemberInfos", arg0)
+	ret := m.ctrl.Call(m, "GetAllMemberInfos", arg0, arg1)
 	ret0, _ := ret[0].([]db.MemberInfoBind)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GetAllMemberInfos indicates an expected call of GetAllMemberInfos.
-func (mr *MockQuerierMockRecorder) GetAllMemberInfos(arg0 interface{}) *gomock.Call {
+func (mr *MockQuerierMockRecorder) GetAllMemberInfos(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAllMemberInfos", reflect.TypeOf((*MockQuerier)(nil).GetAllMemberInfos), arg0)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAllMemberInfos", reflect.TypeOf((*MockQuerier)(nil).GetAllMemberInfos), arg0, arg1)
 }
 
 // GetAllPositions mocks base method.
