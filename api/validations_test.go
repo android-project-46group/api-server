@@ -68,7 +68,8 @@ func TestIsApiKeyValid(t *testing.T) {
 			querier := mockdb.NewMockQuerier(ctrl)
 			tc.buildStubs(querier)
 
-			server, err := NewServer(config, querier)
+			matcher := util.NewMatcher()
+			server, err := NewServer(config, querier, matcher)
 			require.NoError(t, err)
 
 			result := server.isApiKeyValid(tc.key)

@@ -39,7 +39,7 @@ func TestGetAllFormationsAPI(t *testing.T) {
 					Times(1).
 					Return(nil, nil)
 				store.EXPECT().
-					ExistGroup(groupName).
+					FindGroupByName(groupName).
 					Times(1).
 					Return(true)
 			},
@@ -59,7 +59,7 @@ func TestGetAllFormationsAPI(t *testing.T) {
 					Times(1).
 					Return(nil, sql.ErrNoRows)
 				store.EXPECT().
-					ExistGroup(gomock.Any()).
+					FindGroupByName(gomock.Any()).
 					Times(0)
 			},
 			checkResponse: func(t *testing.T, recorder *httptest.ResponseRecorder) {
@@ -78,7 +78,7 @@ func TestGetAllFormationsAPI(t *testing.T) {
 					Times(1).
 					Return(nil, nil)
 				store.EXPECT().
-					ExistGroup("not_existing_group").
+					FindGroupByName("not_existing_group").
 					Times(1).
 					Return(false)
 			},
@@ -99,7 +99,7 @@ func TestGetAllFormationsAPI(t *testing.T) {
 					Times(1).
 					Return(nil, nil)
 				store.EXPECT().
-					ExistGroup(groupName).
+					FindGroupByName(groupName).
 					Times(1).
 					Return(true)
 			},
@@ -122,7 +122,8 @@ func TestGetAllFormationsAPI(t *testing.T) {
 			}
 			querier := mockdb.NewMockQuerier(ctrl)
 			tc.buildStubs(querier)
-			server, err := NewServer(config, querier)
+			mathcer := util.NewMatcher()
+			server, err := NewServer(config, querier, mathcer)
 			require.NoError(t, err)
 			recorder := httptest.NewRecorder()
 

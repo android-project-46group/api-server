@@ -31,7 +31,7 @@ func TestGetAllMembersAPI(t *testing.T) {
 			url:  fmt.Sprintf("/members?gn=%s&key=%s", groupName, key),
 			buildStubs: func(store *mockdb.MockQuerier) {
 				store.EXPECT().
-					GetAllMemberInfos(groupName).
+					GetAllMemberInfos(groupName, gomock.Any()).
 					Times(1).
 					Return([]db.MemberInfoBind{}, nil)
 				store.EXPECT().
@@ -39,7 +39,7 @@ func TestGetAllMembersAPI(t *testing.T) {
 					Times(1).
 					Return(nil, nil)
 				store.EXPECT().
-					ExistGroup(groupName).
+					FindGroupByName(groupName).
 					Times(1).
 					Return(true)
 			},
@@ -52,14 +52,14 @@ func TestGetAllMembersAPI(t *testing.T) {
 			url:  fmt.Sprintf("/members?gn=%s&key=%s", groupName, "invalid_key"),
 			buildStubs: func(store *mockdb.MockQuerier) {
 				store.EXPECT().
-					GetAllMemberInfos(groupName).
+					GetAllMemberInfos(groupName, gomock.Any()).
 					Times(0)
 				store.EXPECT().
 					FindApiKeyByName("invalid_key").
 					Times(1).
 					Return(nil, sql.ErrNoRows)
 				store.EXPECT().
-					ExistGroup(groupName).
+					FindGroupByName(groupName).
 					Times(0)
 			},
 			checkResponse: func(t *testing.T, recorder *httptest.ResponseRecorder) {
@@ -71,14 +71,14 @@ func TestGetAllMembersAPI(t *testing.T) {
 			url:  fmt.Sprintf("/members?gn=%s&key=%s", "not_existing_group", key),
 			buildStubs: func(store *mockdb.MockQuerier) {
 				store.EXPECT().
-					GetAllMemberInfos(groupName).
+					GetAllMemberInfos(groupName, gomock.Any()).
 					Times(0)
 				store.EXPECT().
 					FindApiKeyByName(key).
 					Times(1).
 					Return(nil, nil)
 				store.EXPECT().
-					ExistGroup("not_existing_group").
+					FindGroupByName("not_existing_group").
 					Times(1).
 					Return(false)
 			},
@@ -91,7 +91,7 @@ func TestGetAllMembersAPI(t *testing.T) {
 			url:  fmt.Sprintf("/members?gn=%s&key=%s", groupName, key),
 			buildStubs: func(store *mockdb.MockQuerier) {
 				store.EXPECT().
-					GetAllMemberInfos(groupName).
+					GetAllMemberInfos(groupName, gomock.Any()).
 					Times(1).
 					Return(nil, errors.New("internal server error"))
 				store.EXPECT().
@@ -99,7 +99,7 @@ func TestGetAllMembersAPI(t *testing.T) {
 					Times(1).
 					Return(nil, nil)
 				store.EXPECT().
-					ExistGroup(groupName).
+					FindGroupByName(groupName).
 					Times(1).
 					Return(true)
 			},
@@ -122,7 +122,8 @@ func TestGetAllMembersAPI(t *testing.T) {
 			}
 			querier := mockdb.NewMockQuerier(ctrl)
 			tc.buildStubs(querier)
-			server, err := NewServer(config, querier)
+			matcher := util.NewMatcher()
+			server, err := NewServer(config, querier, matcher)
 			require.NoError(t, err)
 			recorder := httptest.NewRecorder()
 

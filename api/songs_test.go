@@ -39,7 +39,7 @@ func TestGetAllSongsAPI(t *testing.T) {
 					Times(1).
 					Return(nil, nil)
 				querier.EXPECT().
-					ExistGroup(groupName).
+					FindGroupByName(groupName).
 					Times(1).
 					Return(true)
 			},
@@ -60,7 +60,7 @@ func TestGetAllSongsAPI(t *testing.T) {
 					Times(1).
 					Return(nil, sql.ErrNoRows)
 				querier.EXPECT().
-					ExistGroup(gomock.Any()).
+					FindGroupByName(gomock.Any()).
 					Times(0)
 			},
 			checkResponse: func(t *testing.T, recorder *httptest.ResponseRecorder) {
@@ -79,7 +79,7 @@ func TestGetAllSongsAPI(t *testing.T) {
 					Times(1).
 					Return(nil, nil)
 				querier.EXPECT().
-					ExistGroup(gomock.Any()).
+					FindGroupByName(gomock.Any()).
 					Times(1).
 					Return(false)
 			},
@@ -100,7 +100,7 @@ func TestGetAllSongsAPI(t *testing.T) {
 					Times(1).
 					Return(nil, nil)
 				querier.EXPECT().
-					ExistGroup(groupName).
+					FindGroupByName(groupName).
 					Times(1).
 					Return(true)
 			},
@@ -123,7 +123,8 @@ func TestGetAllSongsAPI(t *testing.T) {
 			}
 			querier := mockdb.NewMockQuerier(ctrl)
 			tc.buildStubs(querier)
-			server, err := NewServer(config, querier)
+			matcher := util.NewMatcher()
+			server, err := NewServer(config, querier, matcher)
 			require.NoError(t, err)
 			recorder := httptest.NewRecorder()
 

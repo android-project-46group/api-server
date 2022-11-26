@@ -55,7 +55,7 @@ func TestGetPositionsAPI(t *testing.T) {
 					Times(1).
 					Return(nil, sql.ErrNoRows)
 				store.EXPECT().
-					ExistGroup(gomock.Any()).
+					FindGroupByName(gomock.Any()).
 					Times(0)
 			},
 			checkResponse: func(t *testing.T, recorder *httptest.ResponseRecorder) {
@@ -94,7 +94,8 @@ func TestGetPositionsAPI(t *testing.T) {
 			}
 			querier := mockdb.NewMockQuerier(ctrl)
 			tc.buildStubs(querier)
-			server, err := NewServer(config, querier)
+			matcher := util.NewMatcher()
+			server, err := NewServer(config, querier, matcher)
 			require.NoError(t, err)
 			recorder := httptest.NewRecorder()
 
