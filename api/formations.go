@@ -1,7 +1,9 @@
 package api
 
 import (
+	"database/sql"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 
@@ -24,11 +26,15 @@ func (server *Server) getAllFormations(w http.ResponseWriter, r *http.Request) {
 	// get group name from query parameters
 	group := r.FormValue("gn")
 
-	if !server.querier.ExistGroup(group) {
-		fmt.Printf("getAllFormations: access to invalid group name")
-		// return error message
-		w.WriteHeader(http.StatusBadRequest)
-		fmt.Fprint(w, ErrorJson("Invalid group name"))
+	_, err := server.querier.FindGroupByName(group)
+	if err != nil {
+		if errors.Unwrap(err) == sql.ErrNoRows {
+			w.WriteHeader(http.StatusBadRequest)
+			fmt.Fprint(w, ErrorJson("Invalid group name was passed."))
+			return
+		}
+		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprint(w, ErrorJson("Error while reading group from DB"))
 		return
 	}
 
