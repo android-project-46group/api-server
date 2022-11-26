@@ -49,6 +49,24 @@ func TestGetAllSongsAPI(t *testing.T) {
 			},
 		},
 		{
+			name: "NoAPIKeyInQueryParameter",
+			url:  fmt.Sprintf("/songs?gn=%s", groupName),
+			buildStubs: func(querier *mockdb.MockQuerier) {
+				querier.EXPECT().
+					GetAllSongs(gomock.Any()).
+					Times(0)
+				querier.EXPECT().
+					FindApiKeyByName(gomock.Any()).
+					Times(0)
+				querier.EXPECT().
+					FindGroupByName(groupName).
+					Times(0)
+			},
+			checkResponse: func(t *testing.T, recorder *httptest.ResponseRecorder) {
+				require.Equal(t, http.StatusNotFound, recorder.Code)
+			},
+		},
+		{
 			name: "InvalidAPIKey",
 			url:  fmt.Sprintf("/songs?gn=%s&key=%s", groupName, "invalid_api_key"),
 			buildStubs: func(querier *mockdb.MockQuerier) {
@@ -65,6 +83,43 @@ func TestGetAllSongsAPI(t *testing.T) {
 			},
 			checkResponse: func(t *testing.T, recorder *httptest.ResponseRecorder) {
 				require.Equal(t, http.StatusUnauthorized, recorder.Code)
+			},
+		},
+		{
+			name: "InternalDBErrorWhenReadingAPIKey",
+			url:  fmt.Sprintf("/songs?gn=%s&key=%s", groupName, key),
+			buildStubs: func(querier *mockdb.MockQuerier) {
+				querier.EXPECT().
+					GetAllSongs(gomock.Any()).
+					Times(0)
+				querier.EXPECT().
+					FindApiKeyByName(key).
+					Times(1).
+					Return(nil, sql.ErrConnDone)
+				querier.EXPECT().
+					FindGroupByName(gomock.Any()).
+					Times(0)
+			},
+			checkResponse: func(t *testing.T, recorder *httptest.ResponseRecorder) {
+				require.Equal(t, http.StatusInternalServerError, recorder.Code)
+			},
+		},
+		{
+			name: "NoGroupNameInQueryParameter",
+			url:  fmt.Sprintf("/songs?key=%s", key),
+			buildStubs: func(querier *mockdb.MockQuerier) {
+				querier.EXPECT().
+					GetAllSongs(gomock.Any()).
+					Times(0)
+				querier.EXPECT().
+					FindApiKeyByName(gomock.Any()).
+					Times(0)
+				querier.EXPECT().
+					FindGroupByName(groupName).
+					Times(0)
+			},
+			checkResponse: func(t *testing.T, recorder *httptest.ResponseRecorder) {
+				require.Equal(t, http.StatusNotFound, recorder.Code)
 			},
 		},
 		{
@@ -85,6 +140,26 @@ func TestGetAllSongsAPI(t *testing.T) {
 			},
 			checkResponse: func(t *testing.T, recorder *httptest.ResponseRecorder) {
 				require.Equal(t, http.StatusBadRequest, recorder.Code)
+			},
+		},
+		{
+			name: "InternalDBErrorWhenReadingGroup",
+			url:  fmt.Sprintf("/songs?gn=%s&key=%s", groupName, key),
+			buildStubs: func(querier *mockdb.MockQuerier) {
+				querier.EXPECT().
+					GetAllSongs(gomock.Any()).
+					Times(0)
+				querier.EXPECT().
+					FindApiKeyByName(key).
+					Times(1).
+					Return(nil, nil)
+				querier.EXPECT().
+					FindGroupByName(groupName).
+					Times(1).
+					Return(&models.Group{}, fmt.Errorf("Failed to FindGroupByName: %w", sql.ErrConnDone))
+			},
+			checkResponse: func(t *testing.T, recorder *httptest.ResponseRecorder) {
+				require.Equal(t, http.StatusInternalServerError, recorder.Code)
 			},
 		},
 		{

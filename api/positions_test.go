@@ -44,6 +44,21 @@ func TestGetPositionsAPI(t *testing.T) {
 			},
 		},
 		{
+			name: "NoAPIKeyInQueryParameter",
+			url:  fmt.Sprintf("/positions?title=%s", title),
+			buildStubs: func(store *mockdb.MockQuerier) {
+				store.EXPECT().
+					GetPositionFromTitle(gomock.Any()).
+					Times(0)
+				store.EXPECT().
+					FindApiKeyByName(gomock.Any()).
+					Times(0)
+			},
+			checkResponse: func(t *testing.T, recorder *httptest.ResponseRecorder) {
+				require.Equal(t, http.StatusNotFound, recorder.Code)
+			},
+		},
+		{
 			name: "InvalidAPIKey",
 			url:  fmt.Sprintf("/positions?title=%s&key=%s", title, "invalid_key"),
 			buildStubs: func(store *mockdb.MockQuerier) {
@@ -60,6 +75,37 @@ func TestGetPositionsAPI(t *testing.T) {
 			},
 			checkResponse: func(t *testing.T, recorder *httptest.ResponseRecorder) {
 				require.Equal(t, http.StatusUnauthorized, recorder.Code)
+			},
+		},
+		{
+			name: "InternalDBErrorWhenReadingAPIKey",
+			url:  fmt.Sprintf("/positions?title=%s&key=%s", title, key),
+			buildStubs: func(store *mockdb.MockQuerier) {
+				store.EXPECT().
+					GetPositionFromTitle(gomock.Any()).
+					Times(0)
+				store.EXPECT().
+					FindApiKeyByName(key).
+					Times(1).
+					Return(nil, sql.ErrConnDone)
+			},
+			checkResponse: func(t *testing.T, recorder *httptest.ResponseRecorder) {
+				require.Equal(t, http.StatusInternalServerError, recorder.Code)
+			},
+		},
+		{
+			name: "NoTitleInQueryParameter",
+			url:  fmt.Sprintf("/positions?key=%s", key),
+			buildStubs: func(store *mockdb.MockQuerier) {
+				store.EXPECT().
+					GetPositionFromTitle(gomock.Any()).
+					Times(0)
+				store.EXPECT().
+					FindApiKeyByName(gomock.Any()).
+					Times(0)
+			},
+			checkResponse: func(t *testing.T, recorder *httptest.ResponseRecorder) {
+				require.Equal(t, http.StatusNotFound, recorder.Code)
 			},
 		},
 		{

@@ -49,6 +49,24 @@ func TestGetAllFormationsAPI(t *testing.T) {
 			},
 		},
 		{
+			name: "NoAPIKeyInQueryParameter",
+			url:  fmt.Sprintf("/formations?gn=%s", groupName),
+			buildStubs: func(store *mockdb.MockQuerier) {
+				store.EXPECT().
+					GetAllFormations(gomock.Any()).
+					Times(0)
+				store.EXPECT().
+					FindApiKeyByName(gomock.Any()).
+					Times(0)
+				store.EXPECT().
+					FindGroupByName(gomock.Any()).
+					Times(0)
+			},
+			checkResponse: func(t *testing.T, recorder *httptest.ResponseRecorder) {
+				require.Equal(t, http.StatusNotFound, recorder.Code)
+			},
+		},
+		{
 			name: "InvalidAPIKey",
 			url:  fmt.Sprintf("/formations?gn=%s&key=%s", groupName, "invalid_key"),
 			buildStubs: func(store *mockdb.MockQuerier) {
@@ -65,6 +83,43 @@ func TestGetAllFormationsAPI(t *testing.T) {
 			},
 			checkResponse: func(t *testing.T, recorder *httptest.ResponseRecorder) {
 				require.Equal(t, http.StatusUnauthorized, recorder.Code)
+			},
+		},
+		{
+			name: "InternalDBErrorWhenReadingAPIKey",
+			url:  fmt.Sprintf("/formations?gn=%s&key=%s", groupName, key),
+			buildStubs: func(store *mockdb.MockQuerier) {
+				store.EXPECT().
+					GetAllFormations(gomock.Any()).
+					Times(0)
+				store.EXPECT().
+					FindApiKeyByName(key).
+					Times(1).
+					Return(nil, sql.ErrConnDone)
+				store.EXPECT().
+					FindGroupByName(groupName).
+					Times(0)
+			},
+			checkResponse: func(t *testing.T, recorder *httptest.ResponseRecorder) {
+				require.Equal(t, http.StatusInternalServerError, recorder.Code)
+			},
+		},
+		{
+			name: "NoGroupNameInQueryParameter",
+			url:  fmt.Sprintf("/formations?key=%s", key),
+			buildStubs: func(store *mockdb.MockQuerier) {
+				store.EXPECT().
+					GetAllFormations(gomock.Any()).
+					Times(0)
+				store.EXPECT().
+					FindApiKeyByName(gomock.Any()).
+					Times(0)
+				store.EXPECT().
+					FindGroupByName(gomock.Any()).
+					Times(0)
+			},
+			checkResponse: func(t *testing.T, recorder *httptest.ResponseRecorder) {
+				require.Equal(t, http.StatusNotFound, recorder.Code)
 			},
 		},
 		{
@@ -85,6 +140,26 @@ func TestGetAllFormationsAPI(t *testing.T) {
 			},
 			checkResponse: func(t *testing.T, recorder *httptest.ResponseRecorder) {
 				require.Equal(t, http.StatusBadRequest, recorder.Code)
+			},
+		},
+		{
+			name: "InternalDBErrorWhenReadingGroup",
+			url:  fmt.Sprintf("/formations?gn=%s&key=%s", groupName, key),
+			buildStubs: func(store *mockdb.MockQuerier) {
+				store.EXPECT().
+					GetAllFormations(gomock.Any()).
+					Times(0)
+				store.EXPECT().
+					FindApiKeyByName(key).
+					Times(1).
+					Return(nil, nil)
+				store.EXPECT().
+					FindGroupByName(groupName).
+					Times(1).
+					Return(&models.Group{}, fmt.Errorf("Failed to FindGroupByName: %w", sql.ErrConnDone))
+			},
+			checkResponse: func(t *testing.T, recorder *httptest.ResponseRecorder) {
+				require.Equal(t, http.StatusInternalServerError, recorder.Code)
 			},
 		},
 		{
