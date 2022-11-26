@@ -39,26 +39,31 @@ func (server *Server) setupRouter() {
 	rootPath := os.Getenv("SCRIPT_NAME")
 	r.Path(rootPath+"/members").
 		Queries("gn", "{gn}").
+		Queries("key", "{key}").
 		HandlerFunc(server.getAllMembers).
 		Methods("GET")
 
 	r.Path(rootPath+"/blogs").
 		Queries("gn", "{gn}").
+		Queries("key", "{key}").
 		HandlerFunc(server.getAllBlogs).
 		Methods("GET")
 
 	r.Path(rootPath+"/songs").
 		Queries("gn", "{gn}").
+		Queries("key", "{key}").
 		HandlerFunc(server.getAllSongs).
 		Methods("GET")
 
 	r.Path(rootPath+"/positions").
 		Queries("title", "{title}").
+		Queries("key", "{key}").
 		HandlerFunc(server.getPositions).
 		Methods("GET")
 
 	r.Path(rootPath+"/formations").
 		Queries("gn", "{gn}").
+		Queries("key", "{key}").
 		HandlerFunc(server.getAllFormations).
 		Methods("GET")
 
