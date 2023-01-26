@@ -20,7 +20,10 @@ func (q *SqlQuerier) InsertLocale(ctx context.Context, name string) error {
 	s := &models.Locale{Name: name}
 
 	err := s.Insert(ctx, q.DB, boil.Infer())
-	return fmt.Errorf("InsertLocale: %w", err)
+	if err != nil {
+		return fmt.Errorf("failed to InsertLocale: %w", err)
+	}
+	return nil
 }
 
 func (q *SqlQuerier) FindLocaleByName(ctx context.Context, name string) (*models.Locale, error) {

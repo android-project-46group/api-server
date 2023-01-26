@@ -20,7 +20,10 @@ func (q *SqlQuerier) GetAllSongs(ctx context.Context, groupName string) (models.
 		qm.InnerJoin("groups on groups.group_id = songs.group_id"),
 		qm.Where("groups.group_name = ?", groupName),
 	).All(ctx, q.DB)
-	return s, fmt.Errorf("GetAllSongs: %w", err)
+	if err != nil {
+		return nil, fmt.Errorf("failed to GetAllSongs: %w", err)
+	}
+	return s, nil
 }
 
 // Member まで持ってきているのは過剰かも。

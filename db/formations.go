@@ -25,7 +25,7 @@ func (q *SqlQuerier) GetAllFormations(ctx context.Context, groupName string) ([]
 
 	g, gErr := q.FindGroupByName(ctx, groupName)
 	if gErr != nil {
-		return sPositions, fmt.Errorf("GetAllFormations: %w", gErr)
+		return nil, fmt.Errorf("GetAllFormations: %w", gErr)
 	}
 
 	err := models.Positions(
@@ -35,7 +35,10 @@ func (q *SqlQuerier) GetAllFormations(ctx context.Context, groupName string) ([]
 		qm.Where("songs.group_id = ?", g.GroupID),
 		qm.OrderBy("songs.song_id DESC"),
 	).Bind(ctx, q.DB, &sPositions)
-	return sPositions, fmt.Errorf("GetAllFormations: %w", err)
+	if err != nil {
+		return nil, fmt.Errorf("failed to GetAllFormations: %w", err)
+	}
+	return sPositions, nil
 }
 
 // Custom struct using two generated structs
@@ -53,5 +56,8 @@ func (q *SqlQuerier) GetFormations(ctx context.Context, groupName string) ([]Pos
 		qm.InnerJoin("members on members.member_id = positions.member_id"),
 		qm.Where("groups.group_name = ?", groupName),
 	).Bind(ctx, q.DB, &jMember)
-	return jMember, fmt.Errorf("GetFormations: %w", err)
+	if err != nil {
+		return nil, fmt.Errorf("failed to GetFormations: %w", err)
+	}
+	return jMember, nil
 }

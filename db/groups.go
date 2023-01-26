@@ -18,5 +18,8 @@ func (q *SqlQuerier) FindGroupByName(ctx context.Context, groupName string) (*mo
 
 	g, err := models.Groups(qm.Where("group_name = ?", groupName)).One(ctx, q.DB)
 
-	return g, fmt.Errorf("FindGroupByName: %w", err)
+	if err != nil {
+		return nil, fmt.Errorf("FindGroupByName: %w", err)
+	}
+	return g, nil
 }

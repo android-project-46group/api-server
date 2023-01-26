@@ -30,5 +30,8 @@ func (q *SqlQuerier) GetAllMemberInfos(ctx context.Context, groupName string, lo
 		qm.InnerJoin("groups on groups.group_id = members.group_id"),
 		qm.Where("groups.group_name = ?", groupName),
 	).Bind(ctx, q.DB, &jMember)
-	return jMember, fmt.Errorf("GetAllMemberInfos: %w", err)
+	if err != nil {
+		return nil, fmt.Errorf("GetAllMemberInfos: %w", err)
+	}
+	return jMember, nil
 }

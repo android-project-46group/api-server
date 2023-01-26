@@ -20,7 +20,10 @@ func (q *SqlQuerier) InsertApiKey(ctx context.Context, key string) error {
 	s := &models.APIKey{KeyVal: key}
 
 	err := s.Insert(ctx, q.DB, boil.Infer())
-	return fmt.Errorf("InsertApiKey: %w", err)
+	if err != nil {
+		return fmt.Errorf("failed to InsertApiKey: %w", err)
+	}
+	return nil
 }
 
 func (q *SqlQuerier) FindApiKeyByName(ctx context.Context, key string) (*models.APIKey, error) {
@@ -30,7 +33,7 @@ func (q *SqlQuerier) FindApiKeyByName(ctx context.Context, key string) (*models.
 
 	s, err := models.APIKeys(qm.Where("key_val=?", key)).One(ctx, q.DB)
 	if err != nil {
-		return nil, fmt.Errorf("FindApiKeyByName: %w", err)
+		return nil, fmt.Errorf("failed to FindApiKeyByName: %w", err)
 	}
 	return s, nil
 }

@@ -21,7 +21,7 @@ func (q *SqlQuerier) GetAllBlogs(ctx context.Context, groupName string) ([]Membe
 	span, ctx := tracer.StartSpanFromContext(ctx, "db.GetAllBlogs")
 	defer span.Finish()
 
-	g, _ := q.FindGroupByName(ctx , groupName)
+	g, _ := q.FindGroupByName(ctx, groupName)
 
 	var mBlog []MemberBlogBind
 
@@ -31,5 +31,8 @@ func (q *SqlQuerier) GetAllBlogs(ctx context.Context, groupName string) ([]Membe
 		qm.Where("members.group_id = ?", g.GroupID),
 	).Bind(ctx, q.DB, &mBlog)
 
-	return mBlog, fmt.Errorf("GetAllBlogs: %w", err)
+	if err != nil {
+		return nil, fmt.Errorf("failed to GetAllBlogs: %w", err)
+	}
+	return mBlog, nil
 }

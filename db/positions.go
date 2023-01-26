@@ -51,5 +51,8 @@ func (q *SqlQuerier) GetPositionFromTitle(ctx context.Context, title string) ([]
 		qm.InnerJoin("songs on songs.song_id = positions.song_id"),
 		qm.Where("songs.title = ?", title),
 	).Bind(ctx, q.DB, &pMs)
-	return pMs, fmt.Errorf("GetPositionFromTitle: %w", err)
+	if err != nil {
+		return nil, fmt.Errorf("failed to GetPositionFromTitle: %w", err)
+	}
+	return pMs, nil
 }
