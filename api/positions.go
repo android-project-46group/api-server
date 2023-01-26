@@ -5,6 +5,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+
+	"gopkg.in/DataDog/dd-trace-go.v1/ddtrace/tracer"
 )
 
 /*
@@ -12,11 +14,15 @@ import (
  */
 func (server *Server) getPositions(w http.ResponseWriter, r *http.Request) {
 
+	ctx := r.Context()
+	span, ctx := tracer.StartSpanFromContext(ctx, "api.getAllBlogs")
+	defer span.Finish()
+
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 
 	key := r.FormValue("key")
 
-	if err := server.isApiKeyValid(key); err != nil {
+	if err := server.isApiKeyValid(ctx, key); err != nil {
 		if err == sql.ErrNoRows {
 			w.WriteHeader(http.StatusUnauthorized)
 			fmt.Fprint(w, ErrorJson("No valid api key"))
@@ -30,7 +36,7 @@ func (server *Server) getPositions(w http.ResponseWriter, r *http.Request) {
 	// get group name from query parameters
 	title := r.FormValue("title")
 
-	pMs, err := server.querier.GetPositionFromTitle(title)
+	pMs, err := server.querier.GetPositionFromTitle(ctx, title)
 	if err != nil {
 		// db error
 		w.WriteHeader(http.StatusInternalServerError)

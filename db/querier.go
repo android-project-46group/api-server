@@ -1,20 +1,22 @@
 package db
 
 import (
+	"context"
+
 	models "github.com/android-project-46group/api-server/db/my_models"
 )
 
 type Querier interface {
-	InsertApiKey(key string) error
-	FindApiKeyByName(key string) (*models.APIKey, error)
-	GetAllBlogs(groupName string) ([]MemberBlogBind, error)
-	GetAllFormations(groupName string) ([]PositionSongsBind, error)
-	GetFormations(groupName string) ([]PositionSongsBind, error)
-	FindGroupByName(groupName string) (*models.Group, error)
-	FindLocaleByName(name string) (*models.Locale, error)
-	GetAllMemberInfos(groupName string, localeId int) ([]MemberInfoBind, error)
-	GetAllPositions(groupName string) ([]MemberInfoBind, error)
-	GetPositionFromTitle(title string) ([]PositionMemberBind, error)
-	GetAllSongs(groupName string) (models.SongSlice, error)
-	GetCenter(title string) []string
+	InsertApiKey(ctx context.Context, key string) error
+	FindApiKeyByName(ctx context.Context, key string) (*models.APIKey, error)
+	GetAllBlogs(ctx context.Context, groupName string) ([]MemberBlogBind, error)
+	GetAllFormations(ctx context.Context, groupName string) ([]PositionSongsBind, error)
+	GetFormations(ctx context.Context, groupName string) ([]PositionSongsBind, error)
+	FindGroupByName(ctx context.Context, groupName string) (*models.Group, error)
+	FindLocaleByName(ctx context.Context, name string) (*models.Locale, error)
+	GetAllMemberInfos(ctx context.Context, groupName string, localeId int) ([]MemberInfoBind, error)
+	GetAllPositions(ctx context.Context, groupName string) ([]MemberInfoBind, error)
+	GetPositionFromTitle(ctx context.Context, title string) ([]PositionMemberBind, error)
+	GetAllSongs(ctx context.Context, groupName string) (models.SongSlice, error)
+	GetCenter(ctx context.Context, title string) []string
 }
