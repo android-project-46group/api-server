@@ -31,15 +31,15 @@ func TestGetAllSongsAPI(t *testing.T) {
 			url:  fmt.Sprintf("/songs?gn=%s&key=%s", groupName, key),
 			buildStubs: func(querier *mockdb.MockQuerier) {
 				querier.EXPECT().
-					GetAllSongs(groupName).
+					GetAllSongs(gomock.Any(), groupName).
 					Times(1).
 					Return(models.SongSlice{}, nil)
 				querier.EXPECT().
-					FindApiKeyByName(key).
+					FindApiKeyByName(gomock.Any(), key).
 					Times(1).
 					Return(nil, nil)
 				querier.EXPECT().
-					FindGroupByName(groupName).
+					FindGroupByName(gomock.Any(), groupName).
 					Times(1).
 					Return(&models.Group{}, nil)
 			},
@@ -53,13 +53,13 @@ func TestGetAllSongsAPI(t *testing.T) {
 			url:  fmt.Sprintf("/songs?gn=%s", groupName),
 			buildStubs: func(querier *mockdb.MockQuerier) {
 				querier.EXPECT().
-					GetAllSongs(gomock.Any()).
+					GetAllSongs(gomock.Any(), gomock.Any()).
 					Times(0)
 				querier.EXPECT().
-					FindApiKeyByName(gomock.Any()).
+					FindApiKeyByName(gomock.Any(), gomock.Any()).
 					Times(0)
 				querier.EXPECT().
-					FindGroupByName(groupName).
+					FindGroupByName(gomock.Any(), groupName).
 					Times(0)
 			},
 			checkResponse: func(t *testing.T, recorder *httptest.ResponseRecorder) {
@@ -71,14 +71,14 @@ func TestGetAllSongsAPI(t *testing.T) {
 			url:  fmt.Sprintf("/songs?gn=%s&key=%s", groupName, "invalid_api_key"),
 			buildStubs: func(querier *mockdb.MockQuerier) {
 				querier.EXPECT().
-					GetAllSongs(gomock.Any()).
+					GetAllSongs(gomock.Any(), gomock.Any()).
 					Times(0)
 				querier.EXPECT().
-					FindApiKeyByName("invalid_api_key").
+					FindApiKeyByName(gomock.Any(), "invalid_api_key").
 					Times(1).
 					Return(nil, sql.ErrNoRows)
 				querier.EXPECT().
-					FindGroupByName(gomock.Any()).
+					FindGroupByName(gomock.Any(), gomock.Any()).
 					Times(0)
 			},
 			checkResponse: func(t *testing.T, recorder *httptest.ResponseRecorder) {
@@ -90,14 +90,14 @@ func TestGetAllSongsAPI(t *testing.T) {
 			url:  fmt.Sprintf("/songs?gn=%s&key=%s", groupName, key),
 			buildStubs: func(querier *mockdb.MockQuerier) {
 				querier.EXPECT().
-					GetAllSongs(gomock.Any()).
+					GetAllSongs(gomock.Any(), gomock.Any()).
 					Times(0)
 				querier.EXPECT().
-					FindApiKeyByName(key).
+					FindApiKeyByName(gomock.Any(), key).
 					Times(1).
 					Return(nil, sql.ErrConnDone)
 				querier.EXPECT().
-					FindGroupByName(gomock.Any()).
+					FindGroupByName(gomock.Any(), gomock.Any()).
 					Times(0)
 			},
 			checkResponse: func(t *testing.T, recorder *httptest.ResponseRecorder) {
@@ -109,13 +109,13 @@ func TestGetAllSongsAPI(t *testing.T) {
 			url:  fmt.Sprintf("/songs?key=%s", key),
 			buildStubs: func(querier *mockdb.MockQuerier) {
 				querier.EXPECT().
-					GetAllSongs(gomock.Any()).
+					GetAllSongs(gomock.Any(), gomock.Any()).
 					Times(0)
 				querier.EXPECT().
-					FindApiKeyByName(gomock.Any()).
+					FindApiKeyByName(gomock.Any(), gomock.Any()).
 					Times(0)
 				querier.EXPECT().
-					FindGroupByName(groupName).
+					FindGroupByName(gomock.Any(), groupName).
 					Times(0)
 			},
 			checkResponse: func(t *testing.T, recorder *httptest.ResponseRecorder) {
@@ -127,14 +127,14 @@ func TestGetAllSongsAPI(t *testing.T) {
 			url:  fmt.Sprintf("/songs?gn=%s&key=%s", "not_existing_group", key),
 			buildStubs: func(querier *mockdb.MockQuerier) {
 				querier.EXPECT().
-					GetAllSongs(gomock.Any()).
+					GetAllSongs(gomock.Any(), gomock.Any()).
 					Times(0)
 				querier.EXPECT().
-					FindApiKeyByName(key).
+					FindApiKeyByName(gomock.Any(), key).
 					Times(1).
 					Return(nil, nil)
 				querier.EXPECT().
-					FindGroupByName(gomock.Any()).
+					FindGroupByName(gomock.Any(), gomock.Any()).
 					Times(1).
 					Return(&models.Group{}, fmt.Errorf("failed to FindGroupByName: %w", sql.ErrNoRows))
 			},
@@ -147,14 +147,14 @@ func TestGetAllSongsAPI(t *testing.T) {
 			url:  fmt.Sprintf("/songs?gn=%s&key=%s", groupName, key),
 			buildStubs: func(querier *mockdb.MockQuerier) {
 				querier.EXPECT().
-					GetAllSongs(gomock.Any()).
+					GetAllSongs(gomock.Any(), gomock.Any()).
 					Times(0)
 				querier.EXPECT().
-					FindApiKeyByName(key).
+					FindApiKeyByName(gomock.Any(), key).
 					Times(1).
 					Return(nil, nil)
 				querier.EXPECT().
-					FindGroupByName(groupName).
+					FindGroupByName(gomock.Any(), groupName).
 					Times(1).
 					Return(&models.Group{}, fmt.Errorf("Failed to FindGroupByName: %w", sql.ErrConnDone))
 			},
@@ -167,15 +167,15 @@ func TestGetAllSongsAPI(t *testing.T) {
 			url:  fmt.Sprintf("/songs?gn=%s&key=%s", groupName, key),
 			buildStubs: func(querier *mockdb.MockQuerier) {
 				querier.EXPECT().
-					GetAllSongs(groupName).
+					GetAllSongs(gomock.Any(), groupName).
 					Times(1).
 					Return(nil, errors.New("internal server error"))
 				querier.EXPECT().
-					FindApiKeyByName(key).
+					FindApiKeyByName(gomock.Any(), key).
 					Times(1).
 					Return(nil, nil)
 				querier.EXPECT().
-					FindGroupByName(groupName).
+					FindGroupByName(gomock.Any(), groupName).
 					Times(1).
 					Return(&models.Group{}, nil)
 			},

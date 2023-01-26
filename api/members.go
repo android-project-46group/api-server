@@ -52,7 +52,7 @@ func (server *Server) getAllMembers(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		w.WriteHeader(http.StatusInternalServerError)
-		fmt.Fprint(w, ErrorJson("Error while reading group from DB"))
+		fmt.Fprint(w, ErrorJson(fmt.Errorf("Error while reading group from DB: %w", err).Error()))
 		return
 	}
 
