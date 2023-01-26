@@ -37,6 +37,10 @@ func (server *Server) setupRouter() {
 	r := mux.NewRouter()
 
 	rootPath := os.Getenv("SCRIPT_NAME")
+	r.Path(rootPath + "/health").
+		HandlerFunc(server.Health).
+		Methods("GET")
+
 	r.Path(rootPath+"/members").
 		Queries("gn", "{gn}").
 		Queries("key", "{key}").
