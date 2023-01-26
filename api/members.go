@@ -9,12 +9,17 @@ import (
 
 	models "github.com/android-project-46group/api-server/db/my_models"
 	"golang.org/x/text/language"
+	"gopkg.in/DataDog/dd-trace-go.v1/ddtrace/tracer"
 )
 
 /*
 * /members?gn=sakurazaka
  */
 func (server *Server) getAllMembers(w http.ResponseWriter, r *http.Request) {
+
+	ctx := r.Context()
+	span, ctx := tracer.StartSpanFromContext(ctx, "api.getAllBlogs")
+	defer span.Finish()
 
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 
@@ -25,7 +30,7 @@ func (server *Server) getAllMembers(w http.ResponseWriter, r *http.Request) {
 
 	key := r.FormValue("key")
 
-	if err := server.isApiKeyValid(key); err != nil {
+	if err := server.isApiKeyValid(ctx, key); err != nil {
 		if err == sql.ErrNoRows {
 			w.WriteHeader(http.StatusUnauthorized)
 			fmt.Fprint(w, ErrorJson("No valid api key"))
@@ -39,7 +44,7 @@ func (server *Server) getAllMembers(w http.ResponseWriter, r *http.Request) {
 	// get group name from query parameters
 	group := r.FormValue("gn")
 
-	_, err := server.querier.FindGroupByName(group)
+	_, err := server.querier.FindGroupByName(ctx, group)
 	if err != nil {
 		if errors.Unwrap(err) == sql.ErrNoRows {
 			w.WriteHeader(http.StatusBadRequest)
@@ -47,19 +52,19 @@ func (server *Server) getAllMembers(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		w.WriteHeader(http.StatusInternalServerError)
-		fmt.Fprint(w, ErrorJson("Error while reading group from DB"))
+		fmt.Fprint(w, ErrorJson(fmt.Errorf("Error while reading group from DB: %w", err).Error()))
 		return
 	}
 
 	// 言語情報を取得する。
 	var l *models.Locale
-	l, err = server.querier.FindLocaleByName(locale)
+	l, err = server.querier.FindLocaleByName(ctx, locale)
 	if err != nil {
 		// DB に見つからなかった場合、デフォルトの情報を取得。
-		l, _ = server.querier.FindLocaleByName("ja")
+		l, _ = server.querier.FindLocaleByName(ctx, "ja")
 	}
 
-	infos, err := server.querier.GetAllMemberInfos(group, l.LocaleID)
+	infos, err := server.querier.GetAllMemberInfos(ctx, group, l.LocaleID)
 	if err != nil {
 		// db error
 		w.WriteHeader(http.StatusInternalServerError)

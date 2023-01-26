@@ -1,6 +1,7 @@
 package db
 
 import (
+	"context"
 	"fmt"
 
 	_ "github.com/lib/pq"
@@ -18,13 +19,13 @@ type PositionSongsBind struct {
 	models.Member   `boil:",bind"`
 }
 
-func (q *SqlQuerier) GetAllFormations(groupName string) ([]PositionSongsBind, error) {
+func (q *SqlQuerier) GetAllFormations(ctx context.Context, groupName string) ([]PositionSongsBind, error) {
 
 	var sPositions []PositionSongsBind
 
-	g, gErr := q.FindGroupByName(groupName)
+	g, gErr := q.FindGroupByName(ctx, groupName)
 	if gErr != nil {
-		return sPositions, fmt.Errorf("GetAllFormations: %w", gErr)
+		return nil, fmt.Errorf("GetAllFormations: %w", gErr)
 	}
 
 	err := models.Positions(
@@ -33,8 +34,11 @@ func (q *SqlQuerier) GetAllFormations(groupName string) ([]PositionSongsBind, er
 		qm.InnerJoin("members on members.member_id = positions.member_id"),
 		qm.Where("songs.group_id = ?", g.GroupID),
 		qm.OrderBy("songs.song_id DESC"),
-	).Bind(q.ctx, q.DB, &sPositions)
-	return sPositions, fmt.Errorf("GetAllFormations: %w", err)
+	).Bind(ctx, q.DB, &sPositions)
+	if err != nil {
+		return nil, fmt.Errorf("failed to GetAllFormations: %w", err)
+	}
+	return sPositions, nil
 }
 
 // Custom struct using two generated structs
@@ -44,13 +48,16 @@ type SongFormationsBind struct {
 	Center           string `json:"center" boil:",bind"`
 }
 
-func (q *SqlQuerier) GetFormations(groupName string) ([]PositionSongsBind, error) {
+func (q *SqlQuerier) GetFormations(ctx context.Context, groupName string) ([]PositionSongsBind, error) {
 	var jMember []PositionSongsBind
 	err := models.Positions(
 		qm.Select("positions.*", "songs.*", "members.name_ja"),
 		qm.InnerJoin("songs on songs.song_id = positions.song_id"),
 		qm.InnerJoin("members on members.member_id = positions.member_id"),
 		qm.Where("groups.group_name = ?", groupName),
-	).Bind(q.ctx, q.DB, &jMember)
-	return jMember, fmt.Errorf("GetFormations: %w", err)
+	).Bind(ctx, q.DB, &jMember)
+	if err != nil {
+		return nil, fmt.Errorf("failed to GetFormations: %w", err)
+	}
+	return jMember, nil
 }
