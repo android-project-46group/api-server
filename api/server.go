@@ -5,8 +5,8 @@ import (
 	"net/http/cgi"
 	"os"
 
-	"github.com/gorilla/mux"
 	"golang.org/x/text/language"
+	muxtrace "gopkg.in/DataDog/dd-trace-go.v1/contrib/gorilla/mux"
 
 	"github.com/android-project-46group/api-server/db"
 	"github.com/android-project-46group/api-server/util"
@@ -16,7 +16,7 @@ import (
 type Server struct {
 	config  util.Config
 	querier db.Querier
-	router  *mux.Router
+	router  *muxtrace.Router
 	matcher language.Matcher
 }
 
@@ -34,7 +34,7 @@ func NewServer(config util.Config, querier db.Querier, matcher language.Matcher)
 }
 
 func (server *Server) setupRouter() {
-	r := mux.NewRouter()
+	r := muxtrace.NewRouter()
 
 	rootPath := os.Getenv("SCRIPT_NAME")
 	r.Path(rootPath + "/health").
