@@ -34,5 +34,7 @@ func (q *SqlQuerier) GetAllBlogs(ctx context.Context, groupName string) ([]Membe
 	if err != nil {
 		return nil, fmt.Errorf("failed to GetAllBlogs: %w", err)
 	}
+
+	q.logger.Debugf(ctx, "GetAllBlogs got: ", mBlog)
 	return mBlog, nil
 }

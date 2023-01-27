@@ -18,6 +18,9 @@ func (server *Server) getAllFormations(w http.ResponseWriter, r *http.Request) {
 	span, ctx := tracer.StartSpanFromContext(ctx, "api.getAllBlogs")
 	defer span.Finish()
 
+	// debug log
+	server.logger.Debugf(ctx, "getAllFormations: userAgent", r.UserAgent())
+
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 
 	key := r.FormValue("key")
@@ -25,11 +28,11 @@ func (server *Server) getAllFormations(w http.ResponseWriter, r *http.Request) {
 	if err := server.isApiKeyValid(ctx, key); err != nil {
 		if err == sql.ErrNoRows {
 			w.WriteHeader(http.StatusUnauthorized)
-			fmt.Fprint(w, ErrorJson("No valid api key"))
+			server.logger.Warnf(ctx, "Invalid api key (%s) was passed.", key)
 			return
 		}
 		w.WriteHeader(http.StatusInternalServerError)
-		fmt.Fprint(w, ErrorJson("Error while reading api key from DB"))
+		server.logger.Errorf(ctx, "failed to isApiKeyValid: %w", err)
 		return
 	}
 
@@ -40,17 +43,17 @@ func (server *Server) getAllFormations(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		if errors.Unwrap(err) == sql.ErrNoRows {
 			w.WriteHeader(http.StatusBadRequest)
-			fmt.Fprint(w, ErrorJson("Invalid group name was passed."))
+			server.logger.Warnf(ctx, "Invalid group name (%s) was passed.", group)
 			return
 		}
 		w.WriteHeader(http.StatusInternalServerError)
-		fmt.Fprint(w, ErrorJson("Error while reading group from DB"))
+		server.logger.Errorf(ctx, "failed to FindGroupByName: %w", err)
 		return
 	}
 
 	dbRes, err := server.querier.GetAllFormations(ctx, group)
 	if err != nil {
-		fmt.Printf("getAllFormations: %v", err)
+		server.logger.Errorf(ctx, "failed to get all formations: %w", err)
 		// db error
 		w.WriteHeader(http.StatusInternalServerError)
 		return

@@ -35,5 +35,7 @@ func (q *SqlQuerier) FindApiKeyByName(ctx context.Context, key string) (*models.
 	if err != nil {
 		return nil, fmt.Errorf("failed to FindApiKeyByName: %w", err)
 	}
+
+	q.logger.Debugf(ctx, "FindApiKeyByName got: ", s)
 	return s, nil
 }

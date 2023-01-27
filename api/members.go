@@ -21,6 +21,9 @@ func (server *Server) getAllMembers(w http.ResponseWriter, r *http.Request) {
 	span, ctx := tracer.StartSpanFromContext(ctx, "api.getAllBlogs")
 	defer span.Finish()
 
+	// debug log
+	server.logger.Debugf(ctx, "getAllMembers: userAgent", r.UserAgent())
+
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 
 	lang, _ := r.Cookie("lang")
@@ -33,11 +36,11 @@ func (server *Server) getAllMembers(w http.ResponseWriter, r *http.Request) {
 	if err := server.isApiKeyValid(ctx, key); err != nil {
 		if err == sql.ErrNoRows {
 			w.WriteHeader(http.StatusUnauthorized)
-			fmt.Fprint(w, ErrorJson("No valid api key"))
+			server.logger.Warnf(ctx, "Invalid api key (%s) was passed.", key)
 			return
 		}
 		w.WriteHeader(http.StatusInternalServerError)
-		fmt.Fprint(w, ErrorJson("Error while reading api key from DB"))
+		server.logger.Errorf(ctx, "failed to isApiKeyValid: %w", err)
 		return
 	}
 
@@ -48,11 +51,11 @@ func (server *Server) getAllMembers(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		if errors.Unwrap(err) == sql.ErrNoRows {
 			w.WriteHeader(http.StatusBadRequest)
-			fmt.Fprint(w, ErrorJson("Invalid group name was passed."))
+			server.logger.Warnf(ctx, "Invalid group name (%s) was passed.", group)
 			return
 		}
 		w.WriteHeader(http.StatusInternalServerError)
-		fmt.Fprint(w, ErrorJson(fmt.Errorf("Error while reading group from DB: %w", err).Error()))
+		server.logger.Errorf(ctx, "failed to FindGroupByName: %w", err)
 		return
 	}
 
@@ -66,6 +69,7 @@ func (server *Server) getAllMembers(w http.ResponseWriter, r *http.Request) {
 
 	infos, err := server.querier.GetAllMemberInfos(ctx, group, l.LocaleID)
 	if err != nil {
+		server.logger.Errorf(ctx, "failed to get all memberInfos: %w", err)
 		// db error
 		w.WriteHeader(http.StatusInternalServerError)
 		return

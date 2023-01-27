@@ -52,5 +52,7 @@ func (q *SqlQuerier) GetCenter(ctx context.Context, title string) []string {
 	for _, pm := range pms {
 		res = append(res, pm.Member.NameJa)
 	}
+
+	q.logger.Debugf(ctx, "GetCenter got: ", res)
 	return res
 }

@@ -10,10 +10,11 @@ import (
 
 // Implementation of Querier interface
 type SqlQuerier struct {
-	DB *sql.DB
+	DB     *sql.DB
+	logger util.Logger
 }
 
-func NewQuerier(config util.Config) (*SqlQuerier, error) {
+func NewQuerier(config util.Config, logger util.Logger) (*SqlQuerier, error) {
 
 	con, err := sql.Open(config.DBDriver, config.DBSource)
 	if err != nil {
@@ -21,7 +22,8 @@ func NewQuerier(config util.Config) (*SqlQuerier, error) {
 	}
 
 	querier := &SqlQuerier{
-		DB: con,
+		DB:     con,
+		logger: logger,
 	}
 
 	return querier, nil

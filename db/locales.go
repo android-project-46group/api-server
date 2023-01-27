@@ -35,5 +35,7 @@ func (q *SqlQuerier) FindLocaleByName(ctx context.Context, name string) (*models
 	if err != nil {
 		return nil, fmt.Errorf("FindApiKeyByName: %w", err)
 	}
+
+	q.logger.Debugf(ctx, "FindLocaleByName got: ", s)
 	return s, nil
 }

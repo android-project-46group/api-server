@@ -21,5 +21,7 @@ func (q *SqlQuerier) FindGroupByName(ctx context.Context, groupName string) (*mo
 	if err != nil {
 		return nil, fmt.Errorf("FindGroupByName: %w", err)
 	}
+
+	q.logger.Debugf(ctx, "FindGroupByName got: ", g)
 	return g, nil
 }
