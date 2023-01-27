@@ -9,6 +9,9 @@ type Config struct {
 	ServerAddress string `mapstructure:"SERVER_ADDRESS"`
 	DBDriver      string `mapstructure:"DB_DRIVER"`
 	DBSource      string `mapstructure:"DB_SOURCE"`
+	LogPath       string `mapstructure:"LOG_PATH"`
+	Host          string `mapstructure:"HOST"`
+	Service       string `mapstructure:"SERVICE"`
 }
 
 // Load config parameters using viper
