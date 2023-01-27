@@ -245,7 +245,8 @@ func TestGetAllMembersAPI(t *testing.T) {
 			querier := mockdb.NewMockQuerier(ctrl)
 			tc.buildStubs(querier)
 			matcher := util.NewMatcher()
-			server, err := NewServer(config, querier, matcher)
+			logger, _, _ := util.NewStandardLogger("go-test", "api-saka")
+			server, err := NewServer(config, querier, matcher, logger)
 			require.NoError(t, err)
 			recorder := httptest.NewRecorder()
 
