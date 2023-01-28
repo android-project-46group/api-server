@@ -3,6 +3,7 @@ package api
 import (
 	"net/http"
 	"net/http/cgi"
+	"net/url"
 	"os"
 
 	"golang.org/x/text/language"
@@ -31,14 +32,18 @@ func NewServer(config util.Config, querier db.Querier, matcher language.Matcher,
 		logger:  logger,
 	}
 
-	server.setupRouter()
-	return server, nil
+	err := server.setupRouter()
+	return server, err
 }
 
-func (server *Server) setupRouter() {
+func (server *Server) setupRouter() error {
 	r := muxtrace.NewRouter()
 
 	rootPath := os.Getenv("SCRIPT_NAME")
+	rootPath, err := url.JoinPath("/", rootPath, server.config.URLPrefix)
+	if err != nil {
+		return err
+	}
 	r.Path(rootPath + "/health").
 		HandlerFunc(server.Health).
 		Methods("GET")
@@ -74,6 +79,7 @@ func (server *Server) setupRouter() {
 		Methods("GET")
 
 	server.router = r
+	return nil
 }
 
 // start server depending on the cgi serve or not
