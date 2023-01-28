@@ -32,15 +32,15 @@ func TestGetAllFormationsAPI(t *testing.T) {
 			url:  fmt.Sprintf("/formations?gn=%s&key=%s", groupName, key),
 			buildStubs: func(store *mockdb.MockQuerier) {
 				store.EXPECT().
-					GetAllFormations(groupName).
+					GetAllFormations(gomock.Any(), groupName).
 					Times(1).
 					Return([]db.PositionSongsBind{}, nil)
 				store.EXPECT().
-					FindApiKeyByName(key).
+					FindApiKeyByName(gomock.Any(), key).
 					Times(1).
 					Return(nil, nil)
 				store.EXPECT().
-					FindGroupByName(groupName).
+					FindGroupByName(gomock.Any(), groupName).
 					Times(1).
 					Return(&models.Group{}, nil)
 			},
@@ -53,13 +53,13 @@ func TestGetAllFormationsAPI(t *testing.T) {
 			url:  fmt.Sprintf("/formations?gn=%s", groupName),
 			buildStubs: func(store *mockdb.MockQuerier) {
 				store.EXPECT().
-					GetAllFormations(gomock.Any()).
+					GetAllFormations(gomock.Any(), gomock.Any()).
 					Times(0)
 				store.EXPECT().
-					FindApiKeyByName(gomock.Any()).
+					FindApiKeyByName(gomock.Any(), gomock.Any()).
 					Times(0)
 				store.EXPECT().
-					FindGroupByName(gomock.Any()).
+					FindGroupByName(gomock.Any(), gomock.Any()).
 					Times(0)
 			},
 			checkResponse: func(t *testing.T, recorder *httptest.ResponseRecorder) {
@@ -71,14 +71,14 @@ func TestGetAllFormationsAPI(t *testing.T) {
 			url:  fmt.Sprintf("/formations?gn=%s&key=%s", groupName, "invalid_key"),
 			buildStubs: func(store *mockdb.MockQuerier) {
 				store.EXPECT().
-					GetAllFormations(gomock.Any()).
+					GetAllFormations(gomock.Any(), gomock.Any()).
 					Times(0)
 				store.EXPECT().
-					FindApiKeyByName("invalid_key").
+					FindApiKeyByName(gomock.Any(), "invalid_key").
 					Times(1).
 					Return(nil, sql.ErrNoRows)
 				store.EXPECT().
-					FindGroupByName(gomock.Any()).
+					FindGroupByName(gomock.Any(), gomock.Any()).
 					Times(0)
 			},
 			checkResponse: func(t *testing.T, recorder *httptest.ResponseRecorder) {
@@ -90,14 +90,14 @@ func TestGetAllFormationsAPI(t *testing.T) {
 			url:  fmt.Sprintf("/formations?gn=%s&key=%s", groupName, key),
 			buildStubs: func(store *mockdb.MockQuerier) {
 				store.EXPECT().
-					GetAllFormations(gomock.Any()).
+					GetAllFormations(gomock.Any(), gomock.Any()).
 					Times(0)
 				store.EXPECT().
-					FindApiKeyByName(key).
+					FindApiKeyByName(gomock.Any(), key).
 					Times(1).
 					Return(nil, sql.ErrConnDone)
 				store.EXPECT().
-					FindGroupByName(groupName).
+					FindGroupByName(gomock.Any(), groupName).
 					Times(0)
 			},
 			checkResponse: func(t *testing.T, recorder *httptest.ResponseRecorder) {
@@ -109,13 +109,13 @@ func TestGetAllFormationsAPI(t *testing.T) {
 			url:  fmt.Sprintf("/formations?key=%s", key),
 			buildStubs: func(store *mockdb.MockQuerier) {
 				store.EXPECT().
-					GetAllFormations(gomock.Any()).
+					GetAllFormations(gomock.Any(), gomock.Any()).
 					Times(0)
 				store.EXPECT().
-					FindApiKeyByName(gomock.Any()).
+					FindApiKeyByName(gomock.Any(), gomock.Any()).
 					Times(0)
 				store.EXPECT().
-					FindGroupByName(gomock.Any()).
+					FindGroupByName(gomock.Any(), gomock.Any()).
 					Times(0)
 			},
 			checkResponse: func(t *testing.T, recorder *httptest.ResponseRecorder) {
@@ -127,14 +127,14 @@ func TestGetAllFormationsAPI(t *testing.T) {
 			url:  fmt.Sprintf("/formations?gn=%s&key=%s", "not_existing_group", key),
 			buildStubs: func(store *mockdb.MockQuerier) {
 				store.EXPECT().
-					GetAllFormations(gomock.Any()).
+					GetAllFormations(gomock.Any(), gomock.Any()).
 					Times(0)
 				store.EXPECT().
-					FindApiKeyByName(key).
+					FindApiKeyByName(gomock.Any(), key).
 					Times(1).
 					Return(nil, nil)
 				store.EXPECT().
-					FindGroupByName("not_existing_group").
+					FindGroupByName(gomock.Any(), "not_existing_group").
 					Times(1).
 					Return(&models.Group{}, fmt.Errorf("Failed to FindGroupByName: %w", sql.ErrNoRows))
 			},
@@ -147,14 +147,14 @@ func TestGetAllFormationsAPI(t *testing.T) {
 			url:  fmt.Sprintf("/formations?gn=%s&key=%s", groupName, key),
 			buildStubs: func(store *mockdb.MockQuerier) {
 				store.EXPECT().
-					GetAllFormations(gomock.Any()).
+					GetAllFormations(gomock.Any(), gomock.Any()).
 					Times(0)
 				store.EXPECT().
-					FindApiKeyByName(key).
+					FindApiKeyByName(gomock.Any(), key).
 					Times(1).
 					Return(nil, nil)
 				store.EXPECT().
-					FindGroupByName(groupName).
+					FindGroupByName(gomock.Any(), groupName).
 					Times(1).
 					Return(&models.Group{}, fmt.Errorf("Failed to FindGroupByName: %w", sql.ErrConnDone))
 			},
@@ -167,15 +167,15 @@ func TestGetAllFormationsAPI(t *testing.T) {
 			url:  fmt.Sprintf("/formations?gn=%s&key=%s", groupName, key),
 			buildStubs: func(store *mockdb.MockQuerier) {
 				store.EXPECT().
-					GetAllFormations(groupName).
+					GetAllFormations(gomock.Any(), groupName).
 					Times(1).
 					Return(nil, errors.New("internal server error"))
 				store.EXPECT().
-					FindApiKeyByName(key).
+					FindApiKeyByName(gomock.Any(), key).
 					Times(1).
 					Return(nil, nil)
 				store.EXPECT().
-					FindGroupByName(groupName).
+					FindGroupByName(gomock.Any(), groupName).
 					Times(1).
 					Return(&models.Group{}, nil)
 			},
@@ -199,7 +199,8 @@ func TestGetAllFormationsAPI(t *testing.T) {
 			querier := mockdb.NewMockQuerier(ctrl)
 			tc.buildStubs(querier)
 			mathcer := util.NewMatcher()
-			server, err := NewServer(config, querier, mathcer)
+			logger, _, _ := util.NewStandardLogger("go-test", "api-saka")
+			server, err := NewServer(config, querier, mathcer, logger)
 			require.NoError(t, err)
 			recorder := httptest.NewRecorder()
 

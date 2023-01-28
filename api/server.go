@@ -3,10 +3,11 @@ package api
 import (
 	"net/http"
 	"net/http/cgi"
+	"net/url"
 	"os"
 
-	"github.com/gorilla/mux"
 	"golang.org/x/text/language"
+	muxtrace "gopkg.in/DataDog/dd-trace-go.v1/contrib/gorilla/mux"
 
 	"github.com/android-project-46group/api-server/db"
 	"github.com/android-project-46group/api-server/util"
@@ -16,27 +17,40 @@ import (
 type Server struct {
 	config  util.Config
 	querier db.Querier
-	router  *mux.Router
+	router  *muxtrace.Router
 	matcher language.Matcher
+	logger  util.Logger
 }
 
 // Create a new server from the given config file.
-func NewServer(config util.Config, querier db.Querier, matcher language.Matcher) (*Server, error) {
+func NewServer(config util.Config, querier db.Querier, matcher language.Matcher, logger util.Logger) (*Server, error) {
 
 	server := &Server{
 		config:  config,
 		querier: querier,
 		matcher: matcher,
+		logger:  logger,
 	}
 
-	server.setupRouter()
-	return server, nil
+	err := server.setupRouter()
+	return server, err
 }
 
-func (server *Server) setupRouter() {
-	r := mux.NewRouter()
+func (server *Server) setupRouter() error {
+	r := muxtrace.NewRouter()
 
 	rootPath := os.Getenv("SCRIPT_NAME")
+	var err error
+	if server.config.URLPrefix != "" {
+		rootPath, err = url.JoinPath("/", rootPath, server.config.URLPrefix)
+		if err != nil {
+			return err
+		}
+	}
+	r.Path(rootPath + "/health").
+		HandlerFunc(server.Health).
+		Methods("GET")
+
 	r.Path(rootPath+"/members").
 		Queries("gn", "{gn}").
 		Queries("key", "{key}").
@@ -68,6 +82,7 @@ func (server *Server) setupRouter() {
 		Methods("GET")
 
 	server.router = r
+	return nil
 }
 
 // start server depending on the cgi serve or not

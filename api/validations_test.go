@@ -1,6 +1,7 @@
 package api
 
 import (
+	"context"
 	"database/sql"
 	"errors"
 	"testing"
@@ -13,7 +14,7 @@ import (
 
 func TestIsApiKeyValid(t *testing.T) {
 
-	key := "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+	key := "valid_api_key"
 
 	testCases := []struct {
 		name       string
@@ -26,7 +27,7 @@ func TestIsApiKeyValid(t *testing.T) {
 			key:  key,
 			buildStubs: func(store *mockdb.MockQuerier) {
 				store.EXPECT().
-					FindApiKeyByName(key).
+					FindApiKeyByName(gomock.Any(), key).
 					Times(1).
 					Return(nil, nil)
 			},
@@ -37,7 +38,7 @@ func TestIsApiKeyValid(t *testing.T) {
 			key:  "invalid_key",
 			buildStubs: func(store *mockdb.MockQuerier) {
 				store.EXPECT().
-					FindApiKeyByName("invalid_key").
+					FindApiKeyByName(gomock.Any(), "invalid_key").
 					Times(1).
 					Return(nil, sql.ErrNoRows)
 			},
@@ -48,7 +49,7 @@ func TestIsApiKeyValid(t *testing.T) {
 			key:  "",
 			buildStubs: func(store *mockdb.MockQuerier) {
 				store.EXPECT().
-					FindApiKeyByName(gomock.Any()).
+					FindApiKeyByName(gomock.Any(), gomock.Any()).
 					Times(0)
 			},
 			expected: errors.New("API key is empty"),
@@ -70,10 +71,11 @@ func TestIsApiKeyValid(t *testing.T) {
 			tc.buildStubs(querier)
 
 			matcher := util.NewMatcher()
-			server, err := NewServer(config, querier, matcher)
+			logger, _, _ := util.NewStandardLogger("go-test", "api-saka")
+			server, err := NewServer(config, querier, matcher, logger)
 			require.NoError(t, err)
 
-			result := server.isApiKeyValid(tc.key)
+			result := server.isApiKeyValid(context.Background(), tc.key)
 			require.Equal(t, tc.expected, result)
 		})
 	}

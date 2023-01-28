@@ -31,11 +31,11 @@ func TestGetPositionsAPI(t *testing.T) {
 			url:  fmt.Sprintf("/positions?title=%s&key=%s", title, key),
 			buildStubs: func(store *mockdb.MockQuerier) {
 				store.EXPECT().
-					GetPositionFromTitle(title).
+					GetPositionFromTitle(gomock.Any(), title).
 					Times(1).
 					Return([]db.PositionMemberBind{}, nil)
 				store.EXPECT().
-					FindApiKeyByName(key).
+					FindApiKeyByName(gomock.Any(), key).
 					Times(1).
 					Return(nil, nil)
 			},
@@ -48,10 +48,10 @@ func TestGetPositionsAPI(t *testing.T) {
 			url:  fmt.Sprintf("/positions?title=%s", title),
 			buildStubs: func(store *mockdb.MockQuerier) {
 				store.EXPECT().
-					GetPositionFromTitle(gomock.Any()).
+					GetPositionFromTitle(gomock.Any(), gomock.Any()).
 					Times(0)
 				store.EXPECT().
-					FindApiKeyByName(gomock.Any()).
+					FindApiKeyByName(gomock.Any(), gomock.Any()).
 					Times(0)
 			},
 			checkResponse: func(t *testing.T, recorder *httptest.ResponseRecorder) {
@@ -63,14 +63,14 @@ func TestGetPositionsAPI(t *testing.T) {
 			url:  fmt.Sprintf("/positions?title=%s&key=%s", title, "invalid_key"),
 			buildStubs: func(store *mockdb.MockQuerier) {
 				store.EXPECT().
-					GetPositionFromTitle(gomock.Any()).
+					GetPositionFromTitle(gomock.Any(), gomock.Any()).
 					Times(0)
 				store.EXPECT().
-					FindApiKeyByName("invalid_key").
+					FindApiKeyByName(gomock.Any(), "invalid_key").
 					Times(1).
 					Return(nil, sql.ErrNoRows)
 				store.EXPECT().
-					FindGroupByName(gomock.Any()).
+					FindGroupByName(gomock.Any(), gomock.Any()).
 					Times(0)
 			},
 			checkResponse: func(t *testing.T, recorder *httptest.ResponseRecorder) {
@@ -82,10 +82,10 @@ func TestGetPositionsAPI(t *testing.T) {
 			url:  fmt.Sprintf("/positions?title=%s&key=%s", title, key),
 			buildStubs: func(store *mockdb.MockQuerier) {
 				store.EXPECT().
-					GetPositionFromTitle(gomock.Any()).
+					GetPositionFromTitle(gomock.Any(), gomock.Any()).
 					Times(0)
 				store.EXPECT().
-					FindApiKeyByName(key).
+					FindApiKeyByName(gomock.Any(), key).
 					Times(1).
 					Return(nil, sql.ErrConnDone)
 			},
@@ -98,10 +98,10 @@ func TestGetPositionsAPI(t *testing.T) {
 			url:  fmt.Sprintf("/positions?key=%s", key),
 			buildStubs: func(store *mockdb.MockQuerier) {
 				store.EXPECT().
-					GetPositionFromTitle(gomock.Any()).
+					GetPositionFromTitle(gomock.Any(), gomock.Any()).
 					Times(0)
 				store.EXPECT().
-					FindApiKeyByName(gomock.Any()).
+					FindApiKeyByName(gomock.Any(), gomock.Any()).
 					Times(0)
 			},
 			checkResponse: func(t *testing.T, recorder *httptest.ResponseRecorder) {
@@ -113,11 +113,11 @@ func TestGetPositionsAPI(t *testing.T) {
 			url:  fmt.Sprintf("/positions?title=%s&key=%s", title, key),
 			buildStubs: func(store *mockdb.MockQuerier) {
 				store.EXPECT().
-					GetPositionFromTitle(title).
+					GetPositionFromTitle(gomock.Any(), title).
 					Times(1).
 					Return(nil, errors.New("internal server error"))
 				store.EXPECT().
-					FindApiKeyByName(key).
+					FindApiKeyByName(gomock.Any(), key).
 					Times(1).
 					Return(nil, nil)
 			},
@@ -141,7 +141,8 @@ func TestGetPositionsAPI(t *testing.T) {
 			querier := mockdb.NewMockQuerier(ctrl)
 			tc.buildStubs(querier)
 			matcher := util.NewMatcher()
-			server, err := NewServer(config, querier, matcher)
+			logger, _, _ := util.NewStandardLogger("go-test", "api-saka")
+			server, err := NewServer(config, querier, matcher, logger)
 			require.NoError(t, err)
 			recorder := httptest.NewRecorder()
 
