@@ -21,4 +21,5 @@ func (server *Server) Health(w http.ResponseWriter, r *http.Request) {
 	)
 	w.WriteHeader(http.StatusOK)
 	fmt.Fprint(w, string(jsonRes))
+	server.logger.Debug(ctx, "Health checked")
 }

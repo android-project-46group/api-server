@@ -38,6 +38,8 @@ func (q *SqlQuerier) GetAllFormations(ctx context.Context, groupName string) ([]
 	if err != nil {
 		return nil, fmt.Errorf("failed to GetAllFormations: %w", err)
 	}
+
+	q.logger.Debugf(ctx, "GetAllFormations got: ", sPositions)
 	return sPositions, nil
 }
 
@@ -59,5 +61,7 @@ func (q *SqlQuerier) GetFormations(ctx context.Context, groupName string) ([]Pos
 	if err != nil {
 		return nil, fmt.Errorf("failed to GetFormations: %w", err)
 	}
+
+	q.logger.Debugf(ctx, "GetFormations got: ", jMember)
 	return jMember, nil
 }

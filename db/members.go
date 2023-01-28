@@ -33,5 +33,7 @@ func (q *SqlQuerier) GetAllMemberInfos(ctx context.Context, groupName string, lo
 	if err != nil {
 		return nil, fmt.Errorf("GetAllMemberInfos: %w", err)
 	}
+
+	q.logger.Debugf(ctx, "GetAllMemberInfos got: ", jMember)
 	return jMember, nil
 }

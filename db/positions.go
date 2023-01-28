@@ -54,5 +54,7 @@ func (q *SqlQuerier) GetPositionFromTitle(ctx context.Context, title string) ([]
 	if err != nil {
 		return nil, fmt.Errorf("failed to GetPositionFromTitle: %w", err)
 	}
+
+	q.logger.Debugf(ctx, "GetPositionFromTitle got: ", pMs)
 	return pMs, nil
 }

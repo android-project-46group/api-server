@@ -71,7 +71,8 @@ func TestIsApiKeyValid(t *testing.T) {
 			tc.buildStubs(querier)
 
 			matcher := util.NewMatcher()
-			server, err := NewServer(config, querier, matcher)
+			logger, _, _ := util.NewStandardLogger("go-test", "api-saka")
+			server, err := NewServer(config, querier, matcher, logger)
 			require.NoError(t, err)
 
 			result := server.isApiKeyValid(context.Background(), tc.key)
