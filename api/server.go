@@ -40,9 +40,12 @@ func (server *Server) setupRouter() error {
 	r := muxtrace.NewRouter()
 
 	rootPath := os.Getenv("SCRIPT_NAME")
-	rootPath, err := url.JoinPath("/", rootPath, server.config.URLPrefix)
-	if err != nil {
-		return err
+	var err error
+	if server.config.URLPrefix != "" {
+		rootPath, err = url.JoinPath("/", rootPath, server.config.URLPrefix)
+		if err != nil {
+			return err
+		}
 	}
 	r.Path(rootPath + "/health").
 		HandlerFunc(server.Health).
