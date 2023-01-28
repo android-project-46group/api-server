@@ -23,13 +23,11 @@ func main() {
 		log.Fatal("cannot load config:", err)
 	}
 
-	logger, closeFunc, err := util.NewFileLogger(config.LogPath, config.Host, config.Service)
+	logger, closeFunc, err := util.NewZapLogger(config.LogPath, config.Host, config.Service, util.Degub)
 	if err != nil {
 		log.Fatal("cannot create logger")
 	}
 	defer closeFunc()
-	// Set log-level to DEBUG
-	logger.SetLevel(util.Degub)
 
 	querier, err := db.NewQuerier(config, logger)
 	if err != nil {

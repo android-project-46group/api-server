@@ -18,8 +18,6 @@ type Logger interface {
 	Debugf(ctx context.Context, mst string, a ...interface{})
 
 	Print(ctx context.Context, lv Level, msg string)
-
-	SetLevel(lv Level)
 }
 
 // Logging level
