@@ -111,6 +111,21 @@ func (mr *MockQuerierMockRecorder) GetAllFormations(arg0, arg1 interface{}) *gom
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAllFormations", reflect.TypeOf((*MockQuerier)(nil).GetAllFormations), arg0, arg1)
 }
 
+// GetAllGroups mocks base method.
+func (m *MockQuerier) GetAllGroups(arg0 context.Context) ([]*models.Group, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetAllGroups", arg0)
+	ret0, _ := ret[0].([]*models.Group)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetAllGroups indicates an expected call of GetAllGroups.
+func (mr *MockQuerierMockRecorder) GetAllGroups(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAllGroups", reflect.TypeOf((*MockQuerier)(nil).GetAllGroups), arg0)
+}
+
 // GetAllMemberInfos mocks base method.
 func (m *MockQuerier) GetAllMemberInfos(arg0 context.Context, arg1 string, arg2 int) ([]db.MemberInfoBind, error) {
 	m.ctrl.T.Helper()
