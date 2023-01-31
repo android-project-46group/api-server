@@ -1,5 +1,11 @@
 package api
 
+// Each response entity of GetAllGroupsResponse
+type GroupResponse struct {
+	Id   int    `json:"id"`
+	Name string `json:"name"`
+}
+
 type MemberInfosResponse struct {
 	MemberInfos []MemberInfoResponse `json:"members"`
 }

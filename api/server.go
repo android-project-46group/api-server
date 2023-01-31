@@ -51,6 +51,11 @@ func (server *Server) setupRouter() error {
 		HandlerFunc(server.Health).
 		Methods("GET")
 
+	r.Path(rootPath+"/groups").
+		Queries("key", "{key}").
+		HandlerFunc(server.getAllGroups).
+		Methods("GET")
+
 	r.Path(rootPath+"/members").
 		Queries("gn", "{gn}").
 		Queries("key", "{key}").
