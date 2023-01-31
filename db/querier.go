@@ -9,6 +9,7 @@ import (
 type Querier interface {
 	InsertApiKey(ctx context.Context, key string) error
 	FindApiKeyByName(ctx context.Context, key string) (*models.APIKey, error)
+	GetAllGroups(ctx context.Context) ([]*models.Group, error)
 	GetAllBlogs(ctx context.Context, groupName string) ([]MemberBlogBind, error)
 	GetAllFormations(ctx context.Context, groupName string) ([]PositionSongsBind, error)
 	GetFormations(ctx context.Context, groupName string) ([]PositionSongsBind, error)
