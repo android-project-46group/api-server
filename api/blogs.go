@@ -40,16 +40,18 @@ func (server *Server) getAllBlogs(w http.ResponseWriter, r *http.Request) {
 	// get group name from query parameters
 	group := r.FormValue("gn")
 
-	_, err := server.querier.FindGroupByName(ctx, group)
-	if err != nil {
-		if errors.Unwrap(err) == sql.ErrNoRows {
-			w.WriteHeader(http.StatusBadRequest)
-			server.logger.Warnf(ctx, "Invalid group name (%s) was passed.", group)
+	if group != "" {
+		_, err := server.querier.FindGroupByName(ctx, group)
+		if err != nil {
+			if errors.Unwrap(err) == sql.ErrNoRows {
+				w.WriteHeader(http.StatusBadRequest)
+				server.logger.Warnf(ctx, "Invalid group name (%s) was passed.", group)
+				return
+			}
+			w.WriteHeader(http.StatusInternalServerError)
+			server.logger.Errorf(ctx, "failed to FindGroupByName: %w", err)
 			return
 		}
-		w.WriteHeader(http.StatusInternalServerError)
-		server.logger.Errorf(ctx, "failed to FindGroupByName: %w", err)
-		return
 	}
 
 	blogs, err := server.querier.GetAllBlogs(ctx, group)
@@ -73,7 +75,8 @@ func (server *Server) getAllBlogs(w http.ResponseWriter, r *http.Request) {
 	// make json for http response
 	jsonRes, _ := json.Marshal(
 		map[string]interface{}{
-			"blogs": res,
+			"counts": len(res),
+			"blogs":  res,
 		},
 	)
 
