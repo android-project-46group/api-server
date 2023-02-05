@@ -28,7 +28,7 @@ func (q *SqlQuerier) GetAllMemberInfos(ctx context.Context, groupName string, lo
 		qm.InnerJoin("member_infos on members.member_id = member_infos.member_id"),
 		qm.InnerJoin("locales on locales.locale_id = member_infos.locale_id AND locales.locale_id = ?", locale),
 		qm.InnerJoin("groups on groups.group_id = members.group_id"),
-		qm.Where("CASE WHEN ? = '' THEN '1' ELSE groups.group_name = ? END", groupName, groupName),
+		qm.Where("groups.group_name = ?", groupName),
 	).Bind(ctx, q.DB, &jMember)
 	if err != nil {
 		return nil, fmt.Errorf("GetAllMemberInfos: %w", err)

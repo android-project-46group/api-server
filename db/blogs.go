@@ -21,13 +21,14 @@ func (q *SqlQuerier) GetAllBlogs(ctx context.Context, groupName string) ([]Membe
 	span, ctx := tracer.StartSpanFromContext(ctx, "db.GetAllBlogs")
 	defer span.Finish()
 
+	g, _ := q.FindGroupByName(ctx, groupName)
+
 	var mBlog []MemberBlogBind
 
 	err := models.Blogs(
 		qm.Select("blogs.*", "members.*"),
 		qm.InnerJoin("members on members.member_id = blogs.member_id"),
-		qm.InnerJoin("groups on groups.group_id = members.group_id"),
-		qm.Where("CASE WHEN ? = '' THEN '1' ELSE groups.group_name = ? END", groupName, groupName),
+		qm.Where("members.group_id = ?", g.GroupID),
 	).Bind(ctx, q.DB, &mBlog)
 
 	if err != nil {

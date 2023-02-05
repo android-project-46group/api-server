@@ -119,23 +119,20 @@ func TestGetAllMembersAPI(t *testing.T) {
 			url:  fmt.Sprintf("/members?key=%s", key),
 			buildStubs: func(store *mockdb.MockQuerier) {
 				store.EXPECT().
-					GetAllMemberInfos(gomock.Any(), "", gomock.Any()).
-					Times(1).
-					Return([]db.MemberInfoBind{}, nil)
+					GetAllMemberInfos(gomock.Any(), gomock.Any(), gomock.Any()).
+					Times(0)
 				store.EXPECT().
-					FindApiKeyByName(gomock.Any(), key).
-					Times(1).
-					Return(nil, nil)
+					FindApiKeyByName(gomock.Any(), gomock.Any()).
+					Times(0)
 				store.EXPECT().
 					FindGroupByName(gomock.Any(), gomock.Any()).
 					Times(0)
 				store.EXPECT().
-					FindLocaleByName(gomock.Any(), "ja").
-					Times(1).
-					Return(&models.Locale{}, nil)
+					FindLocaleByName(gomock.Any(), gomock.Any()).
+					Times(0)
 			},
 			checkResponse: func(t *testing.T, recorder *httptest.ResponseRecorder) {
-				require.Equal(t, http.StatusOK, recorder.Code)
+				require.Equal(t, http.StatusNotFound, recorder.Code)
 			},
 		},
 		{
