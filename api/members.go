@@ -47,21 +47,23 @@ func (server *Server) getAllMembers(w http.ResponseWriter, r *http.Request) {
 	// get group name from query parameters
 	group := r.FormValue("gn")
 
-	_, err := server.querier.FindGroupByName(ctx, group)
-	if err != nil {
-		if errors.Unwrap(err) == sql.ErrNoRows {
-			w.WriteHeader(http.StatusBadRequest)
-			server.logger.Warnf(ctx, "Invalid group name (%s) was passed.", group)
+	if group != "" {
+		_, err := server.querier.FindGroupByName(ctx, group)
+		if err != nil {
+			if errors.Unwrap(err) == sql.ErrNoRows {
+				w.WriteHeader(http.StatusBadRequest)
+				server.logger.Warnf(ctx, "Invalid group name (%s) was passed.", group)
+				return
+			}
+			w.WriteHeader(http.StatusInternalServerError)
+			server.logger.Errorf(ctx, "failed to FindGroupByName: %w", err)
 			return
 		}
-		w.WriteHeader(http.StatusInternalServerError)
-		server.logger.Errorf(ctx, "failed to FindGroupByName: %w", err)
-		return
 	}
 
 	// 言語情報を取得する。
 	var l *models.Locale
-	l, err = server.querier.FindLocaleByName(ctx, locale)
+	l, err := server.querier.FindLocaleByName(ctx, locale)
 	if err != nil {
 		// DB に見つからなかった場合、デフォルトの情報を取得。
 		l, _ = server.querier.FindLocaleByName(ctx, "ja")
@@ -92,6 +94,7 @@ func (server *Server) getAllMembers(w http.ResponseWriter, r *http.Request) {
 	// make json for http response
 	jsonRes, _ := json.Marshal(
 		map[string]interface{}{
+			"counts": len(res),
 			"members": res,
 		},
 	)
