@@ -57,7 +57,6 @@ func (server *Server) setupRouter() error {
 		Methods("GET")
 
 	r.Path(rootPath+"/members").
-		Queries("gn", "{gn}").
 		Queries("key", "{key}").
 		HandlerFunc(server.getAllMembers).
 		Methods("GET")
