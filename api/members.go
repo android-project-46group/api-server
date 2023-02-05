@@ -94,6 +94,7 @@ func (server *Server) getAllMembers(w http.ResponseWriter, r *http.Request) {
 	// make json for http response
 	jsonRes, _ := json.Marshal(
 		map[string]interface{}{
+			"counts": len(res),
 			"members": res,
 		},
 	)
