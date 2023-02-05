@@ -112,17 +112,20 @@ func TestGetAllBlogsAPI(t *testing.T) {
 			url:  fmt.Sprintf("/blogs?key=%s", key),
 			buildStubs: func(querier *mockdb.MockQuerier) {
 				querier.EXPECT().
-					GetAllBlogs(gomock.Any(), gomock.Any()).
-					Times(0)
+					GetAllBlogs(gomock.Any(), "").
+					Times(1).
+					Return([]db.MemberBlogBind{}, nil)
 				querier.EXPECT().
 					FindApiKeyByName(gomock.Any(), key).
-					Times(0)
+					Times(1).
+					Return(nil, nil)
 				querier.EXPECT().
 					FindGroupByName(gomock.Any(), gomock.Any()).
 					Times(0)
 			},
 			checkResponse: func(t *testing.T, recorder *httptest.ResponseRecorder) {
-				require.Equal(t, http.StatusNotFound, recorder.Code)
+				require.Equal(t, http.StatusOK, recorder.Code)
+				require.NotNil(t, recorder.Body)
 			},
 		},
 		{
