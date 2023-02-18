@@ -10,8 +10,8 @@ import (
 
 	models "github.com/android-project-46group/api-server/db/my_models"
 	"github.com/android-project-46group/api-server/util"
+	tracer "github.com/opentracing/opentracing-go"
 	"golang.org/x/text/language"
-	"gopkg.in/DataDog/dd-trace-go.v1/ddtrace/tracer"
 )
 
 /*

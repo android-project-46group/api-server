@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"gopkg.in/DataDog/dd-trace-go.v1/ddtrace/tracer"
+	tracer "github.com/opentracing/opentracing-go"
 )
 
 /*

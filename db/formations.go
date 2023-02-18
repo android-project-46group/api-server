@@ -8,7 +8,6 @@ import (
 	"github.com/volatiletech/sqlboiler/v4/queries/qm"
 
 	models "github.com/android-project-46group/api-server/db/my_models"
-	// "fmt"
 )
 
 // Member まで持ってきているのは過剰かも。

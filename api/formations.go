@@ -9,7 +9,7 @@ import (
 	"net/http"
 
 	"github.com/android-project-46group/api-server/db"
-	"gopkg.in/DataDog/dd-trace-go.v1/ddtrace/tracer"
+	tracer "github.com/opentracing/opentracing-go"
 )
 
 func (server *Server) getAllFormations(w http.ResponseWriter, r *http.Request) {
