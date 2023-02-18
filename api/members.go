@@ -96,7 +96,7 @@ func (server *Server) getAllMembers(w http.ResponseWriter, r *http.Request) {
 	var res []MemberInfoResponse
 	for _, info := range infos {
 		m := MemberInfoResponse{
-			MemberId:   info.Member.MemberID,
+			MemberId:   info.MemberInfo.MemberID,
 			MemberName: info.Member.NameJa,
 			Birthday:   info.MemberInfo.Birthday,
 			Height:     info.MemberInfo.Height,
