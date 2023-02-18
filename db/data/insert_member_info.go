@@ -2,6 +2,8 @@ package data
 
 import (
 	"fmt"
+	"strconv"
+	"strings"
 
 	models "github.com/android-project-46group/api-server/db/my_models"
 	_ "github.com/lib/pq"
@@ -54,11 +56,17 @@ func InsertMemberInfosFromGroupName(group string) {
 
 		member_db, _ := FindUserByName(info.Name)
 
+		trimmed := strings.TrimRight(info.Height, "cm")
+		heightCM, err := strconv.ParseFloat(trimmed, 64)
+		if err != nil {
+			fmt.Println("failed to parse float: ", err)
+		}
+
 		m := &models.MemberInfo{
 			MemberID:   member_db.MemberID,
 			Birthday:   info.Birthday,
 			BloodType:  info.BloodType,
-			Height:     info.Height,
+			HeightCM:   heightCM,
 			Generation: info.Generation,
 			LocaleID:   locale.LocaleID,
 		}
@@ -66,7 +74,7 @@ func InsertMemberInfosFromGroupName(group string) {
 		m.BlogURL.Valid = true
 		m.ImgURL.String = info.ImgUrl
 		m.ImgURL.Valid = true
-		err := m.Insert(Ctx, DB, boil.Infer())
+		err = m.Insert(Ctx, DB, boil.Infer())
 		if err != nil {
 			fmt.Println("Error" + info.Name)
 			fmt.Println(err)
@@ -86,11 +94,17 @@ func InsertMemberInfosFromGroupNameEn(group string) {
 
 		member_db, _ := FindUserByName(info.Name)
 
+		trimmed := strings.TrimRight(info.Height, "cm")
+		heightCM, err := strconv.ParseFloat(trimmed, 64)
+		if err != nil {
+			fmt.Println("failed to parse float: ", err)
+		}
+
 		m := &models.MemberInfo{
 			MemberID:   member_db.MemberID,
 			Birthday:   info.Birthday,
 			BloodType:  info.BloodType,
-			Height:     info.Height,
+			HeightCM:   heightCM,
 			Generation: info.Generation,
 			LocaleID:   locale.LocaleID,
 		}
@@ -98,7 +112,7 @@ func InsertMemberInfosFromGroupNameEn(group string) {
 		m.BlogURL.Valid = true
 		m.ImgURL.String = info.ImgUrl
 		m.ImgURL.Valid = true
-		err := m.Insert(Ctx, DB, boil.Infer())
+		err = m.Insert(Ctx, DB, boil.Infer())
 		if err != nil {
 			fmt.Println("Error" + info.Name)
 			fmt.Println(err)
@@ -113,7 +127,7 @@ func InsertGraduatedMemberInfos() {
 		MemberID:   member_db.MemberID,
 		Birthday:   "2001年12月2日",
 		BloodType:  "A 型",
-		Height:     "157 cm",
+		HeightCM:   157,
 		Generation: "1期生",
 		LocaleID:   2,
 	}
@@ -128,7 +142,7 @@ func InsertGraduatedMemberInfos() {
 		MemberID:   member_db.MemberID,
 		Birthday:   "1995年11月10日",
 		BloodType:  "AB 型",
-		Height:     "163 cm",
+		HeightCM:   163,
 		Generation: "1期生",
 		LocaleID:   2,
 	}

@@ -112,7 +112,7 @@ func (server *Server) getAllMembers(w http.ResponseWriter, r *http.Request) {
 			MemberId:   info.MemberInfo.MemberID,
 			MemberName: info.Member.NameJa,
 			Birthday:   info.MemberInfo.Birthday,
-			Height:     info.MemberInfo.Height,
+			Height:     outputHeight(info.MemberInfo.HeightCM),
 			BloodType:  info.MemberInfo.BloodType,
 			Generation: info.MemberInfo.Generation,
 			BlogURL:    info.MemberInfo.BlogURL.String,
@@ -145,6 +145,11 @@ func (server *Server) getAllMembers(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusOK)
 	fmt.Fprint(w, string(jsonRes))
+}
+
+func outputHeight(height float64) string {
+	// 151.00000000 → 151.0cm
+	return fmt.Sprintf("%.1fcm", height)
 }
 
 // queryToColumnName convert query string to SortKey.
