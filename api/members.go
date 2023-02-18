@@ -8,6 +8,7 @@ import (
 	"net/http"
 
 	models "github.com/android-project-46group/api-server/db/my_models"
+	"github.com/android-project-46group/api-server/util"
 	"golang.org/x/text/language"
 	"gopkg.in/DataDog/dd-trace-go.v1/ddtrace/tracer"
 )
@@ -31,7 +32,7 @@ func (server *Server) getAllMembers(w http.ResponseWriter, r *http.Request) {
 	tag, _ := language.MatchStrings(server.matcher, lang.String(), accept)
 	locale := tag.String()[0:2]
 
-	key := r.FormValue("key")
+	key := r.FormValue(queryApiKey)
 
 	if err := server.isApiKeyValid(ctx, key); err != nil {
 		if err == sql.ErrNoRows {
@@ -45,7 +46,7 @@ func (server *Server) getAllMembers(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// get group name from query parameters
-	group := r.FormValue("gn")
+	group := r.FormValue(queryGroupName)
 
 	if group != "" {
 		_, err := server.querier.FindGroupByName(ctx, group)
