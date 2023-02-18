@@ -16,6 +16,7 @@ import (
 type MemberInfoBind struct {
 	models.MemberInfo `boil:",bind"`
 	models.Member     `boil:",bind"`
+	models.Group      `boil:",bind"`
 }
 
 func (q *SqlQuerier) GetAllMemberInfos(ctx context.Context, groupName string, locale int, sortKey util.SortKey, desc bool) ([]MemberInfoBind, error) {
@@ -33,7 +34,7 @@ func (q *SqlQuerier) GetAllMemberInfos(ctx context.Context, groupName string, lo
 
 	var jMember []MemberInfoBind
 	err := models.Members(
-		qm.Select("member_infos.*", "members.*"),
+		qm.Select("member_infos.*", "members.*", "groups.*"),
 		qm.InnerJoin("member_infos on members.member_id = member_infos.member_id"),
 		qm.InnerJoin("locales on locales.locale_id = member_infos.locale_id AND locales.locale_id = ?", locale),
 		qm.InnerJoin("groups on groups.group_id = members.group_id"),

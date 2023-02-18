@@ -105,6 +105,10 @@ func (server *Server) getAllMembers(w http.ResponseWriter, r *http.Request) {
 			BlogURL:    info.MemberInfo.BlogURL.String,
 			ImgURL:     info.MemberInfo.ImgURL.String,
 		}
+		// グループ名で絞り込みがされてない場合、レスポンスにグループ名を付与する。
+		if group == "" {
+			m.Group = info.Group.GroupName
+		}
 		res = append(res, m)
 	}
 
