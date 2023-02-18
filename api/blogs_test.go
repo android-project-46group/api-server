@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"testing"
 
 	"github.com/android-project-46group/api-server/db"
@@ -205,7 +206,7 @@ func TestGetAllBlogsAPI(t *testing.T) {
 			querier := mockdb.NewMockQuerier(ctrl)
 			tc.buildStubs(querier)
 			matcher := util.NewMatcher()
-			logger, _, _ := util.NewStandardLogger("go-test", "api-saka")
+			logger, _, _ := util.NewStandardLogger("go-test", "api-saka", os.Stdout)
 			server, err := NewServer(config, querier, matcher, logger)
 			require.NoError(t, err)
 			recorder := httptest.NewRecorder()

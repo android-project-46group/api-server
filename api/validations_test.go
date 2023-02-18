@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"os"
 	"testing"
 
 	mockdb "github.com/android-project-46group/api-server/db/mock"
@@ -71,7 +72,7 @@ func TestIsApiKeyValid(t *testing.T) {
 			tc.buildStubs(querier)
 
 			matcher := util.NewMatcher()
-			logger, _, _ := util.NewStandardLogger("go-test", "api-saka")
+			logger, _, _ := util.NewStandardLogger("go-test", "api-saka", os.Stdout)
 			server, err := NewServer(config, querier, matcher, logger)
 			require.NoError(t, err)
 

@@ -10,6 +10,7 @@ import (
 
 	db "github.com/android-project-46group/api-server/db"
 	models "github.com/android-project-46group/api-server/db/my_models"
+	util "github.com/android-project-46group/api-server/util"
 	gomock "github.com/golang/mock/gomock"
 )
 
@@ -127,18 +128,18 @@ func (mr *MockQuerierMockRecorder) GetAllGroups(arg0 interface{}) *gomock.Call {
 }
 
 // GetAllMemberInfos mocks base method.
-func (m *MockQuerier) GetAllMemberInfos(arg0 context.Context, arg1 string, arg2 int) ([]db.MemberInfoBind, error) {
+func (m *MockQuerier) GetAllMemberInfos(arg0 context.Context, arg1 string, arg2 int, arg3 util.SortKey, arg4 bool) ([]db.MemberInfoBind, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetAllMemberInfos", arg0, arg1, arg2)
+	ret := m.ctrl.Call(m, "GetAllMemberInfos", arg0, arg1, arg2, arg3, arg4)
 	ret0, _ := ret[0].([]db.MemberInfoBind)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GetAllMemberInfos indicates an expected call of GetAllMemberInfos.
-func (mr *MockQuerierMockRecorder) GetAllMemberInfos(arg0, arg1, arg2 interface{}) *gomock.Call {
+func (mr *MockQuerierMockRecorder) GetAllMemberInfos(arg0, arg1, arg2, arg3, arg4 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAllMemberInfos", reflect.TypeOf((*MockQuerier)(nil).GetAllMemberInfos), arg0, arg1, arg2)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAllMemberInfos", reflect.TypeOf((*MockQuerier)(nil).GetAllMemberInfos), arg0, arg1, arg2, arg3, arg4)
 }
 
 // GetAllPositions mocks base method.
