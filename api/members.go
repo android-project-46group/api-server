@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"strconv"
 
 	models "github.com/android-project-46group/api-server/db/my_models"
 	"github.com/android-project-46group/api-server/util"
@@ -70,7 +71,23 @@ func (server *Server) getAllMembers(w http.ResponseWriter, r *http.Request) {
 		l, _ = server.querier.FindLocaleByName(ctx, "ja")
 	}
 
-	infos, err := server.querier.GetAllMemberInfos(ctx, group, l.LocaleID)
+	// default value is false
+	querySortKey := r.FormValue(querySortKey)
+	sortKey := queryToColumnName(querySortKey)
+
+	// default value is false
+	desc := false
+	queryDesc := r.FormValue(queryDesc)
+	if queryDesc != "" {
+		desc, err = strconv.ParseBool(queryDesc)
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			server.logger.Errorf(ctx, "failed to ParseBool queryDesc: %w", err)
+			return
+		}
+	}
+
+	infos, err := server.querier.GetAllMemberInfos(ctx, group, l.LocaleID, sortKey, desc)
 	if err != nil {
 		server.logger.Errorf(ctx, "failed to get all memberInfos: %w", err)
 		// db error
@@ -95,11 +112,25 @@ func (server *Server) getAllMembers(w http.ResponseWriter, r *http.Request) {
 	// make json for http response
 	jsonRes, _ := json.Marshal(
 		map[string]interface{}{
-			"counts": len(res),
+			"counts":  len(res),
 			"members": res,
 		},
 	)
 
 	w.WriteHeader(http.StatusOK)
 	fmt.Fprint(w, string(jsonRes))
+}
+
+// queryToColumnName convert query string to SortKey.
+func queryToColumnName(query string) util.SortKey {
+	switch query {
+	case SortKeyID:
+		return util.MemberID
+	case SortKeyBirthday:
+		return util.Birthday
+	case SortKeyHeight:
+		return util.Height
+	default:
+		return util.MemberID
+	}
 }
