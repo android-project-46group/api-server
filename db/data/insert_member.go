@@ -70,6 +70,8 @@ func InsertMembersNogi() {
 			date = time.Date(2016, 9, 4, 9, 0, 0, 0, time.Local)
 		} else if info.Generation == "4期生" {
 			date = time.Date(2018, 12, 3, 9, 0, 0, 0, time.Local)
+		} else if info.Generation == "5期生" {
+			date = time.Date(2022, 2, 1, 9, 0, 0, 0, time.Local)
 		}
 
 		for _, b := range new_4th {
@@ -127,6 +129,377 @@ func InsertMembersNogi() {
 	m.LeftAt.Time = time.Date(2020, 10, 28, 9, 0, 0, 0, time.Local)
 	m.LeftAt.Valid = true
 	m.Insert(Ctx, DB, boil.Infer())
+}
+
+func UpdateGraduatedMembersNogi() {
+
+	m, err := FindUserByName("相楽 伊織")
+	if err != nil {
+		fmt.Println(err)
+	}
+	m.LeftAt.Time = time.Date(2018, 7, 16, 9, 0, 0, 0, time.Local)
+	m.LeftAt.Valid = true
+	m.Update(Ctx, DB, boil.Infer())
+
+	m, err = FindUserByName("矢田 里沙子")
+	if err != nil {
+		fmt.Println(err)
+	}
+	m.LeftAt.Time = time.Date(2014, 10, 18, 9, 0, 0, 0, time.Local)
+	m.LeftAt.Valid = true
+	m.Update(Ctx, DB, boil.Infer())
+
+	m, err = FindUserByName("松井 玲奈")
+	if err != nil {
+		fmt.Println(err)
+	}
+	m.LeftAt.Time = time.Date(2015, 5, 14, 9, 0, 0, 0, time.Local)
+	m.LeftAt.Valid = true
+	m.Update(Ctx, DB, boil.Infer())
+
+	m, err = FindUserByName("渡辺 みり愛")
+	if err != nil {
+		fmt.Println(err)
+	}
+	m.LeftAt.Time = time.Date(2021, 8, 31, 9, 0, 0, 0, time.Local)
+	m.LeftAt.Valid = true
+	m.Update(Ctx, DB, boil.Infer())
+
+	m, err = FindUserByName("米徳 京花")
+	if err != nil {
+		fmt.Println(err)
+	}
+	m.LeftAt.Time = time.Date(2014, 10, 18, 9, 0, 0, 0, time.Local)
+	m.LeftAt.Valid = true
+	m.Update(Ctx, DB, boil.Infer())
+
+	m, err = FindUserByName("山崎 怜奈")
+	if err != nil {
+		fmt.Println(err)
+	}
+	m.LeftAt.Time = time.Date(2022, 7, 17, 9, 0, 0, 0, time.Local)
+	m.LeftAt.Valid = true
+	m.Update(Ctx, DB, boil.Infer())
+
+	m, err = FindUserByName("寺田 蘭世")
+	if err != nil {
+		fmt.Println(err)
+	}
+	m.LeftAt.Time = time.Date(2021, 12, 12, 9, 0, 0, 0, time.Local)
+	m.LeftAt.Valid = true
+	m.Update(Ctx, DB, boil.Infer())
+
+	m, err = FindUserByName("佐々木 琴子")
+	if err != nil {
+		fmt.Println(err)
+	}
+	m.LeftAt.Time = time.Date(2020, 3, 31, 9, 0, 0, 0, time.Local)
+	m.LeftAt.Valid = true
+	m.Update(Ctx, DB, boil.Infer())
+
+	m, err = FindUserByName("伊藤 純奈")
+	if err != nil {
+		fmt.Println(err)
+	}
+	m.LeftAt.Time = time.Date(2021, 8, 29, 9, 0, 0, 0, time.Local)
+	m.LeftAt.Valid = true
+	m.Update(Ctx, DB, boil.Infer())
+
+	m, err = FindUserByName("伊藤 かりん")
+	if err != nil {
+		fmt.Println(err)
+	}
+	m.LeftAt.Time = time.Date(2019, 5, 24, 9, 0, 0, 0, time.Local)
+	m.LeftAt.Valid = true
+	m.Update(Ctx, DB, boil.Infer())
+
+	m, err = FindUserByName("新内 眞衣")
+	if err != nil {
+		fmt.Println(err)
+	}
+	m.LeftAt.Time = time.Date(2022, 2, 10, 9, 0, 0, 0, time.Local)
+	m.LeftAt.Valid = true
+	m.Update(Ctx, DB, boil.Infer())
+
+	m, err = FindUserByName("北野 日奈子")
+	if err != nil {
+		fmt.Println(err)
+	}
+	m.LeftAt.Time = time.Date(2022, 4, 30, 9, 0, 0, 0, time.Local)
+	m.LeftAt.Valid = true
+	m.Update(Ctx, DB, boil.Infer())
+
+	m, err = FindUserByName("堀 未央奈")
+	if err != nil {
+		fmt.Println(err)
+	}
+	m.LeftAt.Time = time.Date(2021, 3, 28, 9, 0, 0, 0, time.Local)
+	m.LeftAt.Valid = true
+	m.Update(Ctx, DB, boil.Infer())
+
+	m, err = FindUserByName("秋元 真夏")
+	if err != nil {
+		fmt.Println(err)
+	}
+	m.LeftAt.Time = time.Date(2023, 2, 26, 9, 0, 0, 0, time.Local)
+	m.LeftAt.Valid = true
+	m.Update(Ctx, DB, boil.Infer())
+
+	m, err = FindUserByName("和田 まあや")
+	if err != nil {
+		fmt.Println(err)
+	}
+	m.LeftAt.Time = time.Date(2022, 12, 4, 9, 0, 0, 0, time.Local)
+	m.LeftAt.Valid = true
+	m.Update(Ctx, DB, boil.Infer())
+
+	m, err = FindUserByName("若月 佑美")
+	if err != nil {
+		fmt.Println(err)
+	}
+	m.LeftAt.Time = time.Date(2018, 11, 30, 9, 0, 0, 0, time.Local)
+	m.LeftAt.Valid = true
+	m.Update(Ctx, DB, boil.Infer())
+
+	m, err = FindUserByName("大和 里菜")
+	if err != nil {
+		fmt.Println(err)
+	}
+	m.LeftAt.Time = time.Date(2014, 12, 15, 9, 0, 0, 0, time.Local)
+	m.LeftAt.Valid = true
+	m.Update(Ctx, DB, boil.Infer())
+
+	m, err = FindUserByName("宮澤 成良")
+	if err != nil {
+		fmt.Println(err)
+	}
+	m.LeftAt.Time = time.Date(2013, 11, 17, 9, 0, 0, 0, time.Local)
+	m.LeftAt.Valid = true
+	m.Update(Ctx, DB, boil.Infer())
+
+	m, err = FindUserByName("松村 沙友理")
+	if err != nil {
+		fmt.Println(err)
+	}
+	m.LeftAt.Time = time.Date(2021, 7, 13, 9, 0, 0, 0, time.Local)
+	m.LeftAt.Valid = true
+	m.Update(Ctx, DB, boil.Infer())
+
+	m, err = FindUserByName("星野 みなみ")
+	if err != nil {
+		fmt.Println(err)
+	}
+	m.LeftAt.Time = time.Date(2022, 2, 12, 9, 0, 0, 0, time.Local)
+	m.LeftAt.Valid = true
+	m.Update(Ctx, DB, boil.Infer())
+
+	m, err = FindUserByName("深川 麻衣")
+	if err != nil {
+		fmt.Println(err)
+	}
+	m.LeftAt.Time = time.Date(2016, 6, 16, 9, 0, 0, 0, time.Local)
+	m.LeftAt.Valid = true
+	m.Update(Ctx, DB, boil.Infer())
+
+	m, err = FindUserByName("樋口 日奈")
+	if err != nil {
+		fmt.Println(err)
+	}
+	m.LeftAt.Time = time.Date(2022, 10, 31, 9, 0, 0, 0, time.Local)
+	m.LeftAt.Valid = true
+	m.Update(Ctx, DB, boil.Infer())
+
+	m, err = FindUserByName("畠中 清羅")
+	if err != nil {
+		fmt.Println(err)
+	}
+	m.LeftAt.Time = time.Date(2015, 4, 4, 9, 0, 0, 0, time.Local)
+	m.LeftAt.Valid = true
+	m.Update(Ctx, DB, boil.Infer())
+
+	m, err = FindUserByName("橋本 奈々未")
+	if err != nil {
+		fmt.Println(err)
+	}
+	m.LeftAt.Time = time.Date(2017, 2, 20, 9, 0, 0, 0, time.Local)
+	m.LeftAt.Valid = true
+	m.Update(Ctx, DB, boil.Infer())
+
+	m, err = FindUserByName("能條 愛未")
+	if err != nil {
+		fmt.Println(err)
+	}
+	m.LeftAt.Time = time.Date(2018, 12, 15, 9, 0, 0, 0, time.Local)
+	m.LeftAt.Valid = true
+	m.Update(Ctx, DB, boil.Infer())
+
+	m, err = FindUserByName("西野 七瀬")
+	if err != nil {
+		fmt.Println(err)
+	}
+	m.LeftAt.Time = time.Date(2018, 12, 31, 9, 0, 0, 0, time.Local)
+	m.LeftAt.Valid = true
+	m.Update(Ctx, DB, boil.Infer())
+
+	m, err = FindUserByName("永島 聖羅")
+	if err != nil {
+		fmt.Println(err)
+	}
+	m.LeftAt.Time = time.Date(2016, 3, 20, 9, 0, 0, 0, time.Local)
+	m.LeftAt.Valid = true
+	m.Update(Ctx, DB, boil.Infer())
+
+	m, err = FindUserByName("中元 日芽香")
+	if err != nil {
+		fmt.Println(err)
+	}
+	m.LeftAt.Time = time.Date(2017, 12, 31, 9, 0, 0, 0, time.Local)
+	m.LeftAt.Valid = true
+	m.Update(Ctx, DB, boil.Infer())
+
+	m, err = FindUserByName("中田 花奈")
+	if err != nil {
+		fmt.Println(err)
+	}
+	m.LeftAt.Time = time.Date(2020, 10, 25, 9, 0, 0, 0, time.Local)
+	m.LeftAt.Valid = true
+	m.Update(Ctx, DB, boil.Infer())
+
+	m, err = FindUserByName("高山 一実")
+	if err != nil {
+		fmt.Println(err)
+	}
+	m.LeftAt.Time = time.Date(2021, 11, 21, 9, 0, 0, 0, time.Local)
+	m.LeftAt.Valid = true
+	m.Update(Ctx, DB, boil.Infer())
+
+	m, err = FindUserByName("白石 麻衣")
+	if err != nil {
+		fmt.Println(err)
+	}
+	m.LeftAt.Time = time.Date(2020, 10, 28, 9, 0, 0, 0, time.Local)
+	m.LeftAt.Valid = true
+	m.Update(Ctx, DB, boil.Infer())
+
+	m, err = FindUserByName("桜井 玲香")
+	if err != nil {
+		fmt.Println(err)
+	}
+	m.LeftAt.Time = time.Date(2019, 9, 1, 9, 0, 0, 0, time.Local)
+	m.LeftAt.Valid = true
+	m.Update(Ctx, DB, boil.Infer())
+
+	m, err = FindUserByName("斉藤 優里")
+	if err != nil {
+		fmt.Println(err)
+	}
+	m.LeftAt.Time = time.Date(2019, 6, 30, 9, 0, 0, 0, time.Local)
+	m.LeftAt.Valid = true
+	m.Update(Ctx, DB, boil.Infer())
+
+	m, err = FindUserByName("斎藤 ちはる")
+	if err != nil {
+		fmt.Println(err)
+	}
+	m.LeftAt.Time = time.Date(2018, 7, 16, 9, 0, 0, 0, time.Local)
+	m.LeftAt.Valid = true
+	m.Update(Ctx, DB, boil.Infer())
+
+	m, err = FindUserByName("齋藤 飛鳥")
+	if err != nil {
+		fmt.Println(err)
+	}
+	m.LeftAt.Time = time.Date(2022, 12, 31, 9, 0, 0, 0, time.Local)
+	m.LeftAt.Valid = true
+	m.Update(Ctx, DB, boil.Infer())
+
+	m, err = FindUserByName("川村 真洋")
+	if err != nil {
+		fmt.Println(err)
+	}
+	m.LeftAt.Time = time.Date(2018, 3, 31, 9, 0, 0, 0, time.Local)
+	m.LeftAt.Valid = true
+	m.Update(Ctx, DB, boil.Infer())
+
+	m, err = FindUserByName("川後 陽菜")
+	if err != nil {
+		fmt.Println(err)
+	}
+	m.LeftAt.Time = time.Date(2018, 12, 20, 9, 0, 0, 0, time.Local)
+	m.LeftAt.Valid = true
+	m.Update(Ctx, DB, boil.Infer())
+
+	m, err = FindUserByName("柏 幸奈")
+	if err != nil {
+		fmt.Println(err)
+	}
+	m.LeftAt.Time = time.Date(2013, 11, 17, 9, 0, 0, 0, time.Local)
+	m.LeftAt.Valid = true
+	m.Update(Ctx, DB, boil.Infer())
+
+	m, err = FindUserByName("衛藤 美彩")
+	if err != nil {
+		fmt.Println(err)
+	}
+	m.LeftAt.Time = time.Date(2019, 3, 31, 9, 0, 0, 0, time.Local)
+	m.LeftAt.Valid = true
+	m.Update(Ctx, DB, boil.Infer())
+
+	m, err = FindUserByName("井上 小百合")
+	if err != nil {
+		fmt.Println(err)
+	}
+	m.LeftAt.Time = time.Date(2020, 4, 27, 9, 0, 0, 0, time.Local)
+	m.LeftAt.Valid = true
+	m.Update(Ctx, DB, boil.Infer())
+
+	m, err = FindUserByName("伊藤 万理華")
+	if err != nil {
+		fmt.Println(err)
+	}
+	m.LeftAt.Time = time.Date(2017, 12, 23, 9, 0, 0, 0, time.Local)
+	m.LeftAt.Valid = true
+	m.Update(Ctx, DB, boil.Infer())
+
+	m, err = FindUserByName("伊藤 寧々")
+	if err != nil {
+		fmt.Println(err)
+	}
+	m.LeftAt.Time = time.Date(2014, 10, 19, 9, 0, 0, 0, time.Local)
+	m.LeftAt.Valid = true
+	m.Update(Ctx, DB, boil.Infer())
+
+	m, err = FindUserByName("市來 玲奈")
+	if err != nil {
+		fmt.Println(err)
+	}
+	m.LeftAt.Time = time.Date(2014, 7, 21, 9, 0, 0, 0, time.Local)
+	m.LeftAt.Valid = true
+	m.Update(Ctx, DB, boil.Infer())
+
+	m, err = FindUserByName("岩瀬 佑美子")
+	if err != nil {
+		fmt.Println(err)
+	}
+	m.LeftAt.Time = time.Date(2012, 11, 18, 9, 0, 0, 0, time.Local)
+	m.LeftAt.Valid = true
+	m.Update(Ctx, DB, boil.Infer())
+
+	m, err = FindUserByName("生駒 里奈")
+	if err != nil {
+		fmt.Println(err)
+	}
+	m.LeftAt.Time = time.Date(2018, 5, 6, 9, 0, 0, 0, time.Local)
+	m.LeftAt.Valid = true
+	m.Update(Ctx, DB, boil.Infer())
+
+	m, err = FindUserByName("生田 絵梨花")
+	if err != nil {
+		fmt.Println(err)
+	}
+	m.LeftAt.Time = time.Date(2021, 12, 31, 9, 0, 0, 0, time.Local)
+	m.LeftAt.Valid = true
+	m.Update(Ctx, DB, boil.Infer())
 }
 
 func InsertMembersSakura() {

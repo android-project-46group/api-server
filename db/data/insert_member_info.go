@@ -105,3 +105,36 @@ func InsertMemberInfosFromGroupNameEn(group string) {
 		}
 	}
 }
+
+func InsertGraduatedMemberInfos() {
+	// 脱退したメンバーを挿入する
+	member_db, _ := FindUserByName("柿崎 芽実")
+	m := &models.MemberInfo{
+		MemberID:   member_db.MemberID,
+		Birthday:   "2001年12月2日",
+		BloodType:  "A 型",
+		Height:     "157 cm",
+		Generation: "1期生",
+		LocaleID:   2,
+	}
+	err := m.Insert(Ctx, DB, boil.Infer())
+	if err != nil {
+		fmt.Println("Error ", m)
+		fmt.Println(err)
+	}
+
+	member_db, _ = FindUserByName("井口 眞緒")
+	m = &models.MemberInfo{
+		MemberID:   member_db.MemberID,
+		Birthday:   "1995年11月10日",
+		BloodType:  "AB 型",
+		Height:     "163 cm",
+		Generation: "1期生",
+		LocaleID:   2,
+	}
+	err = m.Insert(Ctx, DB, boil.Infer())
+	if err != nil {
+		fmt.Println("Error ", m)
+		fmt.Println(err)
+	}
+}

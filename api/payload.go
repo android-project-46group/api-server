@@ -12,6 +12,7 @@ type MemberInfosResponse struct {
 
 type MemberInfoResponse struct {
 	MemberId   int    `json:"user_id"`
+	Group      string `json:"group,omitempty"`
 	MemberName string `json:"user_name" binding:"required,min=1"`
 	Birthday   string `json:"birthday"`
 	Height     string `json:"height"`
@@ -19,6 +20,7 @@ type MemberInfoResponse struct {
 	Generation string `json:"generation"`
 	BlogURL    string `json:"blog_url"`
 	ImgURL     string `json:"img_url"`
+	LeftAt     string `json:"left_at,omitempty"`
 }
 
 type BlogResponse struct {
