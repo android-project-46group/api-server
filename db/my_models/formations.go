@@ -124,8 +124,8 @@ type formationL struct{}
 
 var (
 	formationAllColumns            = []string{"formation_id", "first_row_num", "second_row_num", "third_row_num"}
-	formationColumnsWithoutDefault = []string{}
-	formationColumnsWithDefault    = []string{"formation_id", "first_row_num", "second_row_num", "third_row_num"}
+	formationColumnsWithoutDefault = []string{"first_row_num", "second_row_num", "third_row_num"}
+	formationColumnsWithDefault    = []string{"formation_id"}
 	formationPrimaryKeyColumns     = []string{"formation_id"}
 	formationGeneratedColumns      = []string{}
 )
@@ -875,7 +875,6 @@ func (o *Formation) Upsert(ctx context.Context, exec boil.ContextExecutor, updat
 			formationColumnsWithoutDefault,
 			nzDefaults,
 		)
-
 		update := updateColumns.UpdateColumnSet(
 			formationAllColumns,
 			formationPrimaryKeyColumns,
@@ -918,7 +917,7 @@ func (o *Formation) Upsert(ctx context.Context, exec boil.ContextExecutor, updat
 	}
 	if len(cache.retMapping) != 0 {
 		err = exec.QueryRowContext(ctx, cache.query, vals...).Scan(returns...)
-		if errors.Is(err, sql.ErrNoRows) {
+		if err == sql.ErrNoRows {
 			err = nil // Postgres doesn't return anything when there's no update
 		}
 	} else {

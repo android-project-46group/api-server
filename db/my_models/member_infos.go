@@ -28,7 +28,7 @@ type MemberInfo struct {
 	MemberID     int         `boil:"member_id" json:"member_id" toml:"member_id" yaml:"member_id"`
 	Birthday     string      `boil:"birthday" json:"birthday" toml:"birthday" yaml:"birthday"`
 	BloodType    string      `boil:"blood_type" json:"blood_type" toml:"blood_type" yaml:"blood_type"`
-	Height       string      `boil:"height" json:"height" toml:"height" yaml:"height"`
+	HeightCM     float64     `boil:"height_cm" json:"height_cm" toml:"height_cm" yaml:"height_cm"`
 	Generation   string      `boil:"generation" json:"generation" toml:"generation" yaml:"generation"`
 	BlogURL      null.String `boil:"blog_url" json:"blog_url,omitempty" toml:"blog_url" yaml:"blog_url,omitempty"`
 	ImgURL       null.String `boil:"img_url" json:"img_url,omitempty" toml:"img_url" yaml:"img_url,omitempty"`
@@ -43,7 +43,7 @@ var MemberInfoColumns = struct {
 	MemberID     string
 	Birthday     string
 	BloodType    string
-	Height       string
+	HeightCM     string
 	Generation   string
 	BlogURL      string
 	ImgURL       string
@@ -53,7 +53,7 @@ var MemberInfoColumns = struct {
 	MemberID:     "member_id",
 	Birthday:     "birthday",
 	BloodType:    "blood_type",
-	Height:       "height",
+	HeightCM:     "height_cm",
 	Generation:   "generation",
 	BlogURL:      "blog_url",
 	ImgURL:       "img_url",
@@ -65,7 +65,7 @@ var MemberInfoTableColumns = struct {
 	MemberID     string
 	Birthday     string
 	BloodType    string
-	Height       string
+	HeightCM     string
 	Generation   string
 	BlogURL      string
 	ImgURL       string
@@ -75,7 +75,7 @@ var MemberInfoTableColumns = struct {
 	MemberID:     "member_infos.member_id",
 	Birthday:     "member_infos.birthday",
 	BloodType:    "member_infos.blood_type",
-	Height:       "member_infos.height",
+	HeightCM:     "member_infos.height_cm",
 	Generation:   "member_infos.generation",
 	BlogURL:      "member_infos.blog_url",
 	ImgURL:       "member_infos.img_url",
@@ -83,6 +83,35 @@ var MemberInfoTableColumns = struct {
 }
 
 // Generated where
+
+type whereHelperfloat64 struct{ field string }
+
+func (w whereHelperfloat64) EQ(x float64) qm.QueryMod { return qmhelper.Where(w.field, qmhelper.EQ, x) }
+func (w whereHelperfloat64) NEQ(x float64) qm.QueryMod {
+	return qmhelper.Where(w.field, qmhelper.NEQ, x)
+}
+func (w whereHelperfloat64) LT(x float64) qm.QueryMod { return qmhelper.Where(w.field, qmhelper.LT, x) }
+func (w whereHelperfloat64) LTE(x float64) qm.QueryMod {
+	return qmhelper.Where(w.field, qmhelper.LTE, x)
+}
+func (w whereHelperfloat64) GT(x float64) qm.QueryMod { return qmhelper.Where(w.field, qmhelper.GT, x) }
+func (w whereHelperfloat64) GTE(x float64) qm.QueryMod {
+	return qmhelper.Where(w.field, qmhelper.GTE, x)
+}
+func (w whereHelperfloat64) IN(slice []float64) qm.QueryMod {
+	values := make([]interface{}, 0, len(slice))
+	for _, value := range slice {
+		values = append(values, value)
+	}
+	return qm.WhereIn(fmt.Sprintf("%s IN ?", w.field), values...)
+}
+func (w whereHelperfloat64) NIN(slice []float64) qm.QueryMod {
+	values := make([]interface{}, 0, len(slice))
+	for _, value := range slice {
+		values = append(values, value)
+	}
+	return qm.WhereNotIn(fmt.Sprintf("%s NOT IN ?", w.field), values...)
+}
 
 type whereHelpernull_String struct{ field string }
 
@@ -113,7 +142,7 @@ var MemberInfoWhere = struct {
 	MemberID     whereHelperint
 	Birthday     whereHelperstring
 	BloodType    whereHelperstring
-	Height       whereHelperstring
+	HeightCM     whereHelperfloat64
 	Generation   whereHelperstring
 	BlogURL      whereHelpernull_String
 	ImgURL       whereHelpernull_String
@@ -123,7 +152,7 @@ var MemberInfoWhere = struct {
 	MemberID:     whereHelperint{field: "\"member_infos\".\"member_id\""},
 	Birthday:     whereHelperstring{field: "\"member_infos\".\"birthday\""},
 	BloodType:    whereHelperstring{field: "\"member_infos\".\"blood_type\""},
-	Height:       whereHelperstring{field: "\"member_infos\".\"height\""},
+	HeightCM:     whereHelperfloat64{field: "\"member_infos\".\"height_cm\""},
 	Generation:   whereHelperstring{field: "\"member_infos\".\"generation\""},
 	BlogURL:      whereHelpernull_String{field: "\"member_infos\".\"blog_url\""},
 	ImgURL:       whereHelpernull_String{field: "\"member_infos\".\"img_url\""},
@@ -168,9 +197,9 @@ func (r *memberInfoR) GetMember() *Member {
 type memberInfoL struct{}
 
 var (
-	memberInfoAllColumns            = []string{"member_info_id", "member_id", "birthday", "blood_type", "height", "generation", "blog_url", "img_url", "locale_id"}
-	memberInfoColumnsWithoutDefault = []string{"member_id", "birthday", "blood_type", "height", "generation", "locale_id"}
-	memberInfoColumnsWithDefault    = []string{"member_info_id", "blog_url", "img_url"}
+	memberInfoAllColumns            = []string{"member_info_id", "member_id", "birthday", "blood_type", "height_cm", "generation", "blog_url", "img_url", "locale_id"}
+	memberInfoColumnsWithoutDefault = []string{"member_id", "birthday", "blood_type", "height_cm", "generation", "blog_url", "img_url", "locale_id"}
+	memberInfoColumnsWithDefault    = []string{"member_info_id"}
 	memberInfoPrimaryKeyColumns     = []string{"member_info_id"}
 	memberInfoGeneratedColumns      = []string{}
 )
@@ -1079,7 +1108,6 @@ func (o *MemberInfo) Upsert(ctx context.Context, exec boil.ContextExecutor, upda
 			memberInfoColumnsWithoutDefault,
 			nzDefaults,
 		)
-
 		update := updateColumns.UpdateColumnSet(
 			memberInfoAllColumns,
 			memberInfoPrimaryKeyColumns,
@@ -1122,7 +1150,7 @@ func (o *MemberInfo) Upsert(ctx context.Context, exec boil.ContextExecutor, upda
 	}
 	if len(cache.retMapping) != 0 {
 		err = exec.QueryRowContext(ctx, cache.query, vals...).Scan(returns...)
-		if errors.Is(err, sql.ErrNoRows) {
+		if err == sql.ErrNoRows {
 			err = nil // Postgres doesn't return anything when there's no update
 		}
 	} else {

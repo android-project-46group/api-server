@@ -141,8 +141,8 @@ type positionL struct{}
 
 var (
 	positionAllColumns            = []string{"position_id", "song_id", "member_id", "position", "is_center"}
-	positionColumnsWithoutDefault = []string{"song_id", "member_id", "position"}
-	positionColumnsWithDefault    = []string{"position_id", "is_center"}
+	positionColumnsWithoutDefault = []string{"song_id", "member_id", "position", "is_center"}
+	positionColumnsWithDefault    = []string{"position_id"}
 	positionPrimaryKeyColumns     = []string{"position_id"}
 	positionGeneratedColumns      = []string{}
 )
@@ -1051,7 +1051,6 @@ func (o *Position) Upsert(ctx context.Context, exec boil.ContextExecutor, update
 			positionColumnsWithoutDefault,
 			nzDefaults,
 		)
-
 		update := updateColumns.UpdateColumnSet(
 			positionAllColumns,
 			positionPrimaryKeyColumns,
@@ -1094,7 +1093,7 @@ func (o *Position) Upsert(ctx context.Context, exec boil.ContextExecutor, update
 	}
 	if len(cache.retMapping) != 0 {
 		err = exec.QueryRowContext(ctx, cache.query, vals...).Scan(returns...)
-		if errors.Is(err, sql.ErrNoRows) {
+		if err == sql.ErrNoRows {
 			err = nil // Postgres doesn't return anything when there's no update
 		}
 	} else {

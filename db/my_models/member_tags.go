@@ -1012,7 +1012,6 @@ func (o *MemberTag) Upsert(ctx context.Context, exec boil.ContextExecutor, updat
 			memberTagColumnsWithoutDefault,
 			nzDefaults,
 		)
-
 		update := updateColumns.UpdateColumnSet(
 			memberTagAllColumns,
 			memberTagPrimaryKeyColumns,
@@ -1055,7 +1054,7 @@ func (o *MemberTag) Upsert(ctx context.Context, exec boil.ContextExecutor, updat
 	}
 	if len(cache.retMapping) != 0 {
 		err = exec.QueryRowContext(ctx, cache.query, vals...).Scan(returns...)
-		if errors.Is(err, sql.ErrNoRows) {
+		if err == sql.ErrNoRows {
 			err = nil // Postgres doesn't return anything when there's no update
 		}
 	} else {
