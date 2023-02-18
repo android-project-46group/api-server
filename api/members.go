@@ -26,14 +26,19 @@ func (server *Server) getAllMembers(w http.ResponseWriter, r *http.Request) {
 	// debug log
 	server.logger.Debugf(ctx, "getAllMembers: userAgent", r.UserAgent())
 
-	w.Header().Set("Content-Type", "application/json; charset=utf-8")
-
 	lang, _ := r.Cookie("lang")
 	accept := r.Header.Get("Accept-Language")
 	tag, _ := language.MatchStrings(server.matcher, lang.String(), accept)
 	locale := tag.String()[0:2]
-
 	key := r.FormValue(queryApiKey)
+	// get group name from query parameters
+	group := r.FormValue(queryGroupName)
+	querySortKey := r.FormValue(querySortKey)
+	queryDesc := r.FormValue(queryDesc)
+
+	server.logger.Infof(ctx, "server.getAllMembers, locale %s, key %s, group %s, querySortKey %s, desc", locale, key, group, querySortKey, queryDesc)
+
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 
 	if err := server.isApiKeyValid(ctx, key); err != nil {
 		if err == sql.ErrNoRows {
@@ -45,9 +50,6 @@ func (server *Server) getAllMembers(w http.ResponseWriter, r *http.Request) {
 		server.logger.Errorf(ctx, "failed to isApiKeyValid: %w", err)
 		return
 	}
-
-	// get group name from query parameters
-	group := r.FormValue(queryGroupName)
 
 	if group != "" {
 		_, err := server.querier.FindGroupByName(ctx, group)
@@ -71,13 +73,10 @@ func (server *Server) getAllMembers(w http.ResponseWriter, r *http.Request) {
 		l, _ = server.querier.FindLocaleByName(ctx, "ja")
 	}
 
-	// default value is false
-	querySortKey := r.FormValue(querySortKey)
 	sortKey := queryToColumnName(querySortKey)
 
 	// default value is false
 	desc := false
-	queryDesc := r.FormValue(queryDesc)
 	if queryDesc != "" {
 		desc, err = strconv.ParseBool(queryDesc)
 		if err != nil {
