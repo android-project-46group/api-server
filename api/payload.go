@@ -11,9 +11,9 @@ type MemberInfosResponse struct {
 }
 
 type MemberInfoResponse struct {
-	MemberId   int    `json:"user_id"`
+	MemberId   int    `json:"id"`
 	Group      string `json:"group,omitempty"`
-	MemberName string `json:"user_name" binding:"required,min=1"`
+	MemberName string `json:"name" binding:"required,min=1"`
 	Birthday   string `json:"birthday"`
 	Height     string `json:"height"`
 	BloodType  string `json:"blood_type"`

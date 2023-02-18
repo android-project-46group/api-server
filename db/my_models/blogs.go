@@ -854,7 +854,6 @@ func (o *Blog) Upsert(ctx context.Context, exec boil.ContextExecutor, updateOnCo
 			blogColumnsWithoutDefault,
 			nzDefaults,
 		)
-
 		update := updateColumns.UpdateColumnSet(
 			blogAllColumns,
 			blogPrimaryKeyColumns,
@@ -897,7 +896,7 @@ func (o *Blog) Upsert(ctx context.Context, exec boil.ContextExecutor, updateOnCo
 	}
 	if len(cache.retMapping) != 0 {
 		err = exec.QueryRowContext(ctx, cache.query, vals...).Scan(returns...)
-		if errors.Is(err, sql.ErrNoRows) {
+		if err == sql.ErrNoRows {
 			err = nil // Postgres doesn't return anything when there's no update
 		}
 	} else {

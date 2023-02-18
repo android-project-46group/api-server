@@ -785,7 +785,7 @@ func testMemberInfosSelect(t *testing.T) {
 }
 
 var (
-	memberInfoDBTypes = map[string]string{`MemberInfoID`: `integer`, `MemberID`: `integer`, `Birthday`: `character varying`, `BloodType`: `character varying`, `Height`: `character varying`, `Generation`: `character varying`, `BlogURL`: `character varying`, `ImgURL`: `character varying`, `LocaleID`: `integer`}
+	memberInfoDBTypes = map[string]string{`MemberInfoID`: `integer`, `MemberID`: `integer`, `Birthday`: `character varying`, `BloodType`: `character varying`, `HeightCM`: `double precision`, `Generation`: `character varying`, `BlogURL`: `character varying`, `ImgURL`: `character varying`, `LocaleID`: `integer`}
 	_                 = bytes.MinRead
 )
 

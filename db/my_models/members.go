@@ -171,8 +171,8 @@ type memberL struct{}
 
 var (
 	memberAllColumns            = []string{"member_id", "group_id", "name_ja", "joined_at", "left_at"}
-	memberColumnsWithoutDefault = []string{"group_id", "name_ja"}
-	memberColumnsWithDefault    = []string{"member_id", "joined_at", "left_at"}
+	memberColumnsWithoutDefault = []string{"group_id", "name_ja", "joined_at", "left_at"}
+	memberColumnsWithDefault    = []string{"member_id"}
 	memberPrimaryKeyColumns     = []string{"member_id"}
 	memberGeneratedColumns      = []string{}
 )
@@ -1579,7 +1579,6 @@ func (o *Member) Upsert(ctx context.Context, exec boil.ContextExecutor, updateOn
 			memberColumnsWithoutDefault,
 			nzDefaults,
 		)
-
 		update := updateColumns.UpdateColumnSet(
 			memberAllColumns,
 			memberPrimaryKeyColumns,
@@ -1622,7 +1621,7 @@ func (o *Member) Upsert(ctx context.Context, exec boil.ContextExecutor, updateOn
 	}
 	if len(cache.retMapping) != 0 {
 		err = exec.QueryRowContext(ctx, cache.query, vals...).Scan(returns...)
-		if errors.Is(err, sql.ErrNoRows) {
+		if err == sql.ErrNoRows {
 			err = nil // Postgres doesn't return anything when there's no update
 		}
 	} else {

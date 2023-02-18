@@ -56,7 +56,7 @@ func keyToDBColumn(sortKey util.SortKey) string {
 	case util.Birthday:
 		return models.MemberInfoTableColumns.Birthday
 	case util.Height:
-		return models.MemberInfoTableColumns.Height
+		return models.MemberInfoTableColumns.HeightCM
 	default:
 		return models.MemberInfoTableColumns.MemberID
 	}
