@@ -20,6 +20,7 @@ type MemberInfoResponse struct {
 	Generation string `json:"generation"`
 	BlogURL    string `json:"blog_url"`
 	ImgURL     string `json:"img_url"`
+	LeftAt     string `json:"left_at,omitempty"`
 }
 
 type BlogResponse struct {

@@ -35,6 +35,7 @@ func (server *Server) getAllMembers(w http.ResponseWriter, r *http.Request) {
 	group := r.FormValue(queryGroupName)
 	querySortKey := r.FormValue(querySortKey)
 	queryDesc := r.FormValue(queryDesc)
+	queryAll := r.FormValue(queryIncludeGraduated)
 
 	server.logger.Infof(ctx, "server.getAllMembers, locale %s, key %s, group %s, querySortKey %s, desc", locale, key, group, querySortKey, queryDesc)
 
@@ -93,8 +94,20 @@ func (server *Server) getAllMembers(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-	var res []MemberInfoResponse
+
+	includeGraduated := false
+	parsedAll, err := strconv.ParseBool(queryAll)
+	if err == nil {
+		includeGraduated = parsedAll
+	}
+
+	res := []MemberInfoResponse{}
 	for _, info := range infos {
+		// 卒業メンバーを表示させない条件。
+		if !includeGraduated && info.Member.LeftAt.Valid {
+			continue
+		}
+
 		m := MemberInfoResponse{
 			MemberId:   info.MemberInfo.MemberID,
 			MemberName: info.Member.NameJa,
@@ -105,9 +118,19 @@ func (server *Server) getAllMembers(w http.ResponseWriter, r *http.Request) {
 			BlogURL:    info.MemberInfo.BlogURL.String,
 			ImgURL:     info.MemberInfo.ImgURL.String,
 		}
+
 		// グループ名で絞り込みがされてない場合、レスポンスにグループ名を付与する。
 		if group == "" {
 			m.Group = info.Group.GroupName
+		}
+
+		// 卒業メンバーを表示するオプションがある場合、レスポンスに卒業日を付与する。
+		if includeGraduated {
+			if info.Member.LeftAt.Valid {
+				m.LeftAt = info.Member.LeftAt.Time.Format("2006-01-02")
+			} else {
+				m.LeftAt = "-"
+			}
 		}
 		res = append(res, m)
 	}
