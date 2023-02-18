@@ -32,6 +32,7 @@ func InsertMain() {
 	InsertMembersNogi()
 	InsertMembersSakura()
 	InsertMembersHinata()
+	UpdateGraduatedMembersNogi()
 
 	// locales
 	InsertLocales()
@@ -41,6 +42,7 @@ func InsertMain() {
 	InsertMemberInfosHinata()
 	InsertMemberInfosNogi()
 	InsertMemberInfosSakura()
+	InsertGraduatedMemberInfos()
 
 	// tags table
 	InsertTags()

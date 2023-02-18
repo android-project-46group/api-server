@@ -9,6 +9,9 @@ migrateup:
 migratedown:
 	migrate -path migrations -database "$(DB_URL)" -verbose down
 
+migrateclear:	# migrate に失敗したものを更新する。
+	psql -h localhost -p 5432 -U ubuntu -d sakamichi -c "UPDATE schema_migrations SET dirty='f';"
+
 mock:
 	mockgen -package mockdb -destination db/mock/querier.go github.com/android-project-46group/api-server/db Querier
 
