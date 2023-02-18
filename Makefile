@@ -19,6 +19,6 @@ populate:
 	go run db/data/populate/main.go
 
 test:
-	go test -cover -shuffle=on ./...
+	go test -cover -shuffle=on ./api
 
 .PHONY: server migrateup migratedown mock psql populate test

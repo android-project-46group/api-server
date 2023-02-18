@@ -24,7 +24,7 @@ func NewZapLogger(
 	host string,
 	service string,
 	level Level,
-) (Logger, func(), error) {
+) (*zapLogger, func(), error) {
 
 	cfg := zap.NewProductionConfig()
 

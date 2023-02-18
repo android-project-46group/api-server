@@ -4,6 +4,7 @@ import (
 	"context"
 
 	models "github.com/android-project-46group/api-server/db/my_models"
+	"github.com/android-project-46group/api-server/util"
 )
 
 type Querier interface {
@@ -15,7 +16,7 @@ type Querier interface {
 	GetFormations(ctx context.Context, groupName string) ([]PositionSongsBind, error)
 	FindGroupByName(ctx context.Context, groupName string) (*models.Group, error)
 	FindLocaleByName(ctx context.Context, name string) (*models.Locale, error)
-	GetAllMemberInfos(ctx context.Context, groupName string, localeId int) ([]MemberInfoBind, error)
+	GetAllMemberInfos(ctx context.Context, groupName string, localeId int, sortKey util.SortKey, desc bool) ([]MemberInfoBind, error)
 	GetAllPositions(ctx context.Context, groupName string) ([]MemberInfoBind, error)
 	GetPositionFromTitle(ctx context.Context, title string) ([]PositionMemberBind, error)
 	GetAllSongs(ctx context.Context, groupName string) (models.SongSlice, error)

@@ -6,8 +6,10 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"strconv"
 
 	models "github.com/android-project-46group/api-server/db/my_models"
+	"github.com/android-project-46group/api-server/util"
 	"golang.org/x/text/language"
 	"gopkg.in/DataDog/dd-trace-go.v1/ddtrace/tracer"
 )
@@ -24,14 +26,19 @@ func (server *Server) getAllMembers(w http.ResponseWriter, r *http.Request) {
 	// debug log
 	server.logger.Debugf(ctx, "getAllMembers: userAgent", r.UserAgent())
 
-	w.Header().Set("Content-Type", "application/json; charset=utf-8")
-
 	lang, _ := r.Cookie("lang")
 	accept := r.Header.Get("Accept-Language")
 	tag, _ := language.MatchStrings(server.matcher, lang.String(), accept)
 	locale := tag.String()[0:2]
+	key := r.FormValue(queryApiKey)
+	// get group name from query parameters
+	group := r.FormValue(queryGroupName)
+	querySortKey := r.FormValue(querySortKey)
+	queryDesc := r.FormValue(queryDesc)
 
-	key := r.FormValue("key")
+	server.logger.Infof(ctx, "server.getAllMembers, locale %s, key %s, group %s, querySortKey %s, desc", locale, key, group, querySortKey, queryDesc)
+
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 
 	if err := server.isApiKeyValid(ctx, key); err != nil {
 		if err == sql.ErrNoRows {
@@ -43,9 +50,6 @@ func (server *Server) getAllMembers(w http.ResponseWriter, r *http.Request) {
 		server.logger.Errorf(ctx, "failed to isApiKeyValid: %w", err)
 		return
 	}
-
-	// get group name from query parameters
-	group := r.FormValue("gn")
 
 	if group != "" {
 		_, err := server.querier.FindGroupByName(ctx, group)
@@ -69,7 +73,20 @@ func (server *Server) getAllMembers(w http.ResponseWriter, r *http.Request) {
 		l, _ = server.querier.FindLocaleByName(ctx, "ja")
 	}
 
-	infos, err := server.querier.GetAllMemberInfos(ctx, group, l.LocaleID)
+	sortKey := queryToColumnName(querySortKey)
+
+	// default value is false
+	desc := false
+	if queryDesc != "" {
+		desc, err = strconv.ParseBool(queryDesc)
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			server.logger.Errorf(ctx, "failed to ParseBool queryDesc: %w", err)
+			return
+		}
+	}
+
+	infos, err := server.querier.GetAllMemberInfos(ctx, group, l.LocaleID, sortKey, desc)
 	if err != nil {
 		server.logger.Errorf(ctx, "failed to get all memberInfos: %w", err)
 		// db error
@@ -94,11 +111,25 @@ func (server *Server) getAllMembers(w http.ResponseWriter, r *http.Request) {
 	// make json for http response
 	jsonRes, _ := json.Marshal(
 		map[string]interface{}{
-			"counts": len(res),
+			"counts":  len(res),
 			"members": res,
 		},
 	)
 
 	w.WriteHeader(http.StatusOK)
 	fmt.Fprint(w, string(jsonRes))
+}
+
+// queryToColumnName convert query string to SortKey.
+func queryToColumnName(query string) util.SortKey {
+	switch query {
+	case SortKeyID:
+		return util.MemberID
+	case SortKeyBirthday:
+		return util.Birthday
+	case SortKeyHeight:
+		return util.Height
+	default:
+		return util.MemberID
+	}
 }

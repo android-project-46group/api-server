@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"testing"
 
 	"github.com/android-project-46group/api-server/db"
@@ -32,7 +33,33 @@ func TestGetAllMembersAPI(t *testing.T) {
 			url:  fmt.Sprintf("/members?gn=%s&key=%s", groupName, key),
 			buildStubs: func(store *mockdb.MockQuerier) {
 				store.EXPECT().
-					GetAllMemberInfos(gomock.Any(), groupName, gomock.Any()).
+					// default では util.MemberID になる
+					GetAllMemberInfos(gomock.Any(), groupName, gomock.Any(), util.MemberID, false).
+					Times(1).
+					Return([]db.MemberInfoBind{}, nil)
+				store.EXPECT().
+					FindApiKeyByName(gomock.Any(), key).
+					Times(1).
+					Return(nil, nil)
+				store.EXPECT().
+					FindGroupByName(gomock.Any(), groupName).
+					Times(1).
+					Return(&models.Group{}, nil)
+				store.EXPECT().
+					FindLocaleByName(gomock.Any(), "ja").
+					Times(1).
+					Return(&models.Locale{}, nil)
+			},
+			checkResponse: func(t *testing.T, recorder *httptest.ResponseRecorder) {
+				require.Equal(t, http.StatusOK, recorder.Code)
+			},
+		},
+		{
+			name: "OK with sort keys",
+			url:  fmt.Sprintf("/members?gn=%s&key=%s&sort=birthday&desc=true", groupName, key),
+			buildStubs: func(store *mockdb.MockQuerier) {
+				store.EXPECT().
+					GetAllMemberInfos(gomock.Any(), groupName, gomock.Any(), util.Birthday, true).
 					Times(1).
 					Return([]db.MemberInfoBind{}, nil)
 				store.EXPECT().
@@ -57,7 +84,7 @@ func TestGetAllMembersAPI(t *testing.T) {
 			url:  fmt.Sprintf("/members?gn=%s", groupName),
 			buildStubs: func(store *mockdb.MockQuerier) {
 				store.EXPECT().
-					GetAllMemberInfos(gomock.Any(), gomock.Any(), gomock.Any()).
+					GetAllMemberInfos(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
 					Times(0)
 				store.EXPECT().
 					FindApiKeyByName(gomock.Any(), gomock.Any()).
@@ -78,7 +105,7 @@ func TestGetAllMembersAPI(t *testing.T) {
 			url:  fmt.Sprintf("/members?gn=%s&key=%s", groupName, "invalid_key"),
 			buildStubs: func(store *mockdb.MockQuerier) {
 				store.EXPECT().
-					GetAllMemberInfos(gomock.Any(), groupName, gomock.Any()).
+					GetAllMemberInfos(gomock.Any(), groupName, gomock.Any(), gomock.Any(), gomock.Any()).
 					Times(0)
 				store.EXPECT().
 					FindApiKeyByName(gomock.Any(), "invalid_key").
@@ -97,7 +124,7 @@ func TestGetAllMembersAPI(t *testing.T) {
 			url:  fmt.Sprintf("/members?gn=%s&key=%s", groupName, key),
 			buildStubs: func(store *mockdb.MockQuerier) {
 				store.EXPECT().
-					GetAllMemberInfos(gomock.Any(), gomock.Any(), gomock.Any()).
+					GetAllMemberInfos(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
 					Times(0)
 				store.EXPECT().
 					FindApiKeyByName(gomock.Any(), key).
@@ -119,7 +146,7 @@ func TestGetAllMembersAPI(t *testing.T) {
 			url:  fmt.Sprintf("/members?key=%s", key),
 			buildStubs: func(store *mockdb.MockQuerier) {
 				store.EXPECT().
-					GetAllMemberInfos(gomock.Any(), "", gomock.Any()).
+					GetAllMemberInfos(gomock.Any(), "", gomock.Any(), gomock.Any(), gomock.Any()).
 					Times(1).
 					Return([]db.MemberInfoBind{}, nil)
 				store.EXPECT().
@@ -143,7 +170,7 @@ func TestGetAllMembersAPI(t *testing.T) {
 			url:  fmt.Sprintf("/members?gn=%s&key=%s", "not_existing_group", key),
 			buildStubs: func(store *mockdb.MockQuerier) {
 				store.EXPECT().
-					GetAllMemberInfos(gomock.Any(), groupName, gomock.Any()).
+					GetAllMemberInfos(gomock.Any(), groupName, gomock.Any(), gomock.Any(), gomock.Any()).
 					Times(0)
 				store.EXPECT().
 					FindApiKeyByName(gomock.Any(), key).
@@ -163,7 +190,7 @@ func TestGetAllMembersAPI(t *testing.T) {
 			url:  fmt.Sprintf("/members?gn=%s&key=%s", groupName, key),
 			buildStubs: func(store *mockdb.MockQuerier) {
 				store.EXPECT().
-					GetAllMemberInfos(gomock.Any(), groupName, gomock.Any()).
+					GetAllMemberInfos(gomock.Any(), groupName, gomock.Any(), gomock.Any(), gomock.Any()).
 					Times(0)
 				store.EXPECT().
 					FindApiKeyByName(gomock.Any(), key).
@@ -186,7 +213,7 @@ func TestGetAllMembersAPI(t *testing.T) {
 			url:  fmt.Sprintf("/members?gn=%s&key=%s", groupName, key),
 			buildStubs: func(store *mockdb.MockQuerier) {
 				store.EXPECT().
-					GetAllMemberInfos(gomock.Any(), groupName, gomock.Any()).
+					GetAllMemberInfos(gomock.Any(), groupName, gomock.Any(), gomock.Any(), gomock.Any()).
 					Times(1).
 					Return([]db.MemberInfoBind{}, nil)
 				store.EXPECT().
@@ -212,7 +239,7 @@ func TestGetAllMembersAPI(t *testing.T) {
 			url:  fmt.Sprintf("/members?gn=%s&key=%s", groupName, key),
 			buildStubs: func(store *mockdb.MockQuerier) {
 				store.EXPECT().
-					GetAllMemberInfos(gomock.Any(), groupName, gomock.Any()).
+					GetAllMemberInfos(gomock.Any(), groupName, gomock.Any(), gomock.Any(), gomock.Any()).
 					Times(1).
 					Return(nil, errors.New("internal server error"))
 				store.EXPECT().
@@ -248,7 +275,7 @@ func TestGetAllMembersAPI(t *testing.T) {
 			querier := mockdb.NewMockQuerier(ctrl)
 			tc.buildStubs(querier)
 			matcher := util.NewMatcher()
-			logger, _, _ := util.NewStandardLogger("go-test", "api-saka")
+			logger, _, _ := util.NewStandardLogger("go-test", "api-saka", os.Stdout)
 			server, err := NewServer(config, querier, matcher, logger)
 			require.NoError(t, err)
 			recorder := httptest.NewRecorder()

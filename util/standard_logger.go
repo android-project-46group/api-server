@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"io"
 )
 
 // standardLogger prints log to standard output stream.
@@ -11,17 +12,20 @@ type standardLogger struct {
 	level   Level
 	host    string
 	service string
+	writer  io.Writer
 }
 
 func NewStandardLogger(
 	host string,
 	service string,
-) (Logger, func(), error) {
+	writer io.Writer,
+) (*standardLogger, func(), error) {
 
 	logger := &standardLogger{
 		level:   Info,
 		host:    host,
 		service: service,
+		writer:  writer,
 	}
 	return logger, func() {}, nil
 }
@@ -78,11 +82,11 @@ func (s *standardLogger) Print(ctx context.Context, lv Level, msg string) {
 	}
 	sm, err := json.Marshal(m)
 	if err != nil {
-		fmt.Println("{\"Error\": \"Failed to Marshal Struct to Json\"}")
+		s.writer.Write([]byte("{\"Error\": \"Failed to Marshal Struct to Json\"}"))
 	}
 	sm = append(sm, []byte("\n")...)
 
-	fmt.Println(string(sm))
+	s.writer.Write(sm)
 }
 
 // Set Level after struct is initialized.
