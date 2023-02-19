@@ -11,6 +11,7 @@ import (
 
 	"github.com/android-project-46group/api-server/db"
 	mockdb "github.com/android-project-46group/api-server/db/mock"
+	"github.com/android-project-46group/api-server/repository/grpc"
 	"github.com/android-project-46group/api-server/util"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/require"
@@ -143,7 +144,9 @@ func TestGetPositionsAPI(t *testing.T) {
 			tc.buildStubs(querier)
 			matcher := util.NewMatcher()
 			logger, _, _ := util.NewStandardLogger("go-test", "api-saka", os.Stdout)
-			server, err := NewServer(config, querier, matcher, logger)
+			gclient := grpc.NewClient(logger, config)
+
+			server, err := NewServer(config, querier, matcher, logger, gclient)
 			require.NoError(t, err)
 			recorder := httptest.NewRecorder()
 
