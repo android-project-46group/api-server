@@ -6,7 +6,6 @@ import (
 
 	"github.com/opentracing/opentracing-go"
 	"github.com/uber/jaeger-client-go/config"
-	jaegerConfig "github.com/uber/jaeger-client-go/config"
 )
 
 const (
@@ -15,9 +14,9 @@ const (
 )
 
 func NewJaegerTracer() (opentracing.Tracer, io.Closer, error) {
-	cfg := jaegerConfig.Configuration{
+	cfg := config.Configuration{
 		ServiceName: service,
-		Sampler: &jaegerConfig.SamplerConfig{
+		Sampler: &config.SamplerConfig{
 			Type:  "const",
 			Param: 1,
 		},
