@@ -11,7 +11,6 @@ import (
 
 	mockdb "github.com/android-project-46group/api-server/db/mock"
 	models "github.com/android-project-46group/api-server/db/my_models"
-	"github.com/android-project-46group/api-server/repository/grpc"
 	"github.com/android-project-46group/api-server/util"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/require"
@@ -129,9 +128,8 @@ func TestGetAllGroupsAPI(t *testing.T) {
 			tc.buildStubs(querier)
 			matcher := util.NewMatcher()
 			logger, _, _ := util.NewStandardLogger("go-test", "api-saka", os.Stdout)
-			gclient := grpc.NewClient(logger, config)
 
-			server, err := NewServer(config, querier, matcher, logger, gclient)
+			server, err := NewServer(config, querier, matcher, logger, &mockGrpcClient{})
 			require.NoError(t, err)
 			recorder := httptest.NewRecorder()
 
