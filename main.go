@@ -26,7 +26,7 @@ func main() {
 
 	logger, closeFunc, err := util.NewZapLogger(config.LogPath, config.Host, config.Service, util.Degub)
 	if err != nil {
-		log.Fatal("cannot create logger")
+		log.Fatal("cannot create logger: ", err)
 	}
 	defer closeFunc()
 
@@ -38,8 +38,10 @@ func main() {
 
 	matcher := util.NewMatcher()
 
+	grpcClient := grpc.NewClient(logger, config)
+
 	// DI to server
-	server, err := api.NewServer(config, querier, matcher, logger)
+	server, err := api.NewServer(config, querier, matcher, logger, grpcClient)
 	if err != nil {
 		logger.Criticalf(context.Background(), "cannot create server:", err)
 	}

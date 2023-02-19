@@ -165,3 +165,22 @@ func queryToColumnName(query string) util.SortKey {
 		return util.MemberID
 	}
 }
+
+func (server *Server) downloadMembers(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	span, ctx := tracer.StartSpanFromContext(ctx, "api.downloadMembers")
+	defer span.Finish()
+
+	w.Header().Set("Content-Type", "applicaiton/zip")
+	// ファイル名はここで指定する。
+	w.Header().Set("Content-Disposition", "attachment; filename=saka-members.zip")
+
+	err := server.grpcClient.DownloadMembers(ctx, w)
+	if err != nil {
+		server.logger.Warnf(ctx, "failed do download members: %v", err)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+}
