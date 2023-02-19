@@ -10,26 +10,32 @@ import (
 	muxtrace "gopkg.in/DataDog/dd-trace-go.v1/contrib/gorilla/mux"
 
 	"github.com/android-project-46group/api-server/db"
+	"github.com/android-project-46group/api-server/repository/grpc"
 	"github.com/android-project-46group/api-server/util"
 )
 
 // Server serves HTTP requests for this service.
 type Server struct {
-	config  util.Config
-	querier db.Querier
-	router  *muxtrace.Router
-	matcher language.Matcher
-	logger  util.Logger
+	config     util.Config
+	querier    db.Querier
+	router     *muxtrace.Router
+	matcher    language.Matcher
+	logger     util.Logger
+	grpcClient grpc.GrpcClient
 }
 
 // Create a new server from the given config file.
-func NewServer(config util.Config, querier db.Querier, matcher language.Matcher, logger util.Logger) (*Server, error) {
+func NewServer(
+	config util.Config, querier db.Querier, matcher language.Matcher,
+	logger util.Logger, grpcClient grpc.GrpcClient,
+) (*Server, error) {
 
 	server := &Server{
-		config:  config,
-		querier: querier,
-		matcher: matcher,
-		logger:  logger,
+		config:     config,
+		querier:    querier,
+		matcher:    matcher,
+		logger:     logger,
+		grpcClient: grpcClient,
 	}
 
 	err := server.setupRouter()
@@ -82,6 +88,14 @@ func (server *Server) setupRouter() error {
 		Queries("gn", "{gn}").
 		Queries("key", "{key}").
 		HandlerFunc(server.getAllFormations).
+		Methods("GET")
+
+	r.Path(rootPath + "/members/download").
+		HandlerFunc(server.downloadMembers).
+		Methods("GET")
+
+	r.Path(rootPath + "/health/grpc").
+		HandlerFunc(server.healthGrpc).
 		Methods("GET")
 
 	server.router = r

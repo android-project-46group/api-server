@@ -276,7 +276,8 @@ func TestGetAllMembersAPI(t *testing.T) {
 			tc.buildStubs(querier)
 			matcher := util.NewMatcher()
 			logger, _, _ := util.NewStandardLogger("go-test", "api-saka", os.Stdout)
-			server, err := NewServer(config, querier, matcher, logger)
+
+			server, err := NewServer(config, querier, matcher, logger, &mockGrpcClient{})
 			require.NoError(t, err)
 			recorder := httptest.NewRecorder()
 

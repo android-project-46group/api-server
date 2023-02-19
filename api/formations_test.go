@@ -199,9 +199,10 @@ func TestGetAllFormationsAPI(t *testing.T) {
 			}
 			querier := mockdb.NewMockQuerier(ctrl)
 			tc.buildStubs(querier)
-			mathcer := util.NewMatcher()
+			matcher := util.NewMatcher()
 			logger, _, _ := util.NewStandardLogger("go-test", "api-saka", os.Stdout)
-			server, err := NewServer(config, querier, mathcer, logger)
+
+			server, err := NewServer(config, querier, matcher, logger, &mockGrpcClient{})
 			require.NoError(t, err)
 			recorder := httptest.NewRecorder()
 

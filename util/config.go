@@ -13,6 +13,7 @@ type Config struct {
 	LogPath       string `mapstructure:"LOG_PATH"`
 	Host          string `mapstructure:"HOST"`
 	Service       string `mapstructure:"SERVICE"`
+	GRPCURL       string `mapstructure:"GRPC_URL"`
 }
 
 // Load config parameters using viper

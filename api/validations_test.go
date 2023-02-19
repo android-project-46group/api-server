@@ -73,7 +73,8 @@ func TestIsApiKeyValid(t *testing.T) {
 
 			matcher := util.NewMatcher()
 			logger, _, _ := util.NewStandardLogger("go-test", "api-saka", os.Stdout)
-			server, err := NewServer(config, querier, matcher, logger)
+
+			server, err := NewServer(config, querier, matcher, logger, &mockGrpcClient{})
 			require.NoError(t, err)
 
 			result := server.isApiKeyValid(context.Background(), tc.key)
