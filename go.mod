@@ -29,7 +29,7 @@ require (
 	github.com/DataDog/sketches-go v1.2.1 // indirect
 	github.com/HdrHistogram/hdrhistogram-go v1.1.2 // indirect
 	github.com/Microsoft/go-winio v0.5.1 // indirect
-	github.com/android-project-46group/protobuf/gen/go/protobuf v0.0.0-20230218194654-be770a016789 // indirect
+	github.com/android-project-46group/protobuf/gen/go/protobuf v0.0.0-20230219110305-d8328388d0e5 // indirect
 	github.com/cespare/xxhash/v2 v2.2.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/dgraph-io/ristretto v0.1.0 // indirect

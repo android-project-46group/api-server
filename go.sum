@@ -78,6 +78,14 @@ github.com/android-project-46group/protobuf/gen/go/protobuf v0.0.0-2023021817164
 github.com/android-project-46group/protobuf/gen/go/protobuf v0.0.0-20230218171643-3c98a5264a58/go.mod h1:rpi3/7Yo61gWqsT3fLW9bE6ODBE15K6dSkmtorPT3ns=
 github.com/android-project-46group/protobuf/gen/go/protobuf v0.0.0-20230218194654-be770a016789 h1:IiSPeKnTJ4KI1U5jxN31NzG1JIjnDeNzvgqXsDJapr4=
 github.com/android-project-46group/protobuf/gen/go/protobuf v0.0.0-20230218194654-be770a016789/go.mod h1:rpi3/7Yo61gWqsT3fLW9bE6ODBE15K6dSkmtorPT3ns=
+github.com/android-project-46group/protobuf/gen/go/protobuf v0.0.0-20230219104720-46bde4a73fd6 h1:Pc+Gw/kXs6ZHnR5RLBLYV/ig+4KYfO5RKiqr66pBKl0=
+github.com/android-project-46group/protobuf/gen/go/protobuf v0.0.0-20230219104720-46bde4a73fd6/go.mod h1:FcEH+JJ0+/QrJpbbkPQ0guKv4a4udyR5yPzTVjvIVPU=
+github.com/android-project-46group/protobuf/gen/go/protobuf v0.0.0-20230219105346-f914eca7c766 h1:pATlAag2WNyvriIaT4KMeD/8QmPqOX/ZJFVvt+lMIPE=
+github.com/android-project-46group/protobuf/gen/go/protobuf v0.0.0-20230219105346-f914eca7c766/go.mod h1:FcEH+JJ0+/QrJpbbkPQ0guKv4a4udyR5yPzTVjvIVPU=
+github.com/android-project-46group/protobuf/gen/go/protobuf v0.0.0-20230219105902-ffd67830fd0b h1:Yug1NVgycG0pRFwOny1Rs6e3zZsMZEs0ir5pp9sATUQ=
+github.com/android-project-46group/protobuf/gen/go/protobuf v0.0.0-20230219105902-ffd67830fd0b/go.mod h1:FcEH+JJ0+/QrJpbbkPQ0guKv4a4udyR5yPzTVjvIVPU=
+github.com/android-project-46group/protobuf/gen/go/protobuf v0.0.0-20230219110305-d8328388d0e5 h1:xH0bNWGHT8zyonnu2Vhjx359HIsPW8C6mUnqWRYXXyI=
+github.com/android-project-46group/protobuf/gen/go/protobuf v0.0.0-20230219110305-d8328388d0e5/go.mod h1:FcEH+JJ0+/QrJpbbkPQ0guKv4a4udyR5yPzTVjvIVPU=
 github.com/antihax/optional v1.0.0/go.mod h1:uupD/76wgC+ih3iEmQUL+0Ugr19nfwCT1kdvxnR2qWY=
 github.com/apmckinlay/gsuneido v0.0.0-20180907175622-1f10244968e3/go.mod h1:hJnaqxrCRgMCTWtpNz9XUFkBCREiQdlcyK6YNmOfroM=
 github.com/armon/circbuf v0.0.0-20150827004946-bbbad097214e/go.mod h1:3U/XgcO3hCbHZ8TKRvWD2dDTCfh9M9ya+I9JpbB7O8o=
