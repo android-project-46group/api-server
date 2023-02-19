@@ -2,9 +2,12 @@ package grpc
 
 import (
 	"context"
+	"fmt"
 	"io"
 
 	"github.com/android-project-46group/api-server/util"
+	pb "github.com/android-project-46group/protobuf/gen/go/protobuf"
+	"google.golang.org/grpc"
 )
 
 type GrpcClient interface {
@@ -18,13 +21,27 @@ type GrpcClient interface {
 }
 
 type grpcClient struct {
-	logger  util.Logger
-	grpcURL string
+	logger         util.Logger
+	grpcURL        string
+	downloadClient pb.DownloadClient
 }
 
-func NewClient(logger util.Logger, config util.Config) GrpcClient {
+func NewClient(logger util.Logger, config util.Config, downloadClient pb.DownloadClient) GrpcClient {
+
 	return &grpcClient{
-		logger:  logger,
-		grpcURL: config.GRPCURL,
+		logger:         logger,
+		grpcURL:        config.GRPCURL,
+		downloadClient: downloadClient,
 	}
+}
+
+func NewGRPCClient(grpcURL string) (pb.DownloadClient, func(), error) {
+	conn, err := grpc.Dial(grpcURL, grpc.WithInsecure())
+	if err != nil {
+		return nil, nil, fmt.Errorf("failed to dial: %w", err)
+	}
+
+	return pb.NewDownloadClient(conn), func() {
+		conn.Close()
+	}, nil
 }
