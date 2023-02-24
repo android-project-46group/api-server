@@ -8,6 +8,8 @@
 [![](https://img.shields.io/badge/server-555.svg?logo=go)](https://github.com/android-project-46group/api-server)
 [![](https://img.shields.io/badge/crawler-555.svg?logo=python)](https://github.com/android-project-46group/api)
 [![](https://img.shields.io/badge/ios-555.svg?logo=swift)](https://github.com/android-project-46group/ios)
+[![](https://img.shields.io/badge/openapi-555.svg?logo=OpenAPI+Initiative)](https://github.com/android-project-46group/open-api)
+[![](https://img.shields.io/badge/pb-555.svg?logo=Raspberry+Pi)](https://github.com/android-project-46group/protobuf)
 
 API server with ubuntu 20.04 on raspberry pi 4
 
@@ -25,10 +27,6 @@ API server with ubuntu 20.04 on raspberry pi 4
 ## Database design
 
 ![Database design](./docs/er.png)
-
-## API design
-
-[OpenAPI](./docs/openapi.yaml)
 
 ### DB Access (API)
 
