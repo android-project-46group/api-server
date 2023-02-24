@@ -23,19 +23,6 @@ func (server *Server) getAllFormations(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 
-	key := r.FormValue("key")
-
-	if err := server.isApiKeyValid(ctx, key); err != nil {
-		if err == sql.ErrNoRows {
-			w.WriteHeader(http.StatusUnauthorized)
-			server.logger.Warnf(ctx, "Invalid api key (%s) was passed.", key)
-			return
-		}
-		w.WriteHeader(http.StatusInternalServerError)
-		server.logger.Errorf(ctx, "failed to isApiKeyValid: %w", err)
-		return
-	}
-
 	// get group name from query parameters
 	group := r.FormValue("gn")
 

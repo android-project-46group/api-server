@@ -53,52 +53,55 @@ func (server *Server) setupRouter() error {
 			return err
 		}
 	}
+
 	r.Path(rootPath + "/health").
 		HandlerFunc(server.Health).
-		Methods("GET")
-
-	r.Path(rootPath+"/groups").
-		Queries("key", "{key}").
-		HandlerFunc(server.getAllGroups).
-		Methods("GET")
-
-	r.Path(rootPath+"/members").
-		Queries("key", "{key}").
-		HandlerFunc(server.getAllMembers).
-		Methods("GET")
-
-	r.Path(rootPath+"/blogs").
-		Queries("key", "{key}").
-		HandlerFunc(server.getAllBlogs).
-		Methods("GET")
-
-	r.Path(rootPath+"/songs").
-		Queries("gn", "{gn}").
-		Queries("key", "{key}").
-		HandlerFunc(server.getAllSongs).
-		Methods("GET")
-
-	r.Path(rootPath+"/positions").
-		Queries("title", "{title}").
-		Queries("key", "{key}").
-		HandlerFunc(server.getPositions).
-		Methods("GET")
-
-	r.Path(rootPath+"/formations").
-		Queries("gn", "{gn}").
-		Queries("key", "{key}").
-		HandlerFunc(server.getAllFormations).
-		Methods("GET")
-
-	r.Path(rootPath + "/members/download").
-		HandlerFunc(server.downloadMembers).
 		Methods("GET")
 
 	r.Path(rootPath + "/health/grpc").
 		HandlerFunc(server.healthGrpc).
 		Methods("GET")
 
+	authed := r.PathPrefix("").Subrouter()
+	authed.Use(server.authMiddleware)
+
+	authed.Path(rootPath+"/groups").
+		Queries("key", "{key}").
+		HandlerFunc(server.getAllGroups).
+		Methods("GET")
+
+	authed.Path(rootPath+"/members").
+		Queries("key", "{key}").
+		HandlerFunc(server.getAllMembers).
+		Methods("GET")
+
+	authed.Path(rootPath+"/blogs").
+		Queries("key", "{key}").
+		HandlerFunc(server.getAllBlogs).
+		Methods("GET")
+
+	authed.Path(rootPath+"/songs").
+		Queries("key", "{key}").
+		HandlerFunc(server.getAllSongs).
+		Methods("GET")
+
+	authed.Path(rootPath+"/positions").
+		Queries("title", "{title}").
+		Queries("key", "{key}").
+		HandlerFunc(server.getPositions).
+		Methods("GET")
+
+	authed.Path(rootPath+"/formations").
+		Queries("key", "{key}").
+		HandlerFunc(server.getAllFormations).
+		Methods("GET")
+
+	authed.Path(rootPath + "/members/download").
+		HandlerFunc(server.downloadMembers).
+		Methods("GET")
+
 	server.router = r
+
 	return nil
 }
 

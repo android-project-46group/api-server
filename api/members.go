@@ -30,27 +30,16 @@ func (server *Server) getAllMembers(w http.ResponseWriter, r *http.Request) {
 	accept := r.Header.Get("Accept-Language")
 	tag, _ := language.MatchStrings(server.matcher, lang.String(), accept)
 	locale := tag.String()[0:2]
-	key := r.FormValue(queryApiKey)
+
 	// get group name from query parameters
 	group := r.FormValue(queryGroupName)
 	querySortKey := r.FormValue(querySortKey)
 	queryDesc := r.FormValue(queryDesc)
 	queryAll := r.FormValue(queryIncludeGraduated)
 
-	server.logger.Infof(ctx, "server.getAllMembers, locale %s, key %s, group %s, querySortKey %s, desc", locale, key, group, querySortKey, queryDesc)
+	server.logger.Infof(ctx, "server.getAllMembers, locale %s, %s, group %s, querySortKey %s, desc", locale, group, querySortKey, queryDesc)
 
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
-
-	if err := server.isApiKeyValid(ctx, key); err != nil {
-		if err == sql.ErrNoRows {
-			w.WriteHeader(http.StatusUnauthorized)
-			server.logger.Warnf(ctx, "Invalid api key (%s) was passed.", key)
-			return
-		}
-		w.WriteHeader(http.StatusInternalServerError)
-		server.logger.Errorf(ctx, "failed to isApiKeyValid: %w", err)
-		return
-	}
 
 	if group != "" {
 		_, err := server.querier.FindGroupByName(ctx, group)
