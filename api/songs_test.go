@@ -1,12 +1,12 @@
 package api
 
 import (
+	"bytes"
 	"database/sql"
 	"errors"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
-	"os"
 	"testing"
 
 	mockdb "github.com/android-project-46group/api-server/db/mock"
@@ -111,16 +111,19 @@ func TestGetAllSongsAPI(t *testing.T) {
 			buildStubs: func(querier *mockdb.MockQuerier) {
 				querier.EXPECT().
 					GetAllSongs(gomock.Any(), gomock.Any()).
-					Times(0)
+					Times(1).
+					Return(models.SongSlice{}, nil)
 				querier.EXPECT().
 					FindApiKeyByName(gomock.Any(), gomock.Any()).
-					Times(0)
+					Times(1).
+					Return(nil, nil)
 				querier.EXPECT().
-					FindGroupByName(gomock.Any(), groupName).
-					Times(0)
+					FindGroupByName(gomock.Any(), "").
+					Times(1).
+					Return(&models.Group{}, nil)
 			},
 			checkResponse: func(t *testing.T, recorder *httptest.ResponseRecorder) {
-				require.Equal(t, http.StatusNotFound, recorder.Code)
+				require.Equal(t, http.StatusOK, recorder.Code)
 			},
 		},
 		{
@@ -200,7 +203,7 @@ func TestGetAllSongsAPI(t *testing.T) {
 			querier := mockdb.NewMockQuerier(ctrl)
 			tc.buildStubs(querier)
 			matcher := util.NewMatcher()
-			logger, _, _ := util.NewStandardLogger("go-test", "api-saka", os.Stdout)
+			logger, _, _ := util.NewStandardLogger("go-test", "api-saka", bytes.NewBuffer([]byte{}))
 
 			server, err := NewServer(config, querier, matcher, logger, &mockGrpcClient{})
 			require.NoError(t, err)

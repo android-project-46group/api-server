@@ -31,7 +31,9 @@ func (q *SqlQuerier) FindGroupByName(ctx context.Context, groupName string) (*mo
 	span, ctx := tracer.StartSpanFromContext(ctx, "db.FindGroupByName")
 	defer span.Finish()
 
-	g, err := models.Groups(qm.Where("group_name = ?", groupName)).One(ctx, q.DB)
+	g, err := models.Groups(
+		qm.Where("CASE WHEN ? = '' THEN '1' ELSE groups.group_name = ? END", groupName, groupName),
+	).One(ctx, q.DB)
 
 	if err != nil {
 		return nil, fmt.Errorf("FindGroupByName: %w", err)

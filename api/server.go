@@ -81,7 +81,6 @@ func (server *Server) setupRouter() error {
 		Methods("GET")
 
 	authed.Path(rootPath+"/songs").
-		Queries("gn", "{gn}").
 		Queries("key", "{key}").
 		HandlerFunc(server.getAllSongs).
 		Methods("GET")
@@ -93,7 +92,6 @@ func (server *Server) setupRouter() error {
 		Methods("GET")
 
 	authed.Path(rootPath+"/formations").
-		Queries("gn", "{gn}").
 		Queries("key", "{key}").
 		HandlerFunc(server.getAllFormations).
 		Methods("GET")

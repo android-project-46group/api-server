@@ -1,12 +1,12 @@
 package api
 
 import (
+	"bytes"
 	"database/sql"
 	"errors"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
-	"os"
 	"testing"
 
 	"github.com/android-project-46group/api-server/db"
@@ -142,7 +142,7 @@ func TestGetPositionsAPI(t *testing.T) {
 			querier := mockdb.NewMockQuerier(ctrl)
 			tc.buildStubs(querier)
 			matcher := util.NewMatcher()
-			logger, _, _ := util.NewStandardLogger("go-test", "api-saka", os.Stdout)
+			logger, _, _ := util.NewStandardLogger("go-test", "api-saka", bytes.NewBuffer([]byte{}))
 
 			server, err := NewServer(config, querier, matcher, logger, &mockGrpcClient{})
 			require.NoError(t, err)
