@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"time"
 
 	models "github.com/android-project-46group/api-server/db/my_models"
 	"github.com/android-project-46group/api-server/util"
@@ -100,7 +101,7 @@ func (server *Server) getAllMembers(w http.ResponseWriter, r *http.Request) {
 		m := MemberInfoResponse{
 			MemberId:   info.MemberInfo.MemberID,
 			MemberName: info.Member.NameJa,
-			Birthday:   info.MemberInfo.Birthday,
+			Birthday:   outputTime(l, info.MemberInfo.Birthday),
 			Height:     outputHeight(info.MemberInfo.HeightCM),
 			BloodType:  info.MemberInfo.BloodType,
 			Generation: info.MemberInfo.Generation,
@@ -116,7 +117,7 @@ func (server *Server) getAllMembers(w http.ResponseWriter, r *http.Request) {
 		// 卒業メンバーを表示するオプションがある場合、レスポンスに卒業日を付与する。
 		if includeGraduated {
 			if info.Member.LeftAt.Valid {
-				m.LeftAt = info.Member.LeftAt.Time.Format("2006-01-02")
+				m.LeftAt = outputTime(l, info.Member.LeftAt.Time)
 			} else {
 				m.LeftAt = "-"
 			}
@@ -139,6 +140,15 @@ func (server *Server) getAllMembers(w http.ResponseWriter, r *http.Request) {
 func outputHeight(height float64) string {
 	// 151.00000000 → 151.0cm
 	return fmt.Sprintf("%.1fcm", height)
+}
+
+func outputTime(l *models.Locale, date time.Time) string {
+	if l.Name == "ja" {
+
+		return date.Format("2006年01月02日")
+	}
+
+	return date.Format("01/02/2006")
 }
 
 // queryToColumnName convert query string to SortKey.

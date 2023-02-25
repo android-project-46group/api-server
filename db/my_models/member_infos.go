@@ -26,7 +26,7 @@ import (
 type MemberInfo struct {
 	MemberInfoID int         `boil:"member_info_id" json:"member_info_id" toml:"member_info_id" yaml:"member_info_id"`
 	MemberID     int         `boil:"member_id" json:"member_id" toml:"member_id" yaml:"member_id"`
-	Birthday     string      `boil:"birthday" json:"birthday" toml:"birthday" yaml:"birthday"`
+	Birthday     time.Time   `boil:"birthday" json:"birthday" toml:"birthday" yaml:"birthday"`
 	BloodType    string      `boil:"blood_type" json:"blood_type" toml:"blood_type" yaml:"blood_type"`
 	HeightCM     float64     `boil:"height_cm" json:"height_cm" toml:"height_cm" yaml:"height_cm"`
 	Generation   string      `boil:"generation" json:"generation" toml:"generation" yaml:"generation"`
@@ -84,6 +84,27 @@ var MemberInfoTableColumns = struct {
 
 // Generated where
 
+type whereHelpertime_Time struct{ field string }
+
+func (w whereHelpertime_Time) EQ(x time.Time) qm.QueryMod {
+	return qmhelper.Where(w.field, qmhelper.EQ, x)
+}
+func (w whereHelpertime_Time) NEQ(x time.Time) qm.QueryMod {
+	return qmhelper.Where(w.field, qmhelper.NEQ, x)
+}
+func (w whereHelpertime_Time) LT(x time.Time) qm.QueryMod {
+	return qmhelper.Where(w.field, qmhelper.LT, x)
+}
+func (w whereHelpertime_Time) LTE(x time.Time) qm.QueryMod {
+	return qmhelper.Where(w.field, qmhelper.LTE, x)
+}
+func (w whereHelpertime_Time) GT(x time.Time) qm.QueryMod {
+	return qmhelper.Where(w.field, qmhelper.GT, x)
+}
+func (w whereHelpertime_Time) GTE(x time.Time) qm.QueryMod {
+	return qmhelper.Where(w.field, qmhelper.GTE, x)
+}
+
 type whereHelperfloat64 struct{ field string }
 
 func (w whereHelperfloat64) EQ(x float64) qm.QueryMod { return qmhelper.Where(w.field, qmhelper.EQ, x) }
@@ -140,7 +161,7 @@ func (w whereHelpernull_String) IsNotNull() qm.QueryMod { return qmhelper.WhereI
 var MemberInfoWhere = struct {
 	MemberInfoID whereHelperint
 	MemberID     whereHelperint
-	Birthday     whereHelperstring
+	Birthday     whereHelpertime_Time
 	BloodType    whereHelperstring
 	HeightCM     whereHelperfloat64
 	Generation   whereHelperstring
@@ -150,7 +171,7 @@ var MemberInfoWhere = struct {
 }{
 	MemberInfoID: whereHelperint{field: "\"member_infos\".\"member_info_id\""},
 	MemberID:     whereHelperint{field: "\"member_infos\".\"member_id\""},
-	Birthday:     whereHelperstring{field: "\"member_infos\".\"birthday\""},
+	Birthday:     whereHelpertime_Time{field: "\"member_infos\".\"birthday\""},
 	BloodType:    whereHelperstring{field: "\"member_infos\".\"blood_type\""},
 	HeightCM:     whereHelperfloat64{field: "\"member_infos\".\"height_cm\""},
 	Generation:   whereHelperstring{field: "\"member_infos\".\"generation\""},

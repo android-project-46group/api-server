@@ -522,3 +522,47 @@ func InsertMembersSakura() {
 		m.Insert(Ctx, DB, boil.Infer())
 	}
 }
+
+func UpdateGraduatedMembersSakura() {
+
+	m, err := FindUserByName("渡邉 理佐")
+	if err != nil {
+		fmt.Println(err)
+	}
+	m.LeftAt.Time = time.Date(2022, 5, 22, 9, 0, 0, 0, time.Local)
+	m.LeftAt.Valid = true
+	m.Update(Ctx, DB, boil.Infer())
+
+	m, err = FindUserByName("渡邉 美穂")
+	if err != nil {
+		fmt.Println(err)
+	}
+	m.LeftAt.Time = time.Date(2022, 7, 31, 9, 0, 0, 0, time.Local)
+	m.LeftAt.Valid = true
+	m.Update(Ctx, DB, boil.Infer())
+
+	m, err = FindUserByName("原田 葵")
+	if err != nil {
+		fmt.Println(err)
+	}
+	m.LeftAt.Time = time.Date(2022, 8, 20, 9, 0, 0, 0, time.Local)
+	m.LeftAt.Valid = true
+	m.Update(Ctx, DB, boil.Infer())
+
+	m, err = FindUserByName("尾関 梨香")
+	if err != nil {
+		fmt.Println(err)
+	}
+	m.LeftAt.Time = time.Date(2022, 9, 11, 9, 0, 0, 0, time.Local)
+	m.LeftAt.Valid = true
+	m.Update(Ctx, DB, boil.Infer())
+
+	m, err = FindUserByName("菅井 友香")
+	if err != nil {
+		fmt.Println(err)
+	}
+	m.LeftAt.Time = time.Date(2022, 11, 9, 9, 0, 0, 0, time.Local)
+	m.LeftAt.Valid = true
+	m.Update(Ctx, DB, boil.Infer())
+
+}
