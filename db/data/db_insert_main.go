@@ -43,6 +43,7 @@ func InsertMain() {
 	InsertMemberInfosNogi()
 	InsertMemberInfosSakura()
 	InsertGraduatedMemberInfos()
+	UpdateGraduatedMembersSakura()
 
 	// tags table
 	InsertTags()

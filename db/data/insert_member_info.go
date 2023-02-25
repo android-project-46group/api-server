@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
+	"time"
 
 	models "github.com/android-project-46group/api-server/db/my_models"
 	_ "github.com/lib/pq"
@@ -62,9 +63,14 @@ func InsertMemberInfosFromGroupName(group string) {
 			fmt.Println("failed to parse float: ", err)
 		}
 
+		bd, err := time.Parse(info.Birthday, "2018年12月20日")
+		if err != nil {
+			fmt.Println("failed to parse birthday: ", err)
+			continue
+		}
 		m := &models.MemberInfo{
 			MemberID:   member_db.MemberID,
-			Birthday:   info.Birthday,
+			Birthday:   bd,
 			BloodType:  info.BloodType,
 			HeightCM:   heightCM,
 			Generation: info.Generation,
@@ -100,9 +106,14 @@ func InsertMemberInfosFromGroupNameEn(group string) {
 			fmt.Println("failed to parse float: ", err)
 		}
 
+		bd, err := time.Parse(info.Birthday, "12/20/2018")
+		if err != nil {
+			fmt.Println("failed to parse birthday: ", err)
+			continue
+		}
 		m := &models.MemberInfo{
 			MemberID:   member_db.MemberID,
-			Birthday:   info.Birthday,
+			Birthday:   bd,
 			BloodType:  info.BloodType,
 			HeightCM:   heightCM,
 			Generation: info.Generation,
@@ -125,7 +136,7 @@ func InsertGraduatedMemberInfos() {
 	member_db, _ := FindUserByName("柿崎 芽実")
 	m := &models.MemberInfo{
 		MemberID:   member_db.MemberID,
-		Birthday:   "2001年12月2日",
+		Birthday:   time.Date(2001, 12, 2, 12, 34, 56, 123456, time.UTC),
 		BloodType:  "A 型",
 		HeightCM:   157,
 		Generation: "1期生",
@@ -140,7 +151,7 @@ func InsertGraduatedMemberInfos() {
 	member_db, _ = FindUserByName("井口 眞緒")
 	m = &models.MemberInfo{
 		MemberID:   member_db.MemberID,
-		Birthday:   "1995年11月10日",
+		Birthday:   time.Date(1995, 11, 10, 12, 34, 56, 123456, time.UTC),
 		BloodType:  "AB 型",
 		HeightCM:   163,
 		Generation: "1期生",
