@@ -13,7 +13,6 @@ import (
 )
 
 func (q *SqlQuerier) InsertApiKey(ctx context.Context, key string) error {
-
 	span, ctx := tracer.StartSpanFromContext(ctx, "db.InsertApiKey")
 	defer span.Finish()
 
@@ -27,7 +26,6 @@ func (q *SqlQuerier) InsertApiKey(ctx context.Context, key string) error {
 }
 
 func (q *SqlQuerier) FindApiKeyByName(ctx context.Context, key string) (*models.APIKey, error) {
-
 	span, ctx := tracer.StartSpanFromContext(ctx, "db.FindApiKeyByName")
 	defer span.Finish()
 

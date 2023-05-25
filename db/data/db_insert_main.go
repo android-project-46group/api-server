@@ -75,5 +75,6 @@ func shouldInsert() bool {
 	if err != nil {
 		return false
 	}
+
 	return count == 0
 }

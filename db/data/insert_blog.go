@@ -9,7 +9,6 @@ import (
 )
 
 func InsertBlogs() {
-
 	groups := []string{"nogizaka", "sakurazaka", "hinatazaka"}
 	for _, group := range groups {
 		blogs := LoadBlogInfoFile(group)

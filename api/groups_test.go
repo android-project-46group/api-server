@@ -17,7 +17,6 @@ import (
 )
 
 func TestGetAllGroupsAPI(t *testing.T) {
-
 	key := "valid_api_key"
 
 	testCases := []struct {

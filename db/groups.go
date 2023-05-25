@@ -13,7 +13,6 @@ import (
 
 // Get all groups from Database.
 func (q *SqlQuerier) GetAllGroups(ctx context.Context) ([]*models.Group, error) {
-
 	span, ctx := tracer.StartSpanFromContext(ctx, "db.FindGroupByName")
 	defer span.Finish()
 
@@ -27,7 +26,6 @@ func (q *SqlQuerier) GetAllGroups(ctx context.Context) ([]*models.Group, error) 
 }
 
 func (q *SqlQuerier) FindGroupByName(ctx context.Context, groupName string) (*models.Group, error) {
-
 	span, ctx := tracer.StartSpanFromContext(ctx, "db.FindGroupByName")
 	defer span.Finish()
 

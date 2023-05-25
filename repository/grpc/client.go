@@ -27,7 +27,6 @@ type grpcClient struct {
 }
 
 func NewClient(logger util.Logger, config util.Config, downloadClient pb.DownloadClient) GrpcClient {
-
 	return &grpcClient{
 		logger:         logger,
 		grpcURL:        config.GRPCURL,

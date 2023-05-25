@@ -21,5 +21,6 @@ func FindMemberByNameEn(nameEn string) (int, error) {
 	if err != nil {
 		return 0, err
 	}
+
 	return member_info.MemberID, err
 }

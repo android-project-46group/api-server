@@ -43,5 +43,6 @@ func MakeFormations(positions []Position) []int {
 			firstRowNum += 1
 		}
 	}
+
 	return []int{firstRowNum, secondRowNum, thirdRowNum}
 }

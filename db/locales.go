@@ -13,7 +13,6 @@ import (
 )
 
 func (q *SqlQuerier) InsertLocale(ctx context.Context, name string) error {
-
 	span, ctx := tracer.StartSpanFromContext(ctx, "db.InsertLocale")
 	defer span.Finish()
 
@@ -27,7 +26,6 @@ func (q *SqlQuerier) InsertLocale(ctx context.Context, name string) error {
 }
 
 func (q *SqlQuerier) FindLocaleByName(ctx context.Context, name string) (*models.Locale, error) {
-
 	span, ctx := tracer.StartSpanFromContext(ctx, "db.FindLocaleByName")
 	defer span.Finish()
 

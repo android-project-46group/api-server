@@ -29,7 +29,6 @@ func NewServer(
 	config util.Config, querier db.Querier, matcher language.Matcher,
 	logger util.Logger, grpcClient grpc.GrpcClient,
 ) (*Server, error) {
-
 	server := &Server{
 		config:     config,
 		querier:    querier,
@@ -107,7 +106,6 @@ func (server *Server) setupRouter() error {
 
 // start server depending on the cgi serve or not
 func (server *Server) Start() error {
-
 	if server.config.IsCGI {
 		return cgi.Serve(server.router)
 	}

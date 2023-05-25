@@ -57,7 +57,6 @@ func UpdateBlogs() {
 }
 
 func FindBlogByMemberId(id int) (*models.Blog, error) {
-
 	g, err := models.Blogs(
 		qm.Where("member_id = ?", id),
 	).One(Ctx, DB)

@@ -12,8 +12,8 @@ import (
 )
 
 func (server *Server) getAllSongs(w http.ResponseWriter, r *http.Request) {
-
 	ctx := r.Context()
+
 	span, ctx := tracer.StartSpanFromContext(ctx, "api.getAllSongs")
 	defer span.Finish()
 

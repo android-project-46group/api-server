@@ -10,5 +10,6 @@ func ErrorJson(msg string) string {
 			"error": msg,
 		},
 	)
+
 	return string(j)
 }

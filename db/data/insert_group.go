@@ -16,10 +16,10 @@ func InsertGroups() {
 }
 
 func FindGroupIdByName(group string) (int, error) {
-
 	ss, err := models.Groups(qm.Where("group_name = ?", group)).One(Ctx, DB)
 	if err != nil {
 		return 0, err
 	}
+
 	return ss.GroupID, nil
 }
