@@ -21,7 +21,7 @@ import (
 func (server *Server) getAllMembers(w http.ResponseWriter, r *http.Request) {
 
 	ctx := r.Context()
-	span, ctx := tracer.StartSpanFromContext(ctx, "api.getAllBlogs")
+	span, ctx := tracer.StartSpanFromContext(ctx, "api.getAllMembers")
 	defer span.Finish()
 
 	// debug log
