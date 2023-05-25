@@ -21,6 +21,6 @@ func GetTagIdByName(name string) (int, error) {
 	if err != nil {
 		return 0, err
 	}
-	return ss.TagID, nil
 
+	return ss.TagID, nil
 }

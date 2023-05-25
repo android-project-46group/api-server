@@ -10,6 +10,7 @@ import (
 
 func (server *Server) Health(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
+
 	span, ctx := tracer.StartSpanFromContext(ctx, "api.Health")
 	defer span.Finish()
 
@@ -25,6 +26,7 @@ func (server *Server) Health(w http.ResponseWriter, r *http.Request) {
 
 func (server *Server) healthGrpc(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
+
 	span, ctx := tracer.StartSpanFromContext(ctx, "api.healthGrpc")
 	defer span.Finish()
 

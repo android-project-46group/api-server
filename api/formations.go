@@ -13,9 +13,9 @@ import (
 )
 
 func (server *Server) getAllFormations(w http.ResponseWriter, r *http.Request) {
-
 	ctx := r.Context()
-	span, ctx := tracer.StartSpanFromContext(ctx, "api.getAllBlogs")
+
+	span, ctx := tracer.StartSpanFromContext(ctx, "api.getAllFormations")
 	defer span.Finish()
 
 	// debug log
@@ -93,5 +93,6 @@ func createFormationResponse(dbRes []db.PositionSongsBind) []FormationResponse {
 			}
 		}
 	}
+
 	return res
 }

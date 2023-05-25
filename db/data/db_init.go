@@ -22,5 +22,6 @@ func DbInit() (*sql.DB, error) {
 
 	Ctx = context.Background()
 	DB, err = sql.Open(config.DBDriver, config.DBSource)
+
 	return DB, err
 }

@@ -5,6 +5,12 @@ DB_URL=postgresql://ubuntu:sakamichi@localhost:5432/sakamichi?sslmode=disable
 server:
 	go run main.go
 
+
+deploy:	## ラズパイ上へのデプロイ
+	go build -o sakamichi-api-bff main.go
+	mv sakamichi-api-bff /home/ubuntu/deploy/
+	sudo systemctl restart sakamichi-api-bff.service
+
 migrateup:
 	migrate -path migrations -database "$(DB_URL)" -verbose up
 

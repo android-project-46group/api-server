@@ -14,8 +14,8 @@ import (
 * /blogs?gn=sakurazaka&key=xxxyyyzzzhogehoge
  */
 func (server *Server) getAllBlogs(w http.ResponseWriter, r *http.Request) {
-
 	ctx := r.Context()
+
 	span, ctx := tracer.StartSpanFromContext(ctx, "api.getAllBlogs")
 	defer span.Finish()
 

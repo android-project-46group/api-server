@@ -9,16 +9,17 @@ import (
 	"github.com/android-project-46group/api-server/db"
 	"github.com/android-project-46group/api-server/repository/grpc"
 	"github.com/android-project-46group/api-server/util"
+	"github.com/opentracing/opentracing-go"
 )
 
 func main() {
-	// tr, closer, err := util.NewJaegerTracer()
-	// if err != nil {
-	// 	log.Fatal("cannot initialize jaeger tracer: ", err)
-	// }
-	// defer closer.Close()
+	tr, closer, err := util.NewJaegerTracer()
+	if err != nil {
+		log.Fatal("cannot initialize jaeger tracer: ", err)
+	}
+	defer closer.Close()
 
-	// opentracing.SetGlobalTracer(tr)
+	opentracing.SetGlobalTracer(tr)
 
 	config, err := util.LoadConfig(".")
 	if err != nil {

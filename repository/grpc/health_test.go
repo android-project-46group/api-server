@@ -14,7 +14,6 @@ import (
 )
 
 func TestHealthGrpc(t *testing.T) {
-
 	testCases := []struct {
 		name          string
 		buildStubs    func(mock *mockgrpc.MockDownloadClient)

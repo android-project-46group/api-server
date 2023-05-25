@@ -15,7 +15,6 @@ type SqlQuerier struct {
 }
 
 func NewQuerier(config util.Config, logger util.Logger) (*SqlQuerier, error) {
-
 	con, err := sql.Open(config.DBDriver, config.DBSource)
 	if err != nil {
 		return nil, fmt.Errorf("NewQuerier: %w", err)
